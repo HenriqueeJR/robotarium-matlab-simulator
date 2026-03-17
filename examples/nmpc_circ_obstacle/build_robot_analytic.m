@@ -4,7 +4,7 @@
 function [cost, grad] = build_robot_analytic(u, params)
     N = length(u) / 2;
     Ts = 0.033;
-    Q_pos = 1; R_ctrl = 0.01; mu_obs = 10000.0;
+    Q_pos = 1; R_ctrl = 0.1; mu_obs = 10000.0;
     
     x_k = params(1:3);      % Estado inicial x_0
     x_ref = params(4:5);
