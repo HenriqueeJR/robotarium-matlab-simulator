@@ -21,6 +21,6 @@
 #include <string.h>
 
 /* Function Declarations */
-real_T sumColumnB(const real_T x[49]);
+real_T sumColumnB(const real_T x[74]);
 
 /* End of code generation (sumMatrixIncludeNaN.h) */

@@ -14,12 +14,12 @@
 #include "rt_nonfinite.h"
 
 /* Function Definitions */
-real_T sumColumnB(const real_T x[49])
+real_T sumColumnB(const real_T x[74])
 {
   real_T y;
   int32_T k;
   y = x[0];
-  for (k = 0; k < 48; k++) {
+  for (k = 0; k < 73; k++) {
     y += x[k + 1];
   }
   return y;

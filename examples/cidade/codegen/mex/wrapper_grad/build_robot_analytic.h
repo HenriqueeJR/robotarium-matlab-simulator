@@ -21,7 +21,7 @@
 #include <string.h>
 
 /* Function Declarations */
-real_T build_robot_analytic(const emlrtStack *sp, const real_T u[100],
-                            const real_T params[8], real_T grad[100]);
+real_T build_robot_analytic(const emlrtStack *sp, const real_T u[150],
+                            const real_T params[8], real_T grad[150]);
 
 /* End of code generation (build_robot_analytic.h) */

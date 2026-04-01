@@ -21,7 +21,7 @@
 #include <string.h>
 
 /* Function Declarations */
-void wrapper_grad(const emlrtStack *sp, const real_T u[100],
-                  const real_T params[8], real_T grad[100]);
+void wrapper_grad(const emlrtStack *sp, const real_T u[150],
+                  const real_T params[8], real_T grad[150]);
 
 /* End of code generation (wrapper_grad.h) */

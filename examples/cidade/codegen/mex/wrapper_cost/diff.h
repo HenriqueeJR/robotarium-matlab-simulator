@@ -21,6 +21,6 @@
 #include <string.h>
 
 /* Function Declarations */
-void diff(const real_T x[50], real_T y[49]);
+void diff(const real_T x[75], real_T y[74]);
 
 /* End of code generation (diff.h) */

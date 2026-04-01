@@ -13,7 +13,7 @@ r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', po
 
 %% 2. Configurações da Simulação e do NMPC
 Ts = 0.033;             % Tempo de amostragem
-N = 50;                 % Horizonte de predição 
+N = 75;                 % Horizonte de predição 
 T_sim_total = 50;       % Tempo total
 n_steps = round(T_sim_total / Ts);
 
@@ -39,7 +39,7 @@ end
 
 %% 4. Condições Iniciais e Parâmetros do Penalty Method
 X_k = posicoes_iniciais;    
-x_ref = [0; 0.8];         % Alvo (ponta do braço superior)
+x_ref = [1.2; -0.1];         % Alvo (ponta do braço superior)
 x_obs = [0.0; 0.0];         % Centro da topologia complexa
 
 % Parâmetros do Algoritmo 2 (Penalty Method)
@@ -63,7 +63,7 @@ L_arm = 1.5;  % Comprimento dos braços a partir do centro
 W_arm = 0.3;  % Meia-largura dos braços
 R_out = 0.5;  % Raio do círculo externo (Hub conector)
 R_in  = 0.2;  % Raio do círculo interno (Buraco a evitar)
-r_rob = 0.07; % Raio físico do robô
+r_rob = 0.1; % Raio físico do robô
 
 % --- Desenho dos 4 Braços da Cruz (Zonas Seguras) ---
 h_geo(1) = fill(ax, [0 L_arm L_arm 0], [-W_arm -W_arm W_arm W_arm], 'b', 'FaceAlpha', 0.2, 'EdgeColor', 'b');
@@ -83,7 +83,7 @@ h_pred = plot(ax, X_k(1), X_k(2), 'k--', 'LineWidth', 1.5);
 theta_rob = linspace(0, 2*pi, 40); 
 h_robot_body = fill(ax, X_k(1) + r_rob*cos(theta_rob), X_k(2) + r_rob*sin(theta_rob), ...
                     'y', 'FaceAlpha', 0.4, 'EdgeColor', 'yellow', 'LineWidth', 1.5);
-h_robot_body_intern = fill(ax, X_k(1) + (0.055)*cos(theta_rob), X_k(2) + (0.055)*sin(theta_rob), ...
+h_robot_body_intern = fill(ax, X_k(1) + (0.075)*cos(theta_rob), X_k(2) + (0.075)*sin(theta_rob), ...
                     'g', 'FaceAlpha', 0.4, 'EdgeColor', 'green', 'LineWidth', 1.5);
 
 % Ajuste de Camadas (Z-Order)
@@ -100,69 +100,13 @@ for k = 1:n_steps
     X_k = r.get_poses();
     hist_X(:, k+1) = X_k;
     
-    t_start = tic;
+    
     eta_obs = eta_inicial;
     u_current = u_init_mpc; 
-    
-    while eta_obs <= eta_max
-        params = [X_k; x_ref; x_obs; eta_obs];
-        
-        [u_opt, res_norm, iter_count] = solver.solve(u_current, params);
-        
-        X_pred = zeros(3, N+1);
-        X_pred(:, 1) = X_k;
-        max_violacao = 0;
-       
-        for i = 1:N
-            v_p = u_opt((i-1)*2 + 1);
-            w_p = u_opt((i-1)*2 + 2);
-            X_pred(1, i+1) = X_pred(1, i) + Ts * v_p * cos(X_pred(3, i));
-            X_pred(2, i+1) = X_pred(2, i) + Ts * v_p * sin(X_pred(3, i));
-            X_pred(3, i+1) = X_pred(3, i) + Ts * w_p;
-            
-            x_p = X_pred(1, i+1) - x_obs(1); 
-            y_p = X_pred(2, i+1) - x_obs(2);
-            
-            % Calcula as violações dos 6 elementos
-            v_11 = max(0, r_rob - x_p);                  v_12 = max(0, x_p - (L_arm - r_rob));
-            v_13 = max(0, -y_p - (W_arm - r_rob));       v_14 = max(0, y_p - (W_arm - r_rob));
-            P1 = v_11^2 + v_12^2 + v_13^2 + v_14^2;
-            
-            v_21 = max(0, -x_p - (W_arm - r_rob));       v_22 = max(0, x_p - (W_arm - r_rob));
-            v_23 = max(0, r_rob - y_p);                  v_24 = max(0, y_p - (L_arm - r_rob));
-            P2 = v_21^2 + v_22^2 + v_23^2 + v_24^2;
-            
-            v_31 = max(0, -x_p - (L_arm - r_rob));       v_32 = max(0, x_p + r_rob);
-            v_33 = max(0, -y_p - (W_arm - r_rob));       v_34 = max(0, y_p - (W_arm - r_rob));
-            P3 = v_31^2 + v_32^2 + v_33^2 + v_34^2;
-            
-            v_41 = max(0, -x_p - (W_arm - r_rob));       v_42 = max(0, x_p - (W_arm - r_rob));
-            v_43 = max(0, -y_p - (L_arm - r_rob));       v_44 = max(0, y_p + r_rob);
-            P4 = v_41^2 + v_42^2 + v_43^2 + v_44^2;
-            
-            v_5 = max(0, x_p^2 + y_p^2 - (R_out - r_rob)^2);
-            P5 = v_5^2;
-            v_6 = max(0, (R_in + r_rob)^2 - (x_p^2 + y_p^2));
-            P6 = v_6^2;
-            
-            P_cruz_atual = min([P1, P2, P3, P4, P5]);
-            violacao_atual = P_cruz_atual + P6;
-            
-            if violacao_atual > max_violacao
-                max_violacao = violacao_atual;
-            end
-        end
-        
-        set(h_pred, 'XData', X_pred(1, :), 'YData', X_pred(2, :));
-        title(ax, sprintf('mu = %.1e | Violação = %.4f', eta_obs, max_violacao));
-        
-        if (res_norm <= solver.tol) && (max_violacao <= tolerancia_obs)
-            break; 
-        else
-            eta_obs = eta_obs * omega;
-            u_current = u_opt; 
-        end
-    end
+
+    params = [X_k; x_ref; x_obs; eta_obs];
+    t_start = tic;
+    [u_opt, res_norm, iter_count] = solver.solve(u_current, params);
     tempo_solve = toc(t_start);
     
     v_cmd = u_opt(1);
@@ -180,25 +124,32 @@ for k = 1:n_steps
     r.set_velocities(1:Nr, [v_cmd_safe; w_cmd_safe]);
     
     set(h_traj, 'XData', hist_X(1, 1:k+1), 'YData', hist_X(2, 1:k+1));
-    set(h_robot_body, 'XData', X_k(1) + r_rob*cos(theta_rob), 'YData', X_k(2) + r_rob*sin(theta_rob));
-    set(h_robot_body_intern, 'XData', X_k(1) + (0.055)*cos(theta_rob), 'YData', X_k(2) + (0.055)*sin(theta_rob));
+    % --- DESLOCAMENTO DO CENTRO VISUAL ---
+    d_off = 0.035; % 3.5 cm para a frente
+    x_centro = X_k(1) + d_off * cos(X_k(3));
+    y_centro = X_k(2) + d_off * sin(X_k(3));
+    
+    set(h_robot_body, 'XData', x_centro + r_rob*cos(theta_rob), ...
+                      'YData', y_centro + r_rob*sin(theta_rob));
+    set(h_robot_body_intern, 'XData', x_centro + (0.075)*cos(theta_rob), ...
+                             'YData', y_centro + (0.075)*sin(theta_rob));
     
     u_init_mpc = [u_opt(3:end); u_opt(end-1:end)]; 
     hist_time(k) = tempo_solve;
     
     % Critérios de Parada
-    if norm(X_k(1:2) - x_ref(1:2)) < 0.055
+    if norm(X_k(1:2) - x_ref(1:2)) < 0.075
         disp(['Alvo alcançado em ', num2str(k * Ts), ' segundos!']);
         n_steps = k;
         title(ax, 'Trajetória Concluída');
         break;
     end
     
-    if max_violacao >= 0.015
-        disp('O robô real bateu (Violou os limites)!');
-        n_steps = k;
-        break;
-    end
+    % if max_violacao >= 0.015
+    %     disp('O robô real bateu (Violou os limites)!');
+    %     n_steps = k;
+    %     break;
+    % end
     
     r.step();
 end

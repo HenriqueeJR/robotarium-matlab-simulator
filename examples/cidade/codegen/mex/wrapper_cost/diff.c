@@ -14,12 +14,12 @@
 #include "rt_nonfinite.h"
 
 /* Function Definitions */
-void diff(const real_T x[50], real_T y[49])
+void diff(const real_T x[75], real_T y[74])
 {
   real_T work;
   int32_T m;
   work = x[0];
-  for (m = 0; m < 49; m++) {
+  for (m = 0; m < 74; m++) {
     real_T tmp2;
     tmp2 = work;
     work = x[m + 1];

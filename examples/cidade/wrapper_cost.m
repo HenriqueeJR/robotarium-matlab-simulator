@@ -6,7 +6,7 @@ function cost = wrapper_cost(u, params)
     % Aumente esses valores se o robô continuar tremendo.
     % Diminua se ele ficar "preguiçoso" demais para desviar.
     R_dv = 0.01; % Penalidade para variação de velocidade linear
-    R_dw = 0.1; % Penalidade para variação de velocidade angular (Alta para matar o zigue-zague)
+    R_dw = 0.5; % Penalidade para variação de velocidade angular (Alta para matar o zigue-zague)
     
     % 3. Separa as variáveis v e w do vetor u
     % u tem o formato [v1; w1; v2; w2; ...]

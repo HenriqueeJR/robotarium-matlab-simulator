@@ -4,7 +4,7 @@ function grad = wrapper_grad(u, params)
     
     % 2. Pesos (Devem ser EXATAMENTE IGUAIS aos da função de custo!)
     R_dv = 0.01;
-    R_dw = 0.1;
+    R_dw = 0.5;
     
     % 3. Inicializa o vetor do gradiente de suavização
     grad_smooth = zeros(size(u));

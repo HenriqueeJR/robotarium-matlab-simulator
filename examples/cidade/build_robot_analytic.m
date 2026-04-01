@@ -3,7 +3,7 @@
 % =========================================================================
 function [cost, grad] = build_robot_analytic(u, params)
     %#codegen
-    N = 50;
+    N = 75;
     Ts = 0.033;
     Q_pos = 10; R_ctrl = 0.001; 
     
@@ -19,7 +19,7 @@ function [cost, grad] = build_robot_analytic(u, params)
     R_in  = 0.2;  % Raio do círculo interno (Buraco a evitar)
 
     % Raio do robô para inflar restrições (Margem de segurança)
-    r_rob = 0.07; 
+    r_rob = 0.1; 
     
     X_hist = zeros(3, N + 1);
     X_hist(:, 1) = x_k;
@@ -32,8 +32,11 @@ function [cost, grad] = build_robot_analytic(u, params)
         v_n = u((n-1)*2 + 1);
         w_n = u((n-1)*2 + 2);
         
-        x_pos = x_k(1) - x_obs(1); 
-        y_pos = x_k(2) - x_obs(2);
+        % x_pos = x_k(1) - x_obs(1); 
+        % y_pos = x_k(2) - x_obs(2);
+        d_off = 0.035;
+        x_pos = (x_k(1) + d_off * cos(x_k(3))) - x_obs(1); 
+        y_pos = (x_k(2) + d_off * sin(x_k(3))) - x_obs(2);
         
         
         % 1. Retângulo 1 (Braço Direito)
@@ -89,8 +92,11 @@ function [cost, grad] = build_robot_analytic(u, params)
     % TERMINAL E INICIALIZAÇÃO DO BACKWARD
     % =====================================================================
     x_N = X_hist(:, N+1);
-    x_pos_N = x_N(1) - x_obs(1); 
-    y_pos_N = x_N(2) - x_obs(2);
+    % x_pos_N = x_N(1) - x_obs(1); 
+    % y_pos_N = x_N(2) - x_obs(2);
+    
+    x_pos_N = (x_N(1) + d_off * cos(x_N(3))) - x_obs(1); 
+    y_pos_N = (x_N(2) + d_off * sin(x_N(3))) - x_obs(2);
     
     % P1_N = max(0, -x_pos_N)^2 + max(0, x_pos_N-L_arm)^2 + max(0, -y_pos_N-W_arm)^2 + max(0, y_pos_N-W_arm)^2;
     % P2_N = max(0, -x_pos_N-W_arm)^2 + max(0, x_pos_N-W_arm)^2 + max(0, -y_pos_N)^2 + max(0, y_pos_N-L_arm)^2;
@@ -120,9 +126,12 @@ function [cost, grad] = build_robot_analytic(u, params)
         v_n = u((n-1)*2 + 1); w_n = u((n-1)*2 + 2);
         theta_n = x_n(3);
         
-        x_pos = x_n(1) - x_obs(1); 
-        y_pos = x_n(2) - x_obs(2);
-        
+        % x_pos = x_n(1) - x_obs(1); 
+        % y_pos = x_n(2) - x_obs(2);
+ 
+        x_pos = (x_n(1) + d_off * cos(theta_n)) - x_obs(1); 
+        y_pos = (x_n(2) + d_off * sin(theta_n)) - x_obs(2);
+
         grad_x_l_n = [2 * Q_pos * (x_n(1) - x_ref(1)); 2 * Q_pos * (x_n(2) - x_ref(2)); 0];
         grad_u_l_n = [2 * R_ctrl * v_n; 2 * R_ctrl * w_n];
         
@@ -194,6 +203,9 @@ function [cost, grad] = build_robot_analytic(u, params)
         end
         
         % Escala pelo fator de penalidade global
+        gx = grad_geo_n(1);
+        gy = grad_geo_n(2);
+        grad_geo_n(3) = gx * (-d_off * sin(theta_n)) + gy * (d_off * cos(theta_n));
         grad_geo_n = eta_geo * grad_geo_n;
         %grad_geo_n = 0;
         
