@@ -1,6 +1,6 @@
 function cost = wrapper_cost(u, params)
     % 1. Calcula o custo original (distância, obstáculo, etc)
-    cost_base = build_robot_cbf_cross_geofence(u, params);
+    cost_base = build_robot_cbf_experiment(u, params);
     
     % 2. Pesos de suavização (Tuning)
     % Aumente esses valores se o robô continuar tremendo.

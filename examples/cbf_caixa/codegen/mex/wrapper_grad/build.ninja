@@ -45,10 +45,11 @@ build $builddir/rt_nonfinite.o : cc $root/rt_nonfinite.c
 build $builddir/wrapper_grad_initialize.o : cc $root/wrapper_grad_initialize.c
 build $builddir/wrapper_grad_terminate.o : cc $root/wrapper_grad_terminate.c
 build $builddir/wrapper_grad.o : cc $root/wrapper_grad.c
+build $builddir/build_robot_cbf_experiment.o : cc $root/build_robot_cbf_experiment.c
 build $builddir/_coder_wrapper_grad_api.o : cc $root/interface/_coder_wrapper_grad_api.c
 build $builddir/_coder_wrapper_grad_mex.o : cc $root/interface/_coder_wrapper_grad_mex.c
 build $builddir/_coder_wrapper_grad_info.o : cc $root/interface/_coder_wrapper_grad_info.c
 build $builddir/c_mexapi_version.o : cc $matlabdir/extern/version/c_mexapi_version.c
 
 # Link
-build $root\wrapper_grad_mex.mexw64 : link $builddir/wrapper_grad_data.o $builddir/rt_nonfinite.o $builddir/wrapper_grad_initialize.o $builddir/wrapper_grad_terminate.o $builddir/wrapper_grad.o $builddir/_coder_wrapper_grad_api.o $builddir/_coder_wrapper_grad_mex.o $builddir/_coder_wrapper_grad_info.o $builddir/c_mexapi_version.o 
+build $root\wrapper_grad_mex.mexw64 : link $builddir/wrapper_grad_data.o $builddir/rt_nonfinite.o $builddir/wrapper_grad_initialize.o $builddir/wrapper_grad_terminate.o $builddir/wrapper_grad.o $builddir/build_robot_cbf_experiment.o $builddir/_coder_wrapper_grad_api.o $builddir/_coder_wrapper_grad_mex.o $builddir/_coder_wrapper_grad_info.o $builddir/c_mexapi_version.o 

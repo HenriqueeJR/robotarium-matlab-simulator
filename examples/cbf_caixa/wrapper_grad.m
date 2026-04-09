@@ -1,6 +1,6 @@
 function grad = wrapper_grad(u, params)
     % 1. Gradiente do modelo analítico original
-    [~, grad_base] = build_robot_cbf_cross_geofence(u, params);
+    [~, grad_base] = build_robot_cbf_experiment(u, params);
     
     % 2. Pesos (Devem ser EXATAMENTE IGUAIS aos da função de custo!)
     R_dv = 0.9;

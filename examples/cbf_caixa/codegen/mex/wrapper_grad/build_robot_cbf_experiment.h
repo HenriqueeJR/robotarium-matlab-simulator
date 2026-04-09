@@ -3,9 +3,9 @@
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
  *
- * wrapper_grad.h
+ * build_robot_cbf_experiment.h
  *
- * Code generation for function 'wrapper_grad'
+ * Code generation for function 'build_robot_cbf_experiment'
  *
  */
 
@@ -21,7 +21,7 @@
 #include <string.h>
 
 /* Function Declarations */
-void wrapper_grad(const emlrtStack *sp, const real_T u[20],
-                  const real_T params[14], real_T grad[20]);
+real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T u[20],
+                                  const real_T params[14], real_T grad[20]);
 
-/* End of code generation (wrapper_grad.h) */
+/* End of code generation (build_robot_cbf_experiment.h) */
