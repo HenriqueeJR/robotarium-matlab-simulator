@@ -47,8 +47,9 @@ build $builddir/wrapper_cost_terminate.o : cc $root/wrapper_cost_terminate.c
 build $builddir/wrapper_cost.o : cc $root/wrapper_cost.c
 build $builddir/_coder_wrapper_cost_api.o : cc $root/interface/_coder_wrapper_cost_api.c
 build $builddir/_coder_wrapper_cost_mex.o : cc $root/interface/_coder_wrapper_cost_mex.c
+build $builddir/sumMatrixIncludeNaN.o : cc $root/sumMatrixIncludeNaN.c
 build $builddir/_coder_wrapper_cost_info.o : cc $root/interface/_coder_wrapper_cost_info.c
 build $builddir/c_mexapi_version.o : cc $matlabdir/extern/version/c_mexapi_version.c
 
 # Link
-build $root\wrapper_cost_mex.mexw64 : link $builddir/wrapper_cost_data.o $builddir/rt_nonfinite.o $builddir/wrapper_cost_initialize.o $builddir/wrapper_cost_terminate.o $builddir/wrapper_cost.o $builddir/_coder_wrapper_cost_api.o $builddir/_coder_wrapper_cost_mex.o $builddir/_coder_wrapper_cost_info.o $builddir/c_mexapi_version.o 
+build $root\wrapper_cost_mex.mexw64 : link $builddir/wrapper_cost_data.o $builddir/rt_nonfinite.o $builddir/wrapper_cost_initialize.o $builddir/wrapper_cost_terminate.o $builddir/wrapper_cost.o $builddir/_coder_wrapper_cost_api.o $builddir/_coder_wrapper_cost_mex.o $builddir/sumMatrixIncludeNaN.o $builddir/_coder_wrapper_cost_info.o $builddir/c_mexapi_version.o 

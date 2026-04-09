@@ -1,23 +1,27 @@
 % =========================================================================
-% Algoritmo: Backward AD - Desvio de Obstáculo Retangular (Caixa) via CBF
-% Regra do Produto: P = max(0, dx)^2 * max(0, dy)^2
+% Algoritmo: Backward AD - Geofence Retangular (Caixa) via CBF
+% Regra da Soma: P = max(0, |x| - L_safe)^2 + max(0, |y| - W_safe)^2
 % =========================================================================
-function [cost, grad] = build_robot_cbf_box(u, params)
+function [cost, grad] = build_robot_cbf_geofence(u, params)
     %#codegen
     N = 10;
-    Ts = 0.033; % Aumentado para prever mais longe e suavizar a curva
-    Q_pos = 60; R_ctrl = 0.01; % R_ctrl aumentado para evitar curvas bruscas
+    Ts = 0.033; 
+    Q_pos = 10; R_ctrl = 0.1; 
     
-    x_k      = params(1:3);      % Estado inicial x_0
-    x_ref    = params(4:5);      % Alvo [x; y]
-    x_obs    = params(6:7);      % Centro do obstáculo [x; y]
+    x_k      = params(1:3);      
+    x_ref    = params(4:5);      
+    x_obs    = params(6:7);      % Centro da Geofence
     L_obs    = params(8);        % Meio-comprimento (eixo X)
     W_obs    = params(9);        % Meia-largura (eixo Y)
-    eta_safe = params(10);       % Peso da barreira CBF
+    eta_safe = params(10);       
     
-    r_rob = 0.15;     % Raio do robô para inflar o obstáculo
-    gamma_cbf = 0.9; % Taxa de decaimento menor para antecipar a curva
-    eta_cbf = 0.00;  % Margem da função P
+    r_rob = 0.15;     
+    gamma_cbf = 0.3; 
+    eta_cbf = 0.00;  
+    
+    % Para ficar DENTRO da caixa, a borda efetiva encolhe o raio do robô
+    L_safe = L_obs - r_rob;
+    W_safe = W_obs - r_rob;
     
     X_hist = zeros(3, N + 1);
     X_hist(:, 1) = x_k;
@@ -33,13 +37,13 @@ function [cost, grad] = build_robot_cbf_box(u, params)
         x_pos_k = x_k(1) - x_obs(1); 
         y_pos_k = x_k(2) - x_obs(2);
         
-        % 1. Violação no estado atual (Regra do Produto da Caixa)
-        dx_k = max(0, L_obs + r_rob - abs(x_pos_k));
-        dy_k = max(0, W_obs + r_rob - abs(y_pos_k));
-        P_k = (dx_k^2) * (dy_k^2);
+        % 1. Violação (Soma quadrática de sair dos limites X ou Y)
+        dx_k = max(0, abs(x_pos_k) - L_safe);
+        dy_k = max(0, abs(y_pos_k) - W_safe);
+        P_k = dx_k^2 + dy_k^2;
         h_k = eta_cbf - P_k;
         
-        % Simula 1 passo da cinemática
+        % Dinâmica
         x_next = zeros(3,1);
         x_next(1) = x_k(1) + Ts * v_n * cos(x_k(3));
         x_next(2) = x_k(2) + Ts * v_n * sin(x_k(3));
@@ -49,15 +53,13 @@ function [cost, grad] = build_robot_cbf_box(u, params)
         y_pos_next = x_next(2) - x_obs(2);
         
         % 2. Violação no estado futuro
-        dx_next = max(0, L_obs + r_rob - abs(x_pos_next));
-        dy_next = max(0, W_obs + r_rob - abs(y_pos_next));
-        P_next = (dx_next^2) * (dy_next^2);
+        dx_next = max(0, abs(x_pos_next) - L_safe);
+        dy_next = max(0, abs(y_pos_next) - W_safe);
+        P_next = dx_next^2 + dy_next^2;
         h_next = eta_cbf - P_next;
         
-        % 3. Restrição de Barreira Discreta
+        % 3. Restrição e Penalidade
         g_cbf = (1 - gamma_cbf) * h_k - h_next;
-        
-        % 4. Penalidade
         P_cbf_penalty = max(0, g_cbf)^2;
         geo_penalty = eta_safe * P_cbf_penalty;
         
@@ -71,7 +73,7 @@ function [cost, grad] = build_robot_cbf_box(u, params)
     cost = l_u;
     
     % =====================================================================
-    % TERMINAL E INICIALIZAÇÃO DO BACKWARD
+    % TERMINAL E BACKWARD PASS
     % =====================================================================
     x_N = X_hist(:, N+1);
     l_N = Q_pos * ((x_N(1) - x_ref(1))^2 + (x_N(2) - x_ref(2))^2);
@@ -82,9 +84,6 @@ function [cost, grad] = build_robot_cbf_box(u, params)
     grad_x_l_N = [2 * Q_pos * (x_N(1) - x_ref(1)); 2 * Q_pos * (x_N(2) - x_ref(2)); 0];
     p_n = grad_x_l_N;
     
-    % =====================================================================
-    % BACKWARD PASS (Método Adjunto)
-    % =====================================================================
     grad = zeros(length(u), 1);
     for n = N:-1:1
         x_n = X_hist(:, n);       
@@ -98,11 +97,11 @@ function [cost, grad] = build_robot_cbf_box(u, params)
         x_pos_k = x_n(1) - x_obs(1); y_pos_k = x_n(2) - x_obs(2);
         x_pos_next = x_next(1) - x_obs(1); y_pos_next = x_next(2) - x_obs(2);
         
-        dx_k = max(0, L_obs + r_rob - abs(x_pos_k)); dy_k = max(0, W_obs + r_rob - abs(y_pos_k));
-        P_k = (dx_k^2) * (dy_k^2); h_k = eta_cbf - P_k;
+        dx_k = max(0, abs(x_pos_k) - L_safe); dy_k = max(0, abs(y_pos_k) - W_safe);
+        P_k = dx_k^2 + dy_k^2; h_k = eta_cbf - P_k;
         
-        dx_next = max(0, L_obs + r_rob - abs(x_pos_next)); dy_next = max(0, W_obs + r_rob - abs(y_pos_next));
-        P_next = (dx_next^2) * (dy_next^2); h_next = eta_cbf - P_next;
+        dx_next = max(0, abs(x_pos_next) - L_safe); dy_next = max(0, abs(y_pos_next) - W_safe);
+        P_next = dx_next^2 + dy_next^2; h_next = eta_cbf - P_next;
         
         g_cbf = (1 - gamma_cbf) * h_k - h_next;
         
@@ -113,23 +112,26 @@ function [cost, grad] = build_robot_cbf_box(u, params)
             grad_P_k = [0; 0; 0];
             grad_P_next = [0; 0; 0];
             
-            % Gradiente de P_k = (dx^2)*(dy^2)
-            if dx_k > 0 && dy_k > 0
+            % Gradiente de P_k = dx^2 + dy^2 (Regra da Soma)
+            if dx_k > 0
                 sx = sign(x_pos_k); if sx == 0, sx = 1; end
+                grad_P_k(1) = 2 * dx_k * sx; 
+            end
+            if dy_k > 0
                 sy = sign(y_pos_k); if sy == 0, sy = 1; end
-                grad_P_k(1) = 2 * dx_k * (-sx) * (dy_k^2); 
-                grad_P_k(2) = 2 * dy_k * (-sy) * (dx_k^2); 
+                grad_P_k(2) = 2 * dy_k * sy; 
             end
             
             % Gradiente de P_next
-            if dx_next > 0 && dy_next > 0
+            if dx_next > 0
                 sx = sign(x_pos_next); if sx == 0, sx = 1; end
+                grad_P_next(1) = 2 * dx_next * sx; 
+            end
+            if dy_next > 0
                 sy = sign(y_pos_next); if sy == 0, sy = 1; end
-                grad_P_next(1) = 2 * dx_next * (-sx) * (dy_next^2); 
-                grad_P_next(2) = 2 * dy_next * (-sy) * (dx_next^2); 
+                grad_P_next(2) = 2 * dy_next * sy; 
             end
             
-            % h = eta - P => grad_h = -grad_P
             grad_h_k = -grad_P_k;
             grad_h_next = -grad_P_next;
             

@@ -3,9 +3,9 @@
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
  *
- * wrapper_grad.h
+ * sumMatrixIncludeNaN.h
  *
- * Code generation for function 'wrapper_grad'
+ * Code generation for function 'sumMatrixIncludeNaN'
  *
  */
 
@@ -21,7 +21,6 @@
 #include <string.h>
 
 /* Function Declarations */
-void wrapper_grad(const emlrtStack *sp, const real_T u[20],
-                  const real_T params[10], real_T grad[20]);
+real_T sumColumnB(const real_T x[9]);
 
-/* End of code generation (wrapper_grad.h) */
+/* End of code generation (sumMatrixIncludeNaN.h) */
