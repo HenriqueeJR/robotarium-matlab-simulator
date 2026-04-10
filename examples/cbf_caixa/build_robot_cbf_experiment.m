@@ -3,10 +3,10 @@
 % =========================================================================
 function [cost, grad] = build_robot_cbf_experiment(u, params)
     %#codegen
-    N = 10;             % Horizonte longo para enxergar o corredor
-    Ts = 0.1;           % Tempo de predição
-    Q_pos = 0.8;         
-    R_v = 0.1;          % Peso para suavizar a velocidade linear
+    N = params(15);             % Horizonte longo para enxergar o corredor
+    Ts = params(16);           % Tempo de predição
+    Q_pos = 2;         
+    R_v = 0.5;          % Peso para suavizar a velocidade linear
     R_w = 0.01;          % Peso ALTO para evitar zigue-zague
     
     x_k      = params(1:3);      
@@ -20,7 +20,7 @@ function [cost, grad] = build_robot_cbf_experiment(u, params)
     gamma_safe = params(13);
     gamma_obs = params(14);
     
-    r_rob = 0.15;                 % Decaimento da CBF
+    r_rob = params(17);                 
     
     % Limites Seguros
     L_safe = L_obs - r_rob;      % Geofence (Encolhe)

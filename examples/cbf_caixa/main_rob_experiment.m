@@ -12,7 +12,7 @@ r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', po
 %% 2. Configurações da Simulação e do NMPC
 Ts_pred = 0.1;              % Tempo de predição interno (usado na função CBF)
 Ts = 0.033;                 % Tempo físico do Robotarium
-N = 10;                     % Horizonte de predição (para ver o labirinto)
+N = 20;                     % Horizonte de predição (para ver o labirinto)
 T_sim_total = 60;           
 n_steps = round(T_sim_total / Ts);
 
@@ -48,10 +48,10 @@ R_circ = 0.12;            % Raio do obstáculo central
 r_rob  = 0.15;            % Raio físico do robô
 
 eta_safe = 1e7;           % Pesos das barreiras
-eta_obs = 1e5;
+eta_obs = 1e6;
 
 gamma_safe = 0.95;        % Coeficientes das barreiras
-gamma_obs = 0.55;
+gamma_obs = 0.2;
 
 u_init_mpc = zeros(2 * N, 1); 
 hist_X = zeros(3, n_steps + 1);
@@ -105,7 +105,7 @@ for k = 1:n_steps
     
     % Resolve o NMPC em tiro único usando a estrutura CBF combinada
     u_current = u_init_mpc; 
-    params = [X_k; x_ref; x_obs; L_obs; W_obs; R_circ; eta_safe; eta_obs; gamma_safe; gamma_obs];
+    params = [X_k; x_ref; x_obs; L_obs; W_obs; R_circ; eta_safe; eta_obs; gamma_safe; gamma_obs; N; Ts; r_rob];
     
     t_start = tic;
     [u_opt, res_norm, iter_count] = solver.solve(u_current, params);
