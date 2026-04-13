@@ -12,7 +12,7 @@ r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', po
 %% 2. Configurações da Simulação e do NMPC
 Ts = 0.033;                 % Tempo físico do Robotarium
 N = 20;                     % Horizonte de predição (para ver o labirinto)
-T_sim_total = 150;           
+T_sim_total = 100;           
 n_steps = round(T_sim_total / Ts);
 
 % Limites físicos da plataforma diferencial
@@ -43,7 +43,6 @@ x_ref = [x_ref [-1.1; 0.1]];
 x_ref = [x_ref [-1.1; -0.1]];
 x_ref = [x_ref [-0.1; -0.9]];
 x_ref = [x_ref [0.05; -0.9]];
-x_ref = [x_ref [1.1; 0.05]];
 x_ref = [x_ref [0.1; 0.9]];
 x_ref = [x_ref [-0.05; 0.9]];
 x_ref = [x_ref [-1.1; 0.0]];
@@ -170,18 +169,14 @@ for k = 1:n_steps
         
     u_init_mpc = [u_opt(3:end); u_opt(end-1:end)]; 
 
-    % if (k * Ts > 25)
-    %     break;
-    % end
-
-
+    
     if norm(X_k(1:2) - x_ref_current(1:2)) < 0.15
         disp(['Alvo alcançado em ', num2str(k * Ts), ' segundos!']);
-        if (all(x_ref_current == x_ref(:,1)) && k*Ts < 30)
+        if (x_ref_current == x_ref(:,1))
             x_ref_current = x_ref(:,2);
             set(h_ref, 'XData', x_ref_current(1), 'YData', x_ref_current(2));
             %u_init_mpc = zeros(2 * N, 1);
-        elseif (all(x_ref_current == x_ref(:,2)) && k*Ts < 30 )
+        elseif (x_ref_current == x_ref(:,2) && k*Ts < 30 )
             x_ref_current = x_ref(:,3);
             set(h_ref, 'XData', x_ref_current(1), 'YData', x_ref_current(2));
             %u_init_mpc = zeros(2 * N, 1);
@@ -198,13 +193,10 @@ for k = 1:n_steps
             set(h_ref, 'XData', x_ref_current(1), 'YData', x_ref_current(2));
             %u_init_mpc = zeros(2 * N, 1);
         elseif (x_ref_current == x_ref(:,6))
-            x_ref_current = x_ref(:,1);
+            x_ref_current = x_ref(:,);
             set(h_ref, 'XData', x_ref_current(1), 'YData', x_ref_current(2));
             %u_init_mpc = zeros(2 * N, 1);
-        elseif (all(x_ref_current == x_ref(:,1)) && k*Ts > 30)
-            x_ref_current = x_ref(:,7);
-            set(h_ref, 'XData', x_ref_current(1), 'YData', x_ref_current(2));
-        elseif (x_ref_current == x_ref(:,7))
+        elseif (x_ref_current == x_ref(:,2) && k*Ts > 30 )
             x_ref_current = x_ref(:,8);
             set(h_ref, 'XData', x_ref_current(1), 'YData', x_ref_current(2));
         elseif (x_ref_current == x_ref(:,8))

@@ -5,9 +5,9 @@ function [cost, grad] = build_robot_cbf_experiment(u, params)
     %#codegen
     N = params(15);             % Horizonte longo para enxergar o corredor
     Ts = params(16);           % Tempo de predição
-    Q_pos = 2;         
+    Q_pos = 1.8;         
     R_v = 0.5;          % Peso para suavizar a velocidade linear
-    R_w = 0.01;          % Peso ALTO para evitar zigue-zague
+    R_w = 0.001;          % Peso ALTO para evitar zigue-zague
     
     x_k      = params(1:3);      
     x_ref    = params(4:5);      
