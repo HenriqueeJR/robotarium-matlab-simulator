@@ -73,15 +73,15 @@ hist_time = zeros(1, n_steps);
 %% --- SETUP DO PLOT DIRETO NO ROBOTARIUM ---
 ax = gca;
 hold(ax, 'on');
-
+9
 % Limites seguros (Variáveis para o plot)
 L_safe = L_obs - r_rob; W_safe = W_obs - r_rob; R_safe = R_circ + r_rob;
 
 % --- Desenho da Geofence (Cruz Azul) ---
 h_obs1 = fill(ax, [x_obs(1)-L_obs, x_obs(1)+L_obs, x_obs(1)+L_obs, x_obs(1)-L_obs], ...
-                  [x_obs(2)-W_obs, x_obs(2)-W_obs, x_obs(2)+W_obs, x_obs(2)+W_obs], 'b', 'FaceAlpha', 0.1, 'EdgeColor', 'none');
+                  [x_obs(2)-W_obs, x_obs(2)-W_obs, x_obs(2)+W_obs, x_obs(2)+W_obs], 'b', 'FaceAlpha', 0.35, 'EdgeColor', 'none');
 h_obs2 = fill(ax, [x_obs(1)-W_obs, x_obs(1)+W_obs, x_obs(1)+W_obs, x_obs(1)-W_obs], ...
-                  [x_obs(2)-L_obs, x_obs(2)-L_obs, x_obs(2)+L_obs, x_obs(2)+L_obs], 'b', 'FaceAlpha', 0.1, 'EdgeColor', 'none');
+                  [x_obs(2)-L_obs, x_obs(2)-L_obs, x_obs(2)+L_obs, x_obs(2)+L_obs], 'b', 'FaceAlpha', 0.35, 'EdgeColor', 'none');
 
 % Margem interna da Cruz (Tracejada vermelha)
 %h_margin1 = plot(ax, [x_obs(1)-L_safe, x_obs(1)+L_safe, x_obs(1)+L_safe, x_obs(1)-L_safe, x_obs(1)-L_safe], ...
@@ -91,15 +91,15 @@ h_obs2 = fill(ax, [x_obs(1)-W_obs, x_obs(1)+W_obs, x_obs(1)+W_obs, x_obs(1)-W_ob
 
 % --- Desenho do Obstáculo (Círculo Vermelho) ---
 theta_circle = linspace(0, 2*pi, 100);
-h_circ = fill(ax, x_obs(1) + R_circ*cos(theta_circle), x_obs(2) + R_circ*sin(theta_circle), 'r', 'FaceAlpha', 0.5, 'EdgeColor', 'r');
+h_circ = fill(ax, x_obs(1) + R_circ*cos(theta_circle), x_obs(2) + R_circ*sin(theta_circle), 'r', 'FaceAlpha', 0.75, 'EdgeColor', 'r');
 %h_circ_margin = plot(ax, x_obs(1) + R_safe*cos(theta_circle), x_obs(2) + R_safe*sin(theta_circle), 'r--', 'LineWidth', 1.5);
 
-h_ref = plot(ax, x_ref(1,1), x_ref(2,1), 'g*', 'MarkerSize', 10, 'LineWidth', 2);
-h_traj = plot(ax, X_k(1), X_k(2), 'm-', 'LineWidth', 2); 
+h_ref = plot(ax, x_ref(1,1), x_ref(2,1), 'g*', 'MarkerSize', 20, 'LineWidth', 20);
+h_traj = plot(ax, X_k(1), X_k(2), 'black', 'LineWidth', 8); 
 h_pred = plot(ax, X_k(1), X_k(2), 'k--', 'LineWidth', 1.5); 
 
-h_robot_body = fill(ax, X_k(1) + r_rob*cos(theta_circle), X_k(2) + r_rob*sin(theta_circle), 'y', 'FaceAlpha', 0.4, 'EdgeColor', 'yellow', 'LineWidth', 1.5);
-h_robot_body_intern = fill(ax, X_k(1) + (0.07)*cos(theta_circle), X_k(2) + (0.07)*sin(theta_circle), 'g', 'FaceAlpha', 0.4, 'EdgeColor', 'green', 'LineWidth', 1.5);
+h_robot_body = fill(ax, X_k(1) + r_rob*cos(theta_circle), X_k(2) + r_rob*sin(theta_circle), 'y', 'FaceAlpha', 0.75, 'EdgeColor', 'yellow', 'LineWidth', 1.5);
+h_robot_body_intern = fill(ax, X_k(1) + (0.07)*cos(theta_circle), X_k(2) + (0.07)*sin(theta_circle), 'g', 'FaceAlpha', 0.75, 'EdgeColor', 'green', 'LineWidth', 1.5);
 
 uistack(h_obs1, 'bottom'); uistack(h_obs2, 'bottom');
 %uistack(h_margin1, 'bottom'); uistack(h_margin2, 'bottom');
@@ -238,30 +238,35 @@ disp('Dados salvos com sucesso!');
 r.debug();
 
 %% 6. Plotagem das Ações de Controle e Estados (Pós Simulação)
-figure('Name', 'Esforço Computacional', 'Color', 'w');
-plot(1:n_steps, hist_iter(1:n_steps), 'k-', 'LineWidth', 1.5);
-xlabel('Passo de Simulação k'); ylabel('Iterações do PANOC');
-title('Convergência com Warm Start');
-grid on;
 
 figure('Name', 'Ação de Controle ao Longo do Tempo', 'Color', 'w');
 t_sim = (0:n_steps-1) * Ts;
 subplot(2, 1, 1); hold on; grid on;
-stairs(t_sim, hist_U(1, 1:n_steps), 'b-', 'LineWidth', 1.5);
-yline(v_max, 'r--', 'LineWidth', 1.2); yline(v_min, 'r--', 'LineWidth', 1.2);
+stairs(t_sim, hist_U(1, 1:n_steps), 'b-', 'LineWidth', 2);
+yline(v_max, 'r--', 'LineWidth', 1.2); yline(v_min, 'r--', 'LineWidth', 2);
 xlabel('Tempo [s]'); ylabel('v [m/s]'); title('Velocidade Linear (v)');
 ylim([v_min - 0.1, v_max + 0.1]);
 
 subplot(2, 1, 2); hold on; grid on;
-stairs(t_sim, hist_U(2, 1:n_steps), 'm-', 'LineWidth', 1.5);
-yline(w_max, 'r--', 'LineWidth', 1.2); yline(w_min, 'r--', 'LineWidth', 1.2);
+stairs(t_sim, hist_U(2, 1:n_steps), 'm-', 'LineWidth', 2);
+yline(w_max, 'r--', 'LineWidth', 1.2); yline(w_min, 'r--', 'LineWidth', 2);
 xlabel('Tempo [s]'); ylabel('\omega [rad/s]'); title('Velocidade Angular (\omega)');
 ylim([w_min - 0.2, w_max + 0.2]);
+fontsize(18, "points")
 
 figure('Name', 'Tempo Computacional', 'Color', 'w');
+subplot(2, 1, 1);
 plot(1:n_steps, hist_time(1:n_steps), 'k-', 'LineWidth', 1.5);
 xlabel('Passo de Simulação k'); ylabel('Tempo [s]');
 title('Tempos Computacionais');
-yline(0.033, 'r--', 'LineWidth', 1.2);
+yline(0.033, 'r--', 'LineWidth', 2);
 legend('Tempo de Solve', 'Limite do Robotarium (33ms)', 'Location', 'best');
+ylim([0 0.035]);
 grid on;
+
+subplot(2, 1, 2)
+plot(1:n_steps, hist_iter(1:n_steps), 'k-', 'LineWidth', 1.5);
+xlabel('Passo de Simulação k'); ylabel('Iterações do PANOC');
+title('Convergência com Warm Start');
+grid on;
+fontsize(18, "points")
