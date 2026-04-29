@@ -1,21 +1,19 @@
-% =========================================================================
-% Algoritmo: Backward AD - Geofence (Cruz) + Obstáculo (Círculo) via CBF
-% =========================================================================
+
 function [cost, grad] = build_robot_cbf_experiment(u, params)
     %#codegen
-    N = params(15);             % Horizonte longo para enxergar o corredor
-    Ts = params(16);           % Tempo de predição
+    N = params(15);             
+    Ts = params(16);           
     Q_pos = 1.8;         
-    R_v = 0.5;          % Peso para suavizar a velocidade linear
-    R_w = 0.001;          % Peso ALTO para evitar zigue-zague
+    R_v = 0.5;          
+    R_w = 0.001;          
     
     x_k      = params(1:3);      
     x_ref    = params(4:5);      
-    x_obs    = params(6:7);      % Centro (Cruz e Círculo)
+    x_obs    = params(6:7);      
     L_obs    = params(8);        
     W_obs    = params(9);        
     R_circ   = params(10);       
-    eta_safe = params(11);       % Peso da Barreira CBF
+    eta_safe = params(11);      
     eta_obs = params(12);
     gamma_safe = params(13);
     gamma_obs = params(14);
@@ -23,9 +21,9 @@ function [cost, grad] = build_robot_cbf_experiment(u, params)
     r_rob = params(17);                 
     
     % Limites Seguros
-    L_safe = L_obs - r_rob;      % Geofence (Encolhe)
-    W_safe = W_obs - r_rob;      % Geofence (Encolhe)
-    R_safe = R_circ + r_rob;     % Obstáculo (Incha)
+    L_safe = L_obs - r_rob;      
+    W_safe = W_obs - r_rob;      
+    R_safe = R_circ + r_rob;     
     
     X_hist = zeros(3, N + 1);
     X_hist(:, 1) = x_k;

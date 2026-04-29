@@ -1,5 +1,5 @@
 % =========================================================================
-% Script: main_simulation.m (NMPC + CBF Geofence Cruz + CBF Círculo)
+% Main Simulation
 % =========================================================================
 clear; clc; close all;
 
@@ -10,8 +10,8 @@ posicoes_iniciais = [-1.1; 0.0; 0];
 r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', posicoes_iniciais);
 
 %% 2. Configurações da Simulação e do NMPC
-Ts = 0.033;                 % Tempo físico do Robotarium
-N = 20;                     % Horizonte de predição (para ver o labirinto)
+Ts = 0.033;                 
+N = 20;                     
 T_sim_total = 150;           
 n_steps = round(T_sim_total / Ts);
 
@@ -73,7 +73,7 @@ hist_time = zeros(1, n_steps);
 %% --- SETUP DO PLOT DIRETO NO ROBOTARIUM ---
 ax = gca;
 hold(ax, 'on');
-9
+
 % Limites seguros (Variáveis para o plot)
 L_safe = L_obs - r_rob; W_safe = W_obs - r_rob; R_safe = R_circ + r_rob;
 
@@ -82,12 +82,6 @@ h_obs1 = fill(ax, [x_obs(1)-L_obs, x_obs(1)+L_obs, x_obs(1)+L_obs, x_obs(1)-L_ob
                   [x_obs(2)-W_obs, x_obs(2)-W_obs, x_obs(2)+W_obs, x_obs(2)+W_obs], 'b', 'FaceAlpha', 0.35, 'EdgeColor', 'none');
 h_obs2 = fill(ax, [x_obs(1)-W_obs, x_obs(1)+W_obs, x_obs(1)+W_obs, x_obs(1)-W_obs], ...
                   [x_obs(2)-L_obs, x_obs(2)-L_obs, x_obs(2)+L_obs, x_obs(2)+L_obs], 'b', 'FaceAlpha', 0.35, 'EdgeColor', 'none');
-
-% Margem interna da Cruz (Tracejada vermelha)
-%h_margin1 = plot(ax, [x_obs(1)-L_safe, x_obs(1)+L_safe, x_obs(1)+L_safe, x_obs(1)-L_safe, x_obs(1)-L_safe], ...
-%                     [x_obs(2)-W_safe, x_obs(2)-W_safe, x_obs(2)+W_safe, x_obs(2)+W_safe, x_obs(2)-W_safe], 'r--', 'LineWidth', 1.0);
-%h_margin2 = plot(ax, [x_obs(1)-W_safe, x_obs(1)+W_safe, x_obs(1)+W_safe, x_obs(1)-W_safe, x_obs(1)-W_safe], ...
-%                     [x_obs(2)-L_safe, x_obs(2)-L_safe, x_obs(2)+L_safe, x_obs(2)+L_safe, x_obs(2)-L_safe], 'r--', 'LineWidth', 1.0);
 
 % --- Desenho do Obstáculo (Círculo Vermelho) ---
 theta_circle = linspace(0, 2*pi, 100);
@@ -102,7 +96,6 @@ h_robot_body = fill(ax, X_k(1) + r_rob*cos(theta_circle), X_k(2) + r_rob*sin(the
 h_robot_body_intern = fill(ax, X_k(1) + (0.07)*cos(theta_circle), X_k(2) + (0.07)*sin(theta_circle), 'g', 'FaceAlpha', 0.75, 'EdgeColor', 'green', 'LineWidth', 1.5);
 
 uistack(h_obs1, 'bottom'); uistack(h_obs2, 'bottom');
-%uistack(h_margin1, 'bottom'); uistack(h_margin2, 'bottom');
 uistack(h_traj, 'bottom');
 
 disp('Iniciando simulação NMPC no Robotarium...');
@@ -114,7 +107,6 @@ for k = 1:n_steps
     X_k = r.get_poses();
     hist_X(:, k+1) = X_k;
     
-    % Resolve o NMPC em tiro único usando a estrutura CBF combinada
     u_current = u_init_mpc; 
     params = [X_k; x_ref_current; x_obs; L_obs; W_obs; R_circ; eta_safe; eta_obs; gamma_safe; gamma_obs; N; Ts; r_rob];
     
@@ -141,8 +133,6 @@ for k = 1:n_steps
         if viol > max_violacao, max_violacao = viol; end
     end
     set(h_pred, 'XData', X_pred(1, :), 'YData', X_pred(2, :));
-    %title(ax, sprintf('NMPC CBF Ativo | Erro Geométrico (Se > 0 bateu): %.6f', max_violacao));
-    % -------------------------------------------------------------------
     
     v_cmd = u_opt(1);
     w_cmd = u_opt(2);
@@ -169,11 +159,6 @@ for k = 1:n_steps
     drawnow;
         
     u_init_mpc = [u_opt(3:end); u_opt(end-1:end)]; 
-
-    % if (k * Ts > 25)
-    %     break;
-    % end
-
 
     if norm(X_k(1:2) - x_ref_current(1:2)) < 0.15
         disp(['Alvo alcançado em ', num2str(k * Ts), ' segundos!']);

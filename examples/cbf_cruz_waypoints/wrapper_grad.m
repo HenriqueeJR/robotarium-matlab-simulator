@@ -1,16 +1,14 @@
 function grad = wrapper_grad(u, params)
-    % 1. Gradiente do modelo analítico original
+
     [~, grad_base] = build_robot_cbf_experiment(u, params);
     
-    % 2. Pesos (Devem ser EXATAMENTE IGUAIS aos da função de custo!)
     R_dv = 0.2;
     R_dw = 0.2;
     
-    % 3. Inicializa o vetor do gradiente de suavização
     grad_smooth = zeros(size(u));
     N_horizonte = length(u) / 2;
     
-    % 4. Calcula as derivadas parciais (Regra da Cadeia)
+    % Calcula as derivadas parciais 
     for i = 1:N_horizonte-1
         % Derivada em relação a v
         dv = u(2*i+1) - u(2*i-1); % v_{i+1} - v_i

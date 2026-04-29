@@ -1,6 +1,6 @@
 classdef PanocSolver < handle
     properties
-        gamma       % Tamanho do passo (inverso de Lipschitz) inicial
+        gamma       % Tamanho do passo inicial
         sigma       % Parâmetro do FBE
         max_iter    % Limite de iterações
         tol         % Tolerância (norma do resíduo)
@@ -90,9 +90,6 @@ classdef PanocSolver < handle
                     u_bar_next = obj.project_U(u_next - obj.gamma * grad_next);
                 end
                 
-                % ----------------------------------------------------
-                % A CORREÇÃO: Equação Secante do PANOC usa os Resíduos
-                % ----------------------------------------------------
                 r_next = (u_next - u_bar_next) / obj.gamma;
                 
                 s_k = u_next - u_k;
