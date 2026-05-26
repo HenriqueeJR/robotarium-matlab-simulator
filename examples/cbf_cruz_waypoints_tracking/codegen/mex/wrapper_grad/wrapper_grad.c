@@ -1,0 +1,71 @@
+/*
+ * Academic License - for use in teaching, academic research, and meeting
+ * course requirements at degree granting institutions only.  Not for
+ * government, commercial, or other organizational use.
+ *
+ * wrapper_grad.c
+ *
+ * Code generation for function 'wrapper_grad'
+ *
+ */
+
+/* Include files */
+#include "wrapper_grad.h"
+#include "build_robot_cbf_experiment.h"
+#include "rt_nonfinite.h"
+#include "wrapper_grad_data.h"
+#include <emmintrin.h>
+#include <string.h>
+
+/* Variable Definitions */
+static emlrtRSInfo emlrtRSI = {
+    3,              /* lineNo */
+    "wrapper_grad", /* fcnName */
+    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
+    "simulator\\examples\\cbf_cruz_waypoints_tracking\\wrapper_grad.m" /* pathName
+                                                                        */
+};
+
+/* Function Definitions */
+void wrapper_grad(const emlrtStack *sp, const real_T u[51],
+                  const real_T params[17], real_T grad[51])
+{
+  emlrtStack st;
+  real_T grad_smooth[51];
+  int32_T i;
+  st.prev = sp;
+  st.tls = sp->tls;
+  st.site = &emlrtRSI;
+  build_robot_cbf_experiment(&st, u, params, grad);
+  memset(&grad_smooth[0], 0, 51U * sizeof(real_T));
+  /*  Calcula as derivadas parciais  */
+  for (i = 0; i < 24; i++) {
+    real_T grad_smooth_tmp;
+    int32_T dv_tmp;
+    /*  Derivada em relação a v */
+    dv_tmp = (i + 1) << 1;
+    /*  v_{i+1} - v_i */
+    grad_smooth_tmp = 0.4 * (u[dv_tmp] - u[dv_tmp - 2]);
+    grad_smooth[dv_tmp - 2] -= grad_smooth_tmp;
+    grad_smooth[dv_tmp] += grad_smooth_tmp;
+    /*  Derivada em relação a w */
+    /*  w_{i+1} - w_i */
+    grad_smooth_tmp = 0.4 * (u[dv_tmp + 1] - u[dv_tmp - 1]);
+    grad_smooth[dv_tmp - 1] -= grad_smooth_tmp;
+    grad_smooth[dv_tmp + 1] += grad_smooth_tmp;
+    if (*emlrtBreakCheckR2012bFlagVar != 0) {
+      emlrtBreakCheckR2012b((emlrtConstCTX)sp);
+    }
+  }
+  /*  5. Gradiente total */
+  for (i = 0; i <= 48; i += 2) {
+    __m128d r;
+    __m128d r1;
+    r = _mm_loadu_pd(&grad[i]);
+    r1 = _mm_loadu_pd(&grad_smooth[i]);
+    _mm_storeu_pd(&grad[i], _mm_add_pd(r, r1));
+  }
+  grad[50] += grad_smooth[50];
+}
+
+/* End of code generation (wrapper_grad.c) */
