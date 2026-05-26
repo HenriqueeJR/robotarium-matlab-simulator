@@ -123,7 +123,7 @@ static emlrtBCInfo d_emlrtBCI = {
 };
 
 static emlrtRTEInfo b_emlrtRTEI = {
-    175,                          /* lineNo */
+    203,                          /* lineNo */
     13,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -132,7 +132,7 @@ static emlrtRTEInfo b_emlrtRTEI = {
 };
 
 static emlrtDCInfo e_emlrtDCI = {
-    176,                          /* lineNo */
+    204,                          /* lineNo */
     25,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -144,7 +144,7 @@ static emlrtDCInfo e_emlrtDCI = {
 static emlrtBCInfo e_emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
-    176,                          /* lineNo */
+    204,                          /* lineNo */
     25,                           /* colNo */
     "X_hist",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -157,7 +157,7 @@ static emlrtBCInfo e_emlrtBCI = {
 static emlrtBCInfo f_emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
-    177,                          /* lineNo */
+    205,                          /* lineNo */
     28,                           /* colNo */
     "X_hist",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -170,7 +170,7 @@ static emlrtBCInfo f_emlrtBCI = {
 static emlrtBCInfo g_emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
-    325,                          /* lineNo */
+    353,                          /* lineNo */
     16,                           /* colNo */
     "grad_U",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -183,7 +183,7 @@ static emlrtBCInfo g_emlrtBCI = {
 static emlrtBCInfo h_emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
-    325,                          /* lineNo */
+    353,                          /* lineNo */
     30,                           /* colNo */
     "grad_U",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -195,7 +195,7 @@ static emlrtBCInfo h_emlrtBCI = {
 
 static emlrtECInfo emlrtECI = {
     -1,                           /* nDims */
-    325,                          /* lineNo */
+    353,                          /* lineNo */
     9,                            /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -204,7 +204,7 @@ static emlrtECInfo emlrtECI = {
 };
 
 static emlrtDCInfo f_emlrtDCI = {
-    329,                          /* lineNo */
+    357,                          /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -216,7 +216,7 @@ static emlrtDCInfo f_emlrtDCI = {
 static emlrtBCInfo i_emlrtBCI = {
     1,                            /* iFirst */
     51,                           /* iLast */
-    329,                          /* lineNo */
+    357,                          /* lineNo */
     12,                           /* colNo */
     "grad",                       /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -228,7 +228,7 @@ static emlrtBCInfo i_emlrtBCI = {
 
 static emlrtECInfo b_emlrtECI = {
     -1,                           /* nDims */
-    329,                          /* lineNo */
+    357,                          /* lineNo */
     5,                            /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -285,7 +285,7 @@ static emlrtDCInfo h_emlrtDCI = {
 static emlrtBCInfo l_emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
-    178,                          /* lineNo */
+    206,                          /* lineNo */
     17,                           /* colNo */
     "u",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -298,7 +298,7 @@ static emlrtBCInfo l_emlrtBCI = {
 static emlrtBCInfo m_emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
-    178,                          /* lineNo */
+    206,                          /* lineNo */
     39,                           /* colNo */
     "u",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -470,6 +470,7 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   real_T r3[2];
   real_T y[2];
   real_T L_safe;
+  real_T P1_k;
   real_T P1_next;
   real_T P2_k;
   real_T P2_next;
@@ -478,13 +479,16 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   real_T R_safe;
   real_T Ts;
   real_T W_safe;
+  real_T b_r3_tmp;
   real_T b_xs_tmp;
   real_T cost;
   real_T d;
   real_T d1;
+  real_T dx1_k;
   real_T dx1_next;
   real_T dx2_k;
   real_T dx2_next;
+  real_T dy1_k;
   real_T dy1_next;
   real_T dy2_k;
   real_T dy2_next;
@@ -496,6 +500,8 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   real_T grad_us_idx_0;
   real_T grad_us_idx_1;
   real_T l_u;
+  real_T r2_tmp;
+  real_T r3_tmp;
   real_T v_circ_k;
   real_T v_circ_k_tmp = 0.0;
   real_T v_circ_next;
@@ -525,7 +531,6 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   eta_obs = params[11];
   gamma_safe = params[12];
   gamma_obs = params[13];
-  /* mu_obs = 100000.0; */
   d = 2.0 * params[14];
   if (d < 1.0) {
     i = 0;
@@ -597,8 +602,10 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     emlrtDynamicBoundsCheckR2012b((int8_T)((d + 6.0) + 1.0), 1, 51, &p_emlrtBCI,
                                   (emlrtConstCTX)sp);
   }
-  r1[0] = W[(int8_T)(d + 6.0) - 1];
-  r1[1] = W[(int8_T)((d + 6.0) + 1.0) - 1];
+  dx1_k = W[(int8_T)(d + 6.0) - 1];
+  r1[0] = dx1_k;
+  dy1_k = W[(int8_T)((d + 6.0) + 1.0) - 1];
+  r1[1] = dy1_k;
   if (d + 8.0 != (int32_T)muDoubleScalarFloor(d + 8.0)) {
     emlrtIntegerCheckR2012b(d + 8.0, &j_emlrtDCI, (emlrtConstCTX)sp);
   }
@@ -613,8 +620,10 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     emlrtDynamicBoundsCheckR2012b((int8_T)((d + 8.0) + 1.0), 1, 51, &o_emlrtBCI,
                                   (emlrtConstCTX)sp);
   }
-  r2[0] = W[(int8_T)(d + 8.0) - 1];
-  r2[1] = W[(int8_T)((d + 8.0) + 1.0) - 1];
+  P1_k = W[(int8_T)(d + 8.0) - 1];
+  r2[0] = P1_k;
+  r2_tmp = W[(int8_T)((d + 8.0) + 1.0) - 1];
+  r2[1] = r2_tmp;
   if (d + 10.0 != (int32_T)muDoubleScalarFloor(d + 10.0)) {
     emlrtIntegerCheckR2012b(d + 10.0, &i_emlrtDCI, (emlrtConstCTX)sp);
   }
@@ -629,8 +638,10 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     emlrtDynamicBoundsCheckR2012b((int8_T)((d + 10.0) + 1.0), 1, 51,
                                   &n_emlrtBCI, (emlrtConstCTX)sp);
   }
-  r3[0] = W[(int8_T)(d + 10.0) - 1];
-  r3[1] = W[(int8_T)((d + 10.0) + 1.0) - 1];
+  r3_tmp = W[(int8_T)(d + 10.0) - 1];
+  r3[0] = r3_tmp;
+  b_r3_tmp = W[(int8_T)((d + 10.0) + 1.0) - 1];
+  r3[1] = b_r3_tmp;
   /*  Limites Seguros */
   L_safe = params[7] - params[16];
   W_safe = params[8] - params[16];
@@ -686,23 +697,23 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     /*  --- Estado Atual (k) --- */
     /*  Cruz */
     dy2_next = muDoubleScalarAbs(x_pos_k);
-    dy1_next = muDoubleScalarMax(0.0, dy2_next - L_safe);
+    dx2_k = muDoubleScalarMax(0.0, dy2_next - L_safe);
     P2_next = muDoubleScalarAbs(y_pos_k);
-    P1_next = muDoubleScalarMax(0.0, P2_next - W_safe);
-    dx1_next = muDoubleScalarMax(0.0, dy2_next - W_safe);
-    P_cross_k = muDoubleScalarMax(0.0, P2_next - L_safe);
+    v_circ_k = muDoubleScalarMax(0.0, P2_next - W_safe);
+    v_circ_next = muDoubleScalarMax(0.0, dy2_next - W_safe);
+    P1_next = muDoubleScalarMax(0.0, P2_next - L_safe);
     /* P_cross_k = P1_k * P2_k; */
     /*  Círculo */
-    dy2_k = R_safe * R_safe;
-    P2_k =
-        muDoubleScalarMax(0.0, dy2_k - (x_pos_k * x_pos_k + y_pos_k * y_pos_k));
+    dx1_next = R_safe * R_safe;
+    dy1_next = muDoubleScalarMax(
+        0.0, dx1_next - (x_pos_k * x_pos_k + y_pos_k * y_pos_k));
     /*  Dinâmica */
     dy2_next = Ts * v_n;
-    v_circ_k = x_k[0] + dy2_next * muDoubleScalarCos(x_k[2]);
-    v_circ_next = x_k[1] + dy2_next * muDoubleScalarSin(x_k[2]);
-    dx2_k = x_k[2] + Ts * w_n;
-    x_pos_next = v_circ_k - params[5];
-    y_pos_next = v_circ_next - params[6];
+    P_cross_k = x_k[0] + dy2_next * muDoubleScalarCos(x_k[2]);
+    dy2_k = x_k[1] + dy2_next * muDoubleScalarSin(x_k[2]);
+    P2_k = x_k[2] + Ts * w_n;
+    x_pos_next = P_cross_k - params[5];
+    y_pos_next = dy2_k - params[6];
     /*  --- Estado Futuro (next) --- */
     /*  Cruz */
     dy2_next = muDoubleScalarAbs(x_pos_next);
@@ -714,18 +725,19 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     /* P_cross_next = P1_next * P2_next; */
     /*  Círculo */
     dy2_next = muDoubleScalarMax(
-        0.0, dy2_k - (x_pos_next * x_pos_next + y_pos_next * y_pos_next));
+        0.0, dx1_next - (x_pos_next * x_pos_next + y_pos_next * y_pos_next));
     /*  --- Restrições CBF Separadas --- */
-    dy2_k = muDoubleScalarMax(
-        0.0,
-        (1.0 - gamma_safe) * -muDoubleScalarMin(
-                                 dy1_next * dy1_next + P1_next * P1_next,
-                                 dx1_next * dx1_next + P_cross_k * P_cross_k) -
-            (-muDoubleScalarMin(g_cross * g_cross + dx2_next * dx2_next,
-                                P_cross_next * P_cross_next +
-                                    P2_next * P2_next)));
-    P_cross_next = muDoubleScalarMax(0.0, (1.0 - gamma_obs) * -(P2_k * P2_k) -
-                                              (-(dy2_next * dy2_next)));
+    dx1_next = muDoubleScalarMax(
+        0.0, (1.0 - gamma_safe) *
+                     -muDoubleScalarMin(dx2_k * dx2_k + v_circ_k * v_circ_k,
+                                        v_circ_next * v_circ_next +
+                                            P1_next * P1_next) -
+                 (-muDoubleScalarMin(g_cross * g_cross + dx2_next * dx2_next,
+                                     P_cross_next * P_cross_next +
+                                         P2_next * P2_next)));
+    P_cross_next =
+        muDoubleScalarMax(0.0, (1.0 - gamma_obs) * -(dy1_next * dy1_next) -
+                                   (-(dy2_next * dy2_next)));
     g_cross = x_k[0] - xs_tmp;
     dx2_next = x_k[1] - b_xs_tmp;
     P2_next = v_n - v_s;
@@ -733,11 +745,11 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     l_u = ((l_u + ((1.8 * (g_cross * g_cross + dx2_next * dx2_next) +
                     0.5 * (P2_next * P2_next)) +
                    0.001 * (dy2_next * dy2_next))) +
-           eta_safe * (dy2_k * dy2_k)) +
+           eta_safe * (dx1_next * dx1_next)) +
           eta_obs * (P_cross_next * P_cross_next);
-    x_k[0] = v_circ_k;
-    x_k[1] = v_circ_next;
-    x_k[2] = dx2_k;
+    x_k[0] = P_cross_k;
+    x_k[1] = dy2_k;
+    x_k[2] = P2_k;
     if (((int32_T)((uint32_T)n + 2U) < 1) ||
         ((int32_T)((uint32_T)n + 2U) > X_hist->size[1])) {
       emlrtDynamicBoundsCheckR2012b((int32_T)((uint32_T)n + 2U), 1,
@@ -745,9 +757,9 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
                                     (emlrtConstCTX)sp);
     }
     loop_ub = 3 * (n + 1);
-    X_hist_data[loop_ub] = v_circ_k;
-    X_hist_data[loop_ub + 1] = v_circ_next;
-    X_hist_data[loop_ub + 2] = dx2_k;
+    X_hist_data[loop_ub] = P_cross_k;
+    X_hist_data[loop_ub + 1] = dy2_k;
+    X_hist_data[loop_ub + 2] = P2_k;
     if (*emlrtBreakCheckR2012bFlagVar != 0) {
       emlrtBreakCheckR2012b((emlrtConstCTX)sp);
     }
@@ -771,26 +783,29 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   r = _mm_sub_pd(r, b_r1);
   _mm_storeu_pd(&grad_xs[0], r);
   _mm_storeu_pd(&x_k[0], _mm_mul_pd(r, r));
-  dy2_next = X_hist_data[loop_ub + 2] - xs[2];
-  grad_xs[2] = dy2_next;
-  x_k[2] = dy2_next * dy2_next;
+  P2_next = X_hist_data[loop_ub + 2] - xs[2];
+  grad_xs[2] = P2_next;
+  x_k[2] = P2_next * P2_next;
   /*  Custo de Equilíbrio */
   /*  Custo de obstaculo para x_s */
-  /*  d_sq_xs = (xs(1) - x_obs(1))^2 + (xs(2) - x_obs(2))^2; */
-  /*  V_xs = max(0, r_obs^2 - d_sq_xs); */
-  /*  cost = cost + (mu_obs / 2) * V_xs^2;  */
+  dy2_k = xs_tmp - params[5];
+  P2_k = b_xs_tmp - params[6];
+  dy2_next = params[9] * params[9];
+  v_circ_next =
+      muDoubleScalarMax(0.0, dy2_next - (dy2_k * dy2_k + P2_k * P2_k));
   /*  Custos de obstaculo para r1, r2 e r3 */
-  /*  d_sq_r1 = (r1(1) - x_obs(1))^2 + (r1(2) - x_obs(2))^2; */
-  /*  V_r1 = max(0, r_obs^2 - d_sq_r1); */
-  /*  cost = cost + (mu_obs / 2) * V_r1^2; */
-  /*   */
-  /*  d_sq_r2 = (r2(1) - x_obs(1))^2 + (r2(2) - x_obs(2))^2; */
-  /*  V_r2 = max(0, r_obs^2 - d_sq_r2); */
-  /*  cost = cost + (mu_obs / 2) * V_r2^2; */
-  /*   */
-  /*  d_sq_r3 = (r3(1) - x_obs(1))^2 + (r3(2) - x_obs(2))^2; */
-  /*  V_r3 = max(0, r_obs^2 - d_sq_r3); */
-  /*  cost = cost + (mu_obs / 2) * V_r3^2; */
+  P_cross_k = dx1_k - params[5];
+  dx2_k = dy1_k - params[6];
+  dx1_next = muDoubleScalarMax(
+      0.0, dy2_next - (P_cross_k * P_cross_k + dx2_k * dx2_k));
+  v_circ_k = P1_k - params[5];
+  dy1_next = r2_tmp - params[6];
+  g_cross = muDoubleScalarMax(
+      0.0, dy2_next - (v_circ_k * v_circ_k + dy1_next * dy1_next));
+  P1_next = r3_tmp - params[5];
+  dx2_next = b_r3_tmp - params[6];
+  P_cross_next = muDoubleScalarMax(
+      0.0, dy2_next - (P1_next * P1_next + dx2_next * dx2_next));
   /*  Custo de Offset do Caminho Mais Curto */
   /*  O alvo artificial é a âncora inicial */
   /*  O alvo real é a âncora final */
@@ -809,8 +824,12 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   r = _mm_sub_pd(_mm_loadu_pd(&params[3]), b_r1);
   _mm_storeu_pd(&d_y[0], _mm_mul_pd(r, r));
   P2_next = params[15] * params[15];
-  cost = ((l_u + 500.0 * sumColumnB(x_k)) +
-          5000.0 * P2_next * (v_s * v_s + w_s * w_s)) +
+  cost = ((((((l_u + 500.0 * sumColumnB(x_k)) +
+              5000.0 * P2_next * (v_s * v_s + w_s * w_s)) +
+             50000.0 * (v_circ_next * v_circ_next)) +
+            50000.0 * (dx1_next * dx1_next)) +
+           50000.0 * (g_cross * g_cross)) +
+          50000.0 * (P_cross_next * P_cross_next)) +
          500.0 * (((b_sumColumnB(y) + b_sumColumnB(b_y)) + b_sumColumnB(c_y)) +
                   b_sumColumnB(d_y));
   memset(&grad[0], 0, 51U * sizeof(real_T));
@@ -865,6 +884,26 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   dy2_next = 10000.0 * P2_next;
   grad_us_idx_0 = dy2_next * v_s;
   grad_us_idx_1 = dy2_next * w_s;
+  if (v_circ_next > 0.0) {
+    dy2_next = 100000.0 * v_circ_next;
+    grad_xs[0] += dy2_next * (-2.0 * dy2_k);
+    grad_xs[1] += dy2_next * (-2.0 * P2_k);
+  }
+  if (dx1_next > 0.0) {
+    P2_next = 100000.0 * dx1_next;
+    grad_r1[0] += P2_next * (-2.0 * P_cross_k);
+    grad_r1[1] += P2_next * (-2.0 * dx2_k);
+  }
+  if (g_cross > 0.0) {
+    P2_next = 100000.0 * g_cross;
+    r1[0] += P2_next * (-2.0 * v_circ_k);
+    r1[1] += P2_next * (-2.0 * dy1_next);
+  }
+  if (P_cross_next > 0.0) {
+    P2_next = 100000.0 * P_cross_next;
+    r3[0] += P2_next * (-2.0 * P1_next);
+    r3[1] += P2_next * (-2.0 * dx2_next);
+  }
   i1 = (int32_T) - ((-1.0 - params[14]) + 1.0);
   emlrtForLoopVectorCheckR2021a(params[14], -1.0, 1.0, mxDOUBLE_CLASS,
                                 (int32_T) - ((-1.0 - params[14]) + 1.0),
@@ -886,27 +925,21 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     dv[8] = 1.0;
   }
   for (n = 0; n < i1; n++) {
-    real_T P1_k;
-    real_T b_grad_xs_tmp;
-    real_T b_n;
-    real_T grad_us_idx_0_tmp;
-    real_T grad_us_idx_1_tmp;
-    real_T grad_xs_tmp;
     uint32_T u;
     uint32_T u1;
-    b_n = params[14] - (real_T)n;
-    if (b_n != (int32_T)muDoubleScalarFloor(b_n)) {
-      emlrtIntegerCheckR2012b(b_n, &e_emlrtDCI, (emlrtConstCTX)sp);
+    r2_tmp = params[14] - (real_T)n;
+    if (r2_tmp != (int32_T)muDoubleScalarFloor(r2_tmp)) {
+      emlrtIntegerCheckR2012b(r2_tmp, &e_emlrtDCI, (emlrtConstCTX)sp);
     }
-    if (((int32_T)b_n < 1) || ((int32_T)b_n > i2)) {
-      emlrtDynamicBoundsCheckR2012b((int32_T)b_n, 1, i2, &e_emlrtBCI,
+    if (((int32_T)r2_tmp < 1) || ((int32_T)r2_tmp > i2)) {
+      emlrtDynamicBoundsCheckR2012b((int32_T)r2_tmp, 1, i2, &e_emlrtBCI,
                                     (emlrtConstCTX)sp);
     }
-    if (((int32_T)(b_n + 1.0) < 1) || ((int32_T)(b_n + 1.0) > i2)) {
-      emlrtDynamicBoundsCheckR2012b((int32_T)(b_n + 1.0), 1, i2, &f_emlrtBCI,
+    if (((int32_T)(r2_tmp + 1.0) < 1) || ((int32_T)(r2_tmp + 1.0) > i2)) {
+      emlrtDynamicBoundsCheckR2012b((int32_T)(r2_tmp + 1.0), 1, i2, &f_emlrtBCI,
                                     (emlrtConstCTX)sp);
     }
-    u = (uint32_T)((int32_T)b_n - 1) << 1;
+    u = (uint32_T)((int32_T)r2_tmp - 1) << 1;
     if (((int32_T)(u + 1U) < 1) || ((int32_T)(u + 1U) > i)) {
       emlrtDynamicBoundsCheckR2012b((int32_T)(u + 1U), 1, i, &l_emlrtBCI,
                                     (emlrtConstCTX)sp);
@@ -916,28 +949,28 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
       emlrtDynamicBoundsCheckR2012b((int32_T)(u + 2U), 1, i, &m_emlrtBCI,
                                     (emlrtConstCTX)sp);
     }
-    loop_ub = 3 * ((int32_T)b_n - 1);
-    dy2_next = X_hist_data[loop_ub];
-    grad_xs_tmp = 3.6 * (dy2_next - xs_tmp);
-    grad_xs[0] -= grad_xs_tmp;
-    P2_next = X_hist_data[loop_ub + 1];
-    b_grad_xs_tmp = 3.6 * (P2_next - b_xs_tmp);
-    grad_xs[1] -= b_grad_xs_tmp;
-    grad_us_idx_0_tmp = v_n - v_s;
-    grad_us_idx_0 -= grad_us_idx_0_tmp;
-    grad_us_idx_1_tmp = 0.002 * (W[(int32_T)u + 1] - w_s);
-    grad_us_idx_1 -= grad_us_idx_1_tmp;
-    x_pos_k = dy2_next - params[5];
-    y_pos_k = P2_next - params[6];
-    b_loop_ub = 3 * (int32_T)b_n;
+    loop_ub = 3 * ((int32_T)r2_tmp - 1);
+    P2_next = X_hist_data[loop_ub];
+    r3_tmp = 3.6 * (P2_next - xs_tmp);
+    grad_xs[0] -= r3_tmp;
+    dy2_next = X_hist_data[loop_ub + 1];
+    b_r3_tmp = 3.6 * (dy2_next - b_xs_tmp);
+    grad_xs[1] -= b_r3_tmp;
+    l_u = v_n - v_s;
+    grad_us_idx_0 -= l_u;
+    R_safe = 0.002 * (W[(int32_T)u + 1] - w_s);
+    grad_us_idx_1 -= R_safe;
+    x_pos_k = P2_next - params[5];
+    y_pos_k = dy2_next - params[6];
+    b_loop_ub = 3 * (int32_T)r2_tmp;
     x_pos_next = X_hist_data[b_loop_ub] - params[5];
     y_pos_next = X_hist_data[b_loop_ub + 1] - params[6];
     /*  Recalcula k */
     dy2_next = muDoubleScalarAbs(x_pos_k);
-    l_u = muDoubleScalarMax(0.0, dy2_next - L_safe);
+    dx1_k = muDoubleScalarMax(0.0, dy2_next - L_safe);
     P2_next = muDoubleScalarAbs(y_pos_k);
-    R_safe = muDoubleScalarMax(0.0, P2_next - W_safe);
-    P1_k = l_u * l_u + R_safe * R_safe;
+    dy1_k = muDoubleScalarMax(0.0, P2_next - W_safe);
+    P1_k = dx1_k * dx1_k + dy1_k * dy1_k;
     dx2_k = muDoubleScalarMax(0.0, dy2_next - W_safe);
     dy2_k = muDoubleScalarMax(0.0, P2_next - L_safe);
     P2_k = dx2_k * dx2_k + dy2_k * dy2_k;
@@ -1013,11 +1046,11 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
         x_k[1] = 0.0;
         xs[1] = 0.0;
         xs[2] = 0.0;
-        if (l_u > 0.0) {
-          x_k[0] = 2.0 * l_u * muDoubleScalarSign(x_pos_k);
+        if (dx1_k > 0.0) {
+          x_k[0] = 2.0 * dx1_k * muDoubleScalarSign(x_pos_k);
         }
-        if (R_safe > 0.0) {
-          x_k[1] = 2.0 * R_safe * muDoubleScalarSign(y_pos_k);
+        if (dy1_k > 0.0) {
+          x_k[1] = 2.0 * dy1_k * muDoubleScalarSign(y_pos_k);
         }
         if (dx2_k > 0.0) {
           xs[0] = 2.0 * dx2_k * muDoubleScalarSign(x_pos_k);
@@ -1087,10 +1120,10 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
         x_next[0] = dy2_next * x_pos_next;
         x_next[1] = dy2_next * y_pos_next;
       }
-      dy2_next = 2.0 * eta_obs * w_n;
+      P2_next = 2.0 * eta_obs * w_n;
       r = _mm_loadu_pd(&x_k[0]);
       b_r1 = _mm_loadu_pd(&xs[0]);
-      b_r2 = _mm_set1_pd(dy2_next);
+      b_r2 = _mm_set1_pd(P2_next);
       _mm_storeu_pd(
           &xs[0],
           _mm_add_pd(b_r1,
@@ -1099,17 +1132,17 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
       r = _mm_loadu_pd(&x_next[0]);
       b_r1 = _mm_loadu_pd(&gP2_n[0]);
       _mm_storeu_pd(&gP2_n[0], _mm_add_pd(b_r1, _mm_mul_pd(b_r2, r)));
-      xs[2] += dy2_next * ((1.0 - gamma_obs) * -0.0);
-      gP2_n[2] += dy2_next * 0.0;
+      xs[2] += P2_next * ((1.0 - gamma_obs) * -0.0);
+      gP2_n[2] += P2_next * 0.0;
     }
-    dy2_next = X_hist_data[loop_ub + 2];
-    P2_next = muDoubleScalarCos(dy2_next);
-    dy2_next = muDoubleScalarSin(dy2_next);
+    P2_next = X_hist_data[loop_ub + 2];
+    dy2_next = muDoubleScalarCos(P2_next);
+    P2_next = muDoubleScalarSin(P2_next);
     gP2_n[0] += p_n[0];
     gP2_n[1] += p_n[1];
     gP2_n[2] += p_n[2];
-    dv[2] = -Ts * v_n * dy2_next;
-    dv[5] = Ts * v_n * P2_next;
+    dv[2] = -Ts * v_n * P2_next;
+    dv[5] = Ts * v_n * dy2_next;
     memset(&p_n[0], 0, 3U * sizeof(real_T));
     r = _mm_loadu_pd(&dv[0]);
     b_r1 = _mm_loadu_pd(&p_n[0]);
@@ -1126,13 +1159,13 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     b_r3 = _mm_set1_pd(gP2_n[2]);
     _mm_storeu_pd(&p_n[0], _mm_add_pd(b_r1, _mm_mul_pd(r, b_r3)));
     p_n[2] += gP2_n[2];
-    xs[0] += grad_xs_tmp;
-    xs[1] += b_grad_xs_tmp;
+    xs[0] += r3_tmp;
+    xs[1] += b_r3_tmp;
     r = _mm_loadu_pd(&p_n[0]);
     b_r1 = _mm_loadu_pd(&xs[0]);
     _mm_storeu_pd(&p_n[0], _mm_add_pd(r, b_r1));
     p_n[2] += xs[2];
-    u1 = (uint32_T)b_n << 1;
+    u1 = (uint32_T)r2_tmp << 1;
     if (u + 1U > u1) {
       b_loop_ub = 0;
       loop_ub = 0;
@@ -1152,8 +1185,8 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     if (loop_ub != 2) {
       emlrtSubAssignSizeCheck1dR2017a(loop_ub, 2, &emlrtECI, (emlrtConstCTX)sp);
     }
-    b_Ts[0] = Ts * P2_next;
-    b_Ts[2] = Ts * dy2_next;
+    b_Ts[0] = Ts * dy2_next;
+    b_Ts[2] = Ts * P2_next;
     memset(&r2[0], 0, sizeof(real_T) << 1);
     r = _mm_loadu_pd(&b_Ts[0]);
     b_r1 = _mm_loadu_pd(&r2[0]);
@@ -1164,8 +1197,8 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     r = _mm_loadu_pd(&b_Ts[4]);
     b_r1 = _mm_loadu_pd(&r2[0]);
     _mm_storeu_pd(&r2[0], _mm_add_pd(b_r1, _mm_mul_pd(r, b_r3)));
-    y[0] = grad_us_idx_0_tmp;
-    y[1] = grad_us_idx_1_tmp;
+    y[0] = l_u;
+    y[1] = R_safe;
     r = _mm_loadu_pd(&r2[0]);
     b_r1 = _mm_loadu_pd(&y[0]);
     _mm_storeu_pd(&grad_U_data[b_loop_ub], _mm_add_pd(r, b_r1));

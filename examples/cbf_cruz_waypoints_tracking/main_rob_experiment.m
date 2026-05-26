@@ -51,7 +51,7 @@ end
 %% 4. Condições Iniciais e Parâmetros da Geometria
 X_k = posicoes_iniciais;  
 x_ref = [-0.1; -0.9];
-%x_ref = [1.1; -0.2];
+%x_ref = [1.1; -0.0];
 x_ref = [x_ref [1.0; 0.1]];
 x_ref = [x_ref [-1.1; 0.1]];
 x_ref = [x_ref [-1.1; -0.1]];
@@ -71,7 +71,7 @@ W_obs  = 0.3;             % Largura do corredor
 R_circ = 0.12;            % Raio do obstáculo central
 r_rob  = 0.15;            % Raio físico do robô
 
-eta_safe = 1e3;           % Pesos das barreiras
+eta_safe = 1e2;           % Pesos das barreiras
 eta_obs = 1e7;
 
 gamma_safe = 0.75;        % Coeficientes das barreiras

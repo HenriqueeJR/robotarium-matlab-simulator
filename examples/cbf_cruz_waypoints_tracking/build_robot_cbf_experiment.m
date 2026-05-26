@@ -20,7 +20,7 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     
     r_rob = params(17);
 
-    eta_term = 500.0; eta_eq = 5000.0; %mu_obs = 100000.0;
+    eta_term = 500.0; eta_eq = 5000.0; mu_obs = 100000.0;
     kappa_s = 500.0;
 
     u  = W(1:2*N);
@@ -126,22 +126,22 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     cost = cost + eta_eq * Ts^2 * (v_s^2 + w_s^2);
 
     % Custo de obstaculo para x_s
-    % d_sq_xs = (xs(1) - x_obs(1))^2 + (xs(2) - x_obs(2))^2;
-    % V_xs = max(0, r_obs^2 - d_sq_xs);
-    % cost = cost + (mu_obs / 2) * V_xs^2; 
+    d_sq_xs = (xs(1) - x_obs(1))^2 + (xs(2) - x_obs(2))^2;
+    V_xs = max(0, R_circ^2 - d_sq_xs);
+    cost = cost + (mu_obs / 2) * V_xs^2; 
 
     % Custos de obstaculo para r1, r2 e r3
-    % d_sq_r1 = (r1(1) - x_obs(1))^2 + (r1(2) - x_obs(2))^2;
-    % V_r1 = max(0, r_obs^2 - d_sq_r1);
-    % cost = cost + (mu_obs / 2) * V_r1^2;
-    % 
-    % d_sq_r2 = (r2(1) - x_obs(1))^2 + (r2(2) - x_obs(2))^2;
-    % V_r2 = max(0, r_obs^2 - d_sq_r2);
-    % cost = cost + (mu_obs / 2) * V_r2^2;
-    % 
-    % d_sq_r3 = (r3(1) - x_obs(1))^2 + (r3(2) - x_obs(2))^2;
-    % V_r3 = max(0, r_obs^2 - d_sq_r3);
-    % cost = cost + (mu_obs / 2) * V_r3^2;
+    d_sq_r1 = (r1(1) - x_obs(1))^2 + (r1(2) - x_obs(2))^2;
+    V_r1 = max(0, R_circ^2 - d_sq_r1);
+    cost = cost + (mu_obs / 2) * V_r1^2;
+
+    d_sq_r2 = (r2(1) - x_obs(1))^2 + (r2(2) - x_obs(2))^2;
+    V_r2 = max(0, R_circ^2 - d_sq_r2);
+    cost = cost + (mu_obs / 2) * V_r2^2;
+
+    d_sq_r3 = (r3(1) - x_obs(1))^2 + (r3(2) - x_obs(2))^2;
+    V_r3 = max(0, R_circ^2 - d_sq_r3);
+    cost = cost + (mu_obs / 2) * V_r3^2;
 
     % Custo de Offset do Caminho Mais Curto
     r0 = xs(1:2); % O alvo artificial é a âncora inicial
@@ -170,6 +170,34 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     grad_r3 = 2 * kappa_s * (2*r3 - r2 - r4);
     grad_us(1) = grad_us(1) + 2 * eta_eq * Ts^2 * v_s;
     grad_us(2) = grad_us(2) + 2 * eta_eq * Ts^2 * w_s;
+
+    d_sq_xs = (xs(1) - x_obs(1))^2 + (xs(2) - x_obs(2))^2;
+    V_xs = max(0, R_circ^2 - d_sq_xs);
+    if V_xs > 0
+        grad_xs(1) = grad_xs(1) + mu_obs * V_xs * (-2 * (xs(1) - x_obs(1)));
+        grad_xs(2) = grad_xs(2) + mu_obs * V_xs * (-2 * (xs(2) - x_obs(2)));
+    end
+
+    d_sq_r1 = (r1(1) - x_obs(1))^2 + (r1(2) - x_obs(2))^2;
+    V_r1 = max(0, R_circ^2 - d_sq_r1);
+    if V_r1 > 0
+        grad_r1(1) = grad_r1(1) + mu_obs * V_r1 * (-2 * (r1(1) - x_obs(1)));
+        grad_r1(2) = grad_r1(2) + mu_obs * V_r1 * (-2 * (r1(2) - x_obs(2)));
+    end
+
+    d_sq_r2 = (r2(1) - x_obs(1))^2 + (r2(2) - x_obs(2))^2;
+    V_r2 = max(0, R_circ^2 - d_sq_r2);
+    if V_r2 > 0
+        grad_r2(1) = grad_r2(1) + mu_obs * V_r2 * (-2 * (r2(1) - x_obs(1)));
+        grad_r2(2) = grad_r2(2) + mu_obs * V_r2 * (-2 * (r2(2) - x_obs(2)));
+    end
+
+    d_sq_r3 = (r3(1) - x_obs(1))^2 + (r3(2) - x_obs(2))^2;
+    V_r3 = max(0, R_circ^2 - d_sq_r3);
+    if V_r3 > 0
+        grad_r3(1) = grad_r3(1) + mu_obs * V_r3 * (-2 * (r3(1) - x_obs(1)));
+        grad_r3(2) = grad_r3(2) + mu_obs * V_r3 * (-2 * (r3(2) - x_obs(2)));
+    end
     
 
     for n = N:-1:1

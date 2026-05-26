@@ -11,6 +11,7 @@
 
 /* Include files */
 #include "wrapper_cost.h"
+#include "diff.h"
 #include "rt_nonfinite.h"
 #include "sumMatrixIncludeNaN.h"
 #include "wrapper_cost_data.h"
@@ -288,13 +289,14 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
   __m128d r;
   emlrtStack st;
   emxArray_real_T *X_hist;
+  real_T b_u[25];
   real_T c_y[24];
   real_T d_y[24];
-  real_T f_a[24];
+  real_T h_a[24];
   real_T x_next[3];
   real_T xs[3];
   real_T b_y[2];
-  real_T e_a[2];
+  real_T g_a[2];
   real_T r1[2];
   real_T r2[2];
   real_T r3[2];
@@ -303,16 +305,26 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
   real_T R_safe;
   real_T Ts;
   real_T W_safe;
+  real_T b_r1_tmp;
+  real_T b_r2_tmp;
+  real_T b_r3_tmp;
   real_T b_xs_tmp;
   real_T cost;
+  real_T dy1_k_tmp;
   real_T l_u;
-  real_T tmp2;
+  real_T r1_tmp;
+  real_T r2_tmp;
+  real_T r3_tmp;
   real_T v_s_tmp;
   real_T w_s;
   real_T x_k_idx_0;
   real_T x_k_idx_1;
   real_T x_k_idx_2;
+  real_T x_pos_k;
+  real_T x_pos_next;
   real_T xs_tmp;
+  real_T y_pos_k;
+  real_T y_pos_next;
   real_T *X_hist_data;
   int32_T i;
   int32_T i1;
@@ -327,7 +339,6 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
   x_k_idx_0 = params[0];
   x_k_idx_1 = params[1];
   x_k_idx_2 = params[2];
-  /* mu_obs = 100000.0; */
   cost = 2.0 * params[14];
   if (cost < 1.0) {
     i = 0;
@@ -395,7 +406,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
     emlrtDynamicBoundsCheckR2012b((int32_T)(cost + 6.0), 1, 51, &j_emlrtBCI,
                                   &st);
   }
-  r1[0] = u[(int32_T)(cost + 6.0) - 1];
+  r1_tmp = u[(int32_T)(cost + 6.0) - 1];
+  r1[0] = r1_tmp;
   if ((cost + 6.0) + 1.0 != (int32_T)muDoubleScalarFloor((cost + 6.0) + 1.0)) {
     emlrtIntegerCheckR2012b((cost + 6.0) + 1.0, &h_emlrtDCI, &st);
   }
@@ -404,7 +416,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
     emlrtDynamicBoundsCheckR2012b((int32_T)((cost + 6.0) + 1.0), 1, 51,
                                   &j_emlrtBCI, &st);
   }
-  r1[1] = u[(int32_T)((cost + 6.0) + 1.0) - 1];
+  b_r1_tmp = u[(int32_T)((cost + 6.0) + 1.0) - 1];
+  r1[1] = b_r1_tmp;
   if (cost + 8.0 != (int32_T)muDoubleScalarFloor(cost + 8.0)) {
     emlrtIntegerCheckR2012b(cost + 8.0, &g_emlrtDCI, &st);
   }
@@ -412,7 +425,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
     emlrtDynamicBoundsCheckR2012b((int32_T)(cost + 8.0), 1, 51, &i_emlrtBCI,
                                   &st);
   }
-  r2[0] = u[(int32_T)(cost + 8.0) - 1];
+  r2_tmp = u[(int32_T)(cost + 8.0) - 1];
+  r2[0] = r2_tmp;
   if ((cost + 8.0) + 1.0 != (int32_T)muDoubleScalarFloor((cost + 8.0) + 1.0)) {
     emlrtIntegerCheckR2012b((cost + 8.0) + 1.0, &g_emlrtDCI, &st);
   }
@@ -421,7 +435,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
     emlrtDynamicBoundsCheckR2012b((int32_T)((cost + 8.0) + 1.0), 1, 51,
                                   &i_emlrtBCI, &st);
   }
-  r2[1] = u[(int32_T)((cost + 8.0) + 1.0) - 1];
+  b_r2_tmp = u[(int32_T)((cost + 8.0) + 1.0) - 1];
+  r2[1] = b_r2_tmp;
   if (cost + 10.0 != (int32_T)muDoubleScalarFloor(cost + 10.0)) {
     emlrtIntegerCheckR2012b(cost + 10.0, &f_emlrtDCI, &st);
   }
@@ -429,7 +444,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
     emlrtDynamicBoundsCheckR2012b((int32_T)(cost + 10.0), 1, 51, &h_emlrtBCI,
                                   &st);
   }
-  r3[0] = u[(int32_T)(cost + 10.0) - 1];
+  r3_tmp = u[(int32_T)(cost + 10.0) - 1];
+  r3[0] = r3_tmp;
   if ((cost + 10.0) + 1.0 !=
       (int32_T)muDoubleScalarFloor((cost + 10.0) + 1.0)) {
     emlrtIntegerCheckR2012b((cost + 10.0) + 1.0, &f_emlrtDCI, &st);
@@ -439,7 +455,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
     emlrtDynamicBoundsCheckR2012b((int32_T)((cost + 10.0) + 1.0), 1, 51,
                                   &h_emlrtBCI, &st);
   }
-  r3[1] = u[(int32_T)((cost + 10.0) + 1.0) - 1];
+  b_r3_tmp = u[(int32_T)((cost + 10.0) + 1.0) - 1];
+  r3[1] = b_r3_tmp;
   /*  Limites Seguros */
   L_safe = params[7] - params[16];
   W_safe = params[8] - params[16];
@@ -483,14 +500,10 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
     real_T d;
     real_T d1;
     real_T d_a;
-    real_T g_a;
-    real_T h_a;
-    real_T i_a;
+    real_T e_a;
+    real_T f_a;
     real_T v_n;
     real_T w_n;
-    real_T x_pos_k;
-    real_T x_pos_next;
-    real_T y_pos_k;
     loop_ub = (int32_T)(((uint32_T)n << 1) + 1U);
     if ((loop_ub < 1) || (loop_ub > i)) {
       emlrtDynamicBoundsCheckR2012b(loop_ub, 1, i, &e_emlrtBCI, &st);
@@ -507,14 +520,14 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
     /*  Cruz */
     cost = muDoubleScalarAbs(x_pos_k);
     a = muDoubleScalarMax(0.0, cost - L_safe);
-    tmp2 = muDoubleScalarAbs(y_pos_k);
-    b_a = muDoubleScalarMax(0.0, tmp2 - W_safe);
+    dy1_k_tmp = muDoubleScalarAbs(y_pos_k);
+    b_a = muDoubleScalarMax(0.0, dy1_k_tmp - W_safe);
     c_a = muDoubleScalarMax(0.0, cost - W_safe);
-    d_a = muDoubleScalarMax(0.0, tmp2 - L_safe);
+    d_a = muDoubleScalarMax(0.0, dy1_k_tmp - L_safe);
     /* P_cross_k = P1_k * P2_k; */
     /*  Círculo */
     a_tmp = R_safe * R_safe;
-    g_a =
+    e_a =
         muDoubleScalarMax(0.0, a_tmp - (x_pos_k * x_pos_k + y_pos_k * y_pos_k));
     /*  Dinâmica */
     cost = Ts * v_n;
@@ -522,36 +535,37 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
     d1 = x_k_idx_1 + cost * muDoubleScalarSin(x_k_idx_2);
     x_k_idx_2 += Ts * w_n;
     x_pos_next = d - params[5];
-    x_pos_k = d1 - params[6];
+    y_pos_next = d1 - params[6];
     /*  --- Estado Futuro (next) --- */
     /*  Cruz */
     cost = muDoubleScalarAbs(x_pos_next);
-    h_a = muDoubleScalarMax(0.0, cost - L_safe);
-    tmp2 = muDoubleScalarAbs(x_pos_k);
-    i_a = muDoubleScalarMax(0.0, tmp2 - W_safe);
-    y_pos_k = muDoubleScalarMax(0.0, cost - W_safe);
-    tmp2 = muDoubleScalarMax(0.0, tmp2 - L_safe);
+    y_pos_k = muDoubleScalarMax(0.0, cost - L_safe);
+    dy1_k_tmp = muDoubleScalarAbs(y_pos_next);
+    f_a = muDoubleScalarMax(0.0, dy1_k_tmp - W_safe);
+    x_pos_k = muDoubleScalarMax(0.0, cost - W_safe);
+    dy1_k_tmp = muDoubleScalarMax(0.0, dy1_k_tmp - L_safe);
     /* P_cross_next = P1_next * P2_next; */
     /*  Círculo */
     cost = muDoubleScalarMax(
-        0.0, a_tmp - (x_pos_next * x_pos_next + x_pos_k * x_pos_k));
+        0.0, a_tmp - (x_pos_next * x_pos_next + y_pos_next * y_pos_next));
     /*  --- Restrições CBF Separadas --- */
-    h_a = muDoubleScalarMax(
-        0.0, (1.0 - params[12]) * -muDoubleScalarMin(a * a + b_a * b_a,
-                                                     c_a * c_a + d_a * d_a) -
-                 (-muDoubleScalarMin(h_a * h_a + i_a * i_a,
-                                     y_pos_k * y_pos_k + tmp2 * tmp2)));
-    x_pos_next = muDoubleScalarMax(0.0, (1.0 - params[13]) * -(g_a * g_a) -
+    dy1_k_tmp = muDoubleScalarMax(
+        0.0,
+        (1.0 - params[12]) *
+                -muDoubleScalarMin(a * a + b_a * b_a, c_a * c_a + d_a * d_a) -
+            (-muDoubleScalarMin(y_pos_k * y_pos_k + f_a * f_a,
+                                x_pos_k * x_pos_k + dy1_k_tmp * dy1_k_tmp)));
+    y_pos_next = muDoubleScalarMax(0.0, (1.0 - params[13]) * -(e_a * e_a) -
                                             (-(cost * cost)));
-    y_pos_k = x_k_idx_0 - xs_tmp;
-    x_pos_k = x_k_idx_1 - b_xs_tmp;
-    tmp2 = v_n - v_s_tmp;
+    x_pos_next = x_k_idx_0 - xs_tmp;
+    y_pos_k = x_k_idx_1 - b_xs_tmp;
+    x_pos_k = v_n - v_s_tmp;
     cost = w_n - w_s;
-    l_u = ((l_u + ((1.8 * (y_pos_k * y_pos_k + x_pos_k * x_pos_k) +
-                    0.5 * (tmp2 * tmp2)) +
+    l_u = ((l_u + ((1.8 * (x_pos_next * x_pos_next + y_pos_k * y_pos_k) +
+                    0.5 * (x_pos_k * x_pos_k)) +
                    0.001 * (cost * cost))) +
-           params[10] * (h_a * h_a)) +
-          params[11] * (x_pos_next * x_pos_next);
+           params[10] * (dy1_k_tmp * dy1_k_tmp)) +
+          params[11] * (y_pos_next * y_pos_next);
     x_k_idx_0 = d;
     x_k_idx_1 = d1;
     if (((int32_T)((uint32_T)n + 2U) < 1) ||
@@ -588,21 +602,23 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
   x_next[2] = cost * cost;
   /*  Custo de Equilíbrio */
   /*  Custo de obstaculo para x_s */
-  /*  d_sq_xs = (xs(1) - x_obs(1))^2 + (xs(2) - x_obs(2))^2; */
-  /*  V_xs = max(0, r_obs^2 - d_sq_xs); */
-  /*  cost = cost + (mu_obs / 2) * V_xs^2;  */
+  y_pos_k = xs_tmp - params[5];
+  cost = b_xs_tmp - params[6];
+  y_pos_next = params[9] * params[9];
+  x_pos_next =
+      muDoubleScalarMax(0.0, y_pos_next - (y_pos_k * y_pos_k + cost * cost));
   /*  Custos de obstaculo para r1, r2 e r3 */
-  /*  d_sq_r1 = (r1(1) - x_obs(1))^2 + (r1(2) - x_obs(2))^2; */
-  /*  V_r1 = max(0, r_obs^2 - d_sq_r1); */
-  /*  cost = cost + (mu_obs / 2) * V_r1^2; */
-  /*   */
-  /*  d_sq_r2 = (r2(1) - x_obs(1))^2 + (r2(2) - x_obs(2))^2; */
-  /*  V_r2 = max(0, r_obs^2 - d_sq_r2); */
-  /*  cost = cost + (mu_obs / 2) * V_r2^2; */
-  /*   */
-  /*  d_sq_r3 = (r3(1) - x_obs(1))^2 + (r3(2) - x_obs(2))^2; */
-  /*  V_r3 = max(0, r_obs^2 - d_sq_r3); */
-  /*  cost = cost + (mu_obs / 2) * V_r3^2; */
+  y_pos_k = r1_tmp - params[5];
+  cost = b_r1_tmp - params[6];
+  dy1_k_tmp =
+      muDoubleScalarMax(0.0, y_pos_next - (y_pos_k * y_pos_k + cost * cost));
+  y_pos_k = r2_tmp - params[5];
+  cost = b_r2_tmp - params[6];
+  x_pos_k =
+      muDoubleScalarMax(0.0, y_pos_next - (y_pos_k * y_pos_k + cost * cost));
+  y_pos_k = r3_tmp - params[5];
+  cost = b_r3_tmp - params[6];
+  cost = muDoubleScalarMax(0.0, y_pos_next - (y_pos_k * y_pos_k + cost * cost));
   /*  Custo de Offset do Caminho Mais Curto */
   /*  O alvo artificial é a âncora inicial */
   /*  O alvo real é a âncora final */
@@ -620,35 +636,35 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
   _mm_storeu_pd(&r1[0], _mm_mul_pd(r, r));
   r = _mm_sub_pd(_mm_loadu_pd(&params[3]), b_r1);
   _mm_storeu_pd(&r3[0], r);
-  _mm_storeu_pd(&e_a[0], _mm_mul_pd(r, r));
+  _mm_storeu_pd(&g_a[0], _mm_mul_pd(r, r));
   /*  Pesos de suavização  */
-  cost = u[0];
-  for (n = 0; n < 24; n++) {
-    tmp2 = cost;
-    cost = u[(n + 1) << 1];
-    f_a[n] = cost - tmp2;
+  for (n = 0; n < 25; n++) {
+    b_u[n] = u[n << 1];
   }
+  diff(b_u, h_a);
   for (n = 0; n <= 22; n += 2) {
-    r = _mm_loadu_pd(&f_a[n]);
+    r = _mm_loadu_pd(&h_a[n]);
     _mm_storeu_pd(&c_y[n], _mm_mul_pd(r, r));
   }
-  cost = u[1];
-  for (n = 0; n < 24; n++) {
-    tmp2 = cost;
-    cost = u[((n + 1) << 1) + 1];
-    f_a[n] = cost - tmp2;
+  for (n = 0; n < 25; n++) {
+    b_u[n] = u[(n << 1) + 1];
   }
+  diff(b_u, h_a);
   for (n = 0; n <= 22; n += 2) {
-    r = _mm_loadu_pd(&f_a[n]);
+    r = _mm_loadu_pd(&h_a[n]);
     _mm_storeu_pd(&d_y[n], _mm_mul_pd(r, r));
   }
   /*  Custo total */
-  cost =
-      (((l_u + 500.0 * sumColumnB(x_next)) +
-        5000.0 * (params[15] * params[15]) * (v_s_tmp * v_s_tmp + w_s * w_s)) +
-       500.0 * (((b_sumColumnB(y) + b_sumColumnB(b_y)) + b_sumColumnB(r1)) +
-                b_sumColumnB(e_a))) +
-      (0.2 * c_sumColumnB(c_y) + 0.2 * c_sumColumnB(d_y));
+  cost = (((((((l_u + 500.0 * sumColumnB(x_next)) +
+               5000.0 * (params[15] * params[15]) *
+                   (v_s_tmp * v_s_tmp + w_s * w_s)) +
+              50000.0 * (x_pos_next * x_pos_next)) +
+             50000.0 * (dy1_k_tmp * dy1_k_tmp)) +
+            50000.0 * (x_pos_k * x_pos_k)) +
+           50000.0 * (cost * cost)) +
+          500.0 * (((b_sumColumnB(y) + b_sumColumnB(b_y)) + b_sumColumnB(r1)) +
+                   b_sumColumnB(g_a))) +
+         (0.2 * c_sumColumnB(c_y) + 0.2 * c_sumColumnB(d_y));
   emlrtHeapReferenceStackLeaveFcnR2012b((emlrtConstCTX)sp);
   return cost;
 }
