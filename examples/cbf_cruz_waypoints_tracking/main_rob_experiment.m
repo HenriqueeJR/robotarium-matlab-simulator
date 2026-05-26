@@ -50,8 +50,8 @@ end
 
 %% 4. Condições Iniciais e Parâmetros da Geometria
 X_k = posicoes_iniciais;  
-x_ref = [-0.1; -0.9];
-%x_ref = [1.1; -0.0];
+%x_ref = [-0.1; -0.9];
+x_ref = [1.1; -0.0];
 x_ref = [x_ref [1.0; 0.1]];
 x_ref = [x_ref [-1.1; 0.1]];
 x_ref = [x_ref [-1.1; -0.1]];

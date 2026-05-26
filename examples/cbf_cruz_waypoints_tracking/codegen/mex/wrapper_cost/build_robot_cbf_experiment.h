@@ -3,9 +3,9 @@
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
  *
- * diff.h
+ * build_robot_cbf_experiment.h
  *
- * Code generation for function 'diff'
+ * Code generation for function 'build_robot_cbf_experiment'
  *
  */
 
@@ -21,6 +21,7 @@
 #include <string.h>
 
 /* Function Declarations */
-void diff(const real_T x[25], real_T y[24]);
+real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
+                                  const real_T params[17]);
 
-/* End of code generation (diff.h) */
+/* End of code generation (build_robot_cbf_experiment.h) */
