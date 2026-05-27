@@ -612,7 +612,7 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     y_pos_k = v_n - v_s_tmp;
     cost = w_n - w_s;
     l_u = ((l_u +
-            ((1.8 * (x_pos_next * x_pos_next + dy1_next_tmp * dy1_next_tmp) +
+            ((0.8 * (x_pos_next * x_pos_next + dy1_next_tmp * dy1_next_tmp) +
               0.5 * (y_pos_k * y_pos_k)) +
              0.001 * (cost * cost))) +
            params[10] * (e_a * e_a)) +
@@ -693,20 +693,20 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   x_pos_k = calc_cross_penalty(r1, &params[5], L_safe, W_safe, g_a);
   y_pos_k = calc_cross_penalty(r2, &params[5], L_safe, W_safe, g_a);
   cost = calc_cross_penalty(r3, &params[5], L_safe, W_safe, g_a);
-  cost =
-      ((((((((((l_u + 500.0 * b_sumColumnB(x_next)) +
-               50.0 * (params[15] * params[15]) *
-                   (v_s_tmp * v_s_tmp + w_s * w_s)) +
-              50000.0 * (e_a * e_a)) +
-             50000.0 * (y_pos_next * y_pos_next)) +
-            50000.0 * (x_pos_next * x_pos_next)) +
-           50000.0 * (dy1_next_tmp * dy1_next_tmp)) +
-          500.0 * (((c_sumColumnB(y) + c_sumColumnB(b_y)) + c_sumColumnB(c_y)) +
-                   c_sumColumnB(d_y))) +
-         5000.0 * (dy1_k_tmp * dy1_k_tmp)) +
-        5000.0 * (x_pos_k * x_pos_k)) +
-       5000.0 * (y_pos_k * y_pos_k)) +
-      5000.0 * (cost * cost);
+  cost = ((((((((((l_u + 1000.0 * b_sumColumnB(x_next)) +
+                  100.0 * (params[15] * params[15]) *
+                      (v_s_tmp * v_s_tmp + w_s * w_s)) +
+                 50000.0 * (e_a * e_a)) +
+                50000.0 * (y_pos_next * y_pos_next)) +
+               50000.0 * (x_pos_next * x_pos_next)) +
+              50000.0 * (dy1_next_tmp * dy1_next_tmp)) +
+             1000.0 *
+                 (((c_sumColumnB(y) + c_sumColumnB(b_y)) + c_sumColumnB(c_y)) +
+                  c_sumColumnB(d_y))) +
+            0.0 * (dy1_k_tmp * dy1_k_tmp)) +
+           0.0 * (x_pos_k * x_pos_k)) +
+          0.0 * (y_pos_k * y_pos_k)) +
+         0.0 * (cost * cost);
   emlrtHeapReferenceStackLeaveFcnR2012b((emlrtConstCTX)sp);
   return cost;
 }

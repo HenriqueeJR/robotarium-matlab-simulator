@@ -50,8 +50,8 @@ end
 
 %% 4. Condições Iniciais e Parâmetros da Geometria
 X_k = posicoes_iniciais;  
-%x_ref = [-0.1; -0.9];
-x_ref = [1.1; -0.0];
+x_ref = [-0.1; -0.9];
+%x_ref = [1.1; -0.0];
 x_ref = [x_ref [1.0; 0.1]];
 x_ref = [x_ref [-1.1; 0.1]];
 x_ref = [x_ref [-1.1; -0.1]];
@@ -71,10 +71,10 @@ W_obs  = 0.3;             % Largura do corredor
 R_circ = 0.12;            % Raio do obstáculo central
 r_rob  = 0.15;            % Raio físico do robô
 
-eta_safe = 1e2;           % Pesos das barreiras
-eta_obs = 1e7;
+eta_safe = 1e4;           % Pesos das barreiras
+eta_obs = 1e8;
 
-gamma_safe = 0.75;        % Coeficientes das barreiras
+gamma_safe = 0.3;        % Coeficientes das barreiras
 gamma_obs = 0.2;
 
 w_init = zeros(nW,1);
@@ -109,7 +109,7 @@ h_circ = fill(ax, x_obs(1) + R_circ*cos(theta_circle), x_obs(2) + R_circ*sin(the
 
 h_ref = plot(ax, x_ref(1,1), x_ref(2,1), 'g*', 'MarkerSize', 20, 'LineWidth', 20);
 h_traj = plot(ax, X_k(1), X_k(2), 'black', 'LineWidth', 8); 
-h_pred = plot(ax, X_k(1), X_k(2), 'k--', 'LineWidth', 1.5); 
+h_pred = plot(ax, X_k(1), X_k(2), 'black--', 'LineWidth', 15); 
 
 h_robot_body = fill(ax, X_k(1) + r_rob*cos(theta_circle), X_k(2) + r_rob*sin(theta_circle), 'y', 'FaceAlpha', 0.75, 'EdgeColor', 'yellow', 'LineWidth', 1.5);
 h_robot_body_intern = fill(ax, X_k(1) + (0.07)*cos(theta_circle), X_k(2) + (0.07)*sin(theta_circle), 'g', 'FaceAlpha', 0.75, 'EdgeColor', 'green', 'LineWidth', 1.5);
@@ -120,7 +120,7 @@ h_r2    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');
 h_r3    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');
 
 uistack(h_obs1, 'bottom'); uistack(h_obs2, 'bottom');
-uistack(h_traj, 'bottom');
+uistack(h_traj, 'bottom'); uistack(h_pred, 'bottom');
 
 disp('Iniciando simulação NMPC no Robotarium...');
 tic;
@@ -147,13 +147,6 @@ for k = 1:n_steps
         X_pred(1, i+1) = X_pred(1, i) + Ts * v_p * cos(X_pred(3, i));
         X_pred(2, i+1) = X_pred(2, i) + Ts * v_p * sin(X_pred(3, i));
         X_pred(3, i+1) = X_pred(3, i) + Ts * w_p;
-        
-        xp = X_pred(1, i+1) - x_obs(1); yp = X_pred(2, i+1) - x_obs(2);
-        dx1 = max(0, abs(xp) - L_safe); dy1 = max(0, abs(yp) - W_safe);
-        dx2 = max(0, abs(xp) - W_safe); dy2 = max(0, abs(yp) - L_safe);
-        v_circ = max(0, R_safe^2 - (xp^2 + yp^2));
-        viol = ((dx1^2+dy1^2)*(dx2^2+dy2^2)) + v_circ^2;
-        if viol > max_violacao, max_violacao = viol; end
     end
     set(h_pred, 'XData', X_pred(1, :), 'YData', X_pred(2, :));
     
@@ -201,6 +194,7 @@ for k = 1:n_steps
 
     if norm(X_k(1:2) - x_ref_current(1:2)) < 0.15
         disp(['Alvo alcançado em ', num2str(k * Ts), ' segundos!']);
+        break;
         if (all(x_ref_current == x_ref(:,1)) && k*Ts < 30)
             x_ref_current = x_ref(:,2);
             set(h_ref, 'XData', x_ref_current(1), 'YData', x_ref_current(2));

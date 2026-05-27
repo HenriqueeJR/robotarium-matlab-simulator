@@ -802,7 +802,7 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     dx2_next = x_k[1] - b_xs_tmp;
     P2_next = v_n - v_s;
     dy2_next = w_n - w_s;
-    l_u = ((l_u + ((1.8 * (g_cross * g_cross + dx2_next * dx2_next) +
+    l_u = ((l_u + ((0.8 * (g_cross * g_cross + dx2_next * dx2_next) +
                     0.5 * (P2_next * P2_next)) +
                    0.001 * (dy2_next * dy2_next))) +
            eta_safe * (dy2_k * dy2_k)) +
@@ -889,19 +889,19 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   P2_k = calc_cross_penalty(r3, &params[5], L_safe, W_safe, g_cross_r3);
   P2_next = params[15] * params[15];
   cost =
-      ((((((((((l_u + 500.0 * sumColumnB(x_k)) +
-               50.0 * P2_next * (v_s * v_s + w_s * w_s)) +
+      ((((((((((l_u + 1000.0 * sumColumnB(x_k)) +
+               100.0 * P2_next * (v_s * v_s + w_s * w_s)) +
               50000.0 * (P1_next * P1_next)) +
              50000.0 * (v_circ_k * v_circ_k)) +
             50000.0 * (P_cross_k * P_cross_k)) +
            50000.0 * (dy2_k * dy2_k)) +
-          500.0 *
+          1000.0 *
               (((b_sumColumnB(grad_r1) + b_sumColumnB(y)) + b_sumColumnB(b_y)) +
                b_sumColumnB(c_y))) +
-         5000.0 * (P_cross_next * P_cross_next)) +
-        5000.0 * (g_cross * g_cross)) +
-       5000.0 * (dx2_next * dx2_next)) +
-      5000.0 * (P2_k * P2_k);
+         0.0 * (P_cross_next * P_cross_next)) +
+        0.0 * (g_cross * g_cross)) +
+       0.0 * (dx2_next * dx2_next)) +
+      0.0 * (P2_k * P2_k);
   memset(&grad[0], 0, 51U * sizeof(real_T));
   emxInit_real_T(sp, &grad_U, 1, &d_emlrtRTEI);
   if (!(d >= 0.0)) {
@@ -923,12 +923,12 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     grad_U_data[n] = 0.0;
   }
   r = _mm_loadu_pd(&grad_xs[0]);
-  b_r3 = _mm_set1_pd(1000.0);
+  b_r3 = _mm_set1_pd(2000.0);
   r = _mm_mul_pd(b_r3, r);
   _mm_storeu_pd(&p_n[0], r);
   r4 = _mm_set1_pd(-1.0);
   _mm_storeu_pd(&grad_xs[0], _mm_mul_pd(r, r4));
-  dy2_next = 1000.0 * grad_xs[2];
+  dy2_next = 2000.0 * grad_xs[2];
   p_n[2] = dy2_next;
   dy2_next = -dy2_next;
   grad_xs[2] = dy2_next;
@@ -951,7 +951,7 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
   _mm_storeu_pd(&r3[0],
                 _mm_mul_pd(b_r3, _mm_sub_pd(_mm_sub_pd(_mm_mul_pd(r5, r), b_r2),
                                             _mm_loadu_pd(&params[3]))));
-  dy2_next = 100.0 * P2_next;
+  dy2_next = 200.0 * P2_next;
   grad_us_idx_0 = dy2_next * v_s;
   l_u = dy2_next * w_s;
   if (P1_next > 0.0) {
@@ -981,27 +981,25 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     b_r1 = _mm_loadu_pd(&grad_xs[0]);
     _mm_storeu_pd(
         &grad_xs[0],
-        _mm_add_pd(b_r1, _mm_mul_pd(_mm_set1_pd(10000.0 * P_cross_next), r)));
+        _mm_add_pd(b_r1, _mm_mul_pd(_mm_set1_pd(0.0 * P_cross_next), r)));
   }
   if (g_cross > 0.0) {
     r = _mm_loadu_pd(&g_cross_r1[0]);
     b_r1 = _mm_loadu_pd(&grad_r1[0]);
-    _mm_storeu_pd(
-        &grad_r1[0],
-        _mm_add_pd(b_r1, _mm_mul_pd(_mm_set1_pd(10000.0 * g_cross), r)));
+    _mm_storeu_pd(&grad_r1[0],
+                  _mm_add_pd(b_r1, _mm_mul_pd(_mm_set1_pd(0.0 * g_cross), r)));
   }
   if (dx2_next > 0.0) {
     r = _mm_loadu_pd(&g_cross_r2[0]);
     b_r1 = _mm_loadu_pd(&r1[0]);
-    _mm_storeu_pd(
-        &r1[0],
-        _mm_add_pd(b_r1, _mm_mul_pd(_mm_set1_pd(10000.0 * dx2_next), r)));
+    _mm_storeu_pd(&r1[0],
+                  _mm_add_pd(b_r1, _mm_mul_pd(_mm_set1_pd(0.0 * dx2_next), r)));
   }
   if (P2_k > 0.0) {
     r = _mm_loadu_pd(&g_cross_r3[0]);
     b_r1 = _mm_loadu_pd(&r3[0]);
     _mm_storeu_pd(&r3[0],
-                  _mm_add_pd(b_r1, _mm_mul_pd(_mm_set1_pd(10000.0 * P2_k), r)));
+                  _mm_add_pd(b_r1, _mm_mul_pd(_mm_set1_pd(0.0 * P2_k), r)));
   }
   i1 = (int32_T) - ((-1.0 - params[14]) + 1.0);
   emlrtForLoopVectorCheckR2021a(params[14], -1.0, 1.0, mxDOUBLE_CLASS,
@@ -1050,10 +1048,10 @@ real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
     }
     loop_ub = 3 * ((int32_T)r1_tmp - 1);
     P2_next = X_hist_data[loop_ub];
-    r2_tmp = 3.6 * (P2_next - xs_tmp);
+    r2_tmp = 1.6 * (P2_next - xs_tmp);
     grad_xs[0] -= r2_tmp;
     dy2_next = X_hist_data[loop_ub + 1];
-    b_r2_tmp = 3.6 * (dy2_next - b_xs_tmp);
+    b_r2_tmp = 1.6 * (dy2_next - b_xs_tmp);
     grad_xs[1] -= b_r2_tmp;
     r3_tmp = v_n - v_s;
     grad_us_idx_0 -= r3_tmp;

@@ -20,7 +20,7 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     
     r_rob = params(17);
 
-    eta_term = 500.0; eta_eq = 5000.0; mu_obs = 1e5; mu_safe = 0;
+    eta_term = 500.0; eta_eq = 500.0; mu_obs = 1e5; mu_safe = 0.0;
     kappa_s = 500.0;
 
     u  = W(1:2*N);

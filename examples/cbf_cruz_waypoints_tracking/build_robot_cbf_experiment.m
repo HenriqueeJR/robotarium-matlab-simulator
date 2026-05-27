@@ -3,7 +3,7 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     %#codegen
     N = params(15);             
     Ts = params(16);           
-    Q_pos = 1.8;         
+    Q_pos = 0.8;         
     R_v = 0.5;          
     R_w = 0.001;          
     
@@ -20,8 +20,8 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     
     r_rob = params(17);
 
-    eta_term = 500.0; eta_eq = 5000.0; mu_obs = 1e5; mu_safe = 0;
-    kappa_s = 500.0;
+    eta_term = 1000.0; eta_eq = 100.0; mu_obs = 1e5; mu_safe = 0;
+    kappa_s = 1000.0;
 
     u  = W(1:2*N);
     xs = W(2*N+1 : 2*N+3);
