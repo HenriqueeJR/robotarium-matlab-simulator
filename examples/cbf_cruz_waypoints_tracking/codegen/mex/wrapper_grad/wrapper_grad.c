@@ -28,7 +28,7 @@ static emlrtRSInfo emlrtRSI = {
 
 /* Function Definitions */
 void wrapper_grad(const emlrtStack *sp, const real_T u[51],
-                  const real_T params[17], real_T grad[51])
+                  const real_T params[30], real_T grad[51])
 {
   emlrtStack st;
   real_T grad_smooth[51];

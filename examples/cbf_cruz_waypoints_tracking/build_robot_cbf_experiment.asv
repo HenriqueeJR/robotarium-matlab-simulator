@@ -3,7 +3,7 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     %#codegen
     N = params(15);             
     Ts = params(16);           
-    Q_pos = 1.8;         
+    Q_pos = 0.8;         
     R_v = 0.5;          
     R_w = 0.001;          
     
@@ -20,8 +20,8 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     
     r_rob = params(17);
 
-    eta_term = 500.0; eta_eq = 500.0; mu_obs = 1e5; mu_safe = 0.0;
-    kappa_s = 500.0;
+    eta_term = 1000.0; eta_eq = 100.0; mu_obs = 1e5; mu_safe = 2000;
+    kappa_s = 2000.0;
 
     u  = W(1:2*N);
     xs = W(2*N+1 : 2*N+3);
@@ -155,16 +155,16 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
 
     % --- NOVO: Custos da Geofence (Cruz) para os nós artificiais ---
     [P_cross_xs, g_cross_xs] = calc_cross_penalty(xs(1:2), x_obs, L_safe, W_safe);
-    cost = cost + (mu_safe / 2) * P_cross_xs^2;
+    cost = cost + (mu_safe / 2) * P_cross_xs;
     
     [P_cross_r1, g_cross_r1] = calc_cross_penalty(r1, x_obs, L_safe, W_safe);
-    cost = cost + (mu_safe / 2) * P_cross_r1^2;
+    cost = cost + (mu_safe / 2) * P_cross_r1;
     
     [P_cross_r2, g_cross_r2] = calc_cross_penalty(r2, x_obs, L_safe, W_safe);
-    cost = cost + (mu_safe / 2) * P_cross_r2^2;
+    cost = cost + (mu_safe / 2) * P_cross_r2;
     
     [P_cross_r3, g_cross_r3] = calc_cross_penalty(r3, x_obs, L_safe, W_safe);
-    cost = cost + (mu_safe / 2) * P_cross_r3^2;
+    cost = cost + (mu_safe / 2) * P_cross_r3;
     
     if nargout == 1, return; end
     
@@ -215,16 +215,16 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     % --- NOVO: Gradientes da Geofence (Cruz) para os nós ---
     % A derivada de (mu/2)*P^2 em relação a r é: mu * P * grad_P
     if P_cross_xs > 0
-        grad_xs(1:2) = grad_xs(1:2) + mu_safe * P_cross_xs * g_cross_xs;
+        grad_xs(1:2) = grad_xs(1:2) + (mu_safe / 2) * g_cross_xs;
     end
     if P_cross_r1 > 0
-        grad_r1 = grad_r1 + mu_safe * P_cross_r1 * g_cross_r1;
+        grad_r1 = grad_r1 + (mu_safe / 2) * g_cross_r1;
     end
     if P_cross_r2 > 0
-        grad_r2 = grad_r2 + mu_safe * P_cross_r2 * g_cross_r2;
+        grad_r2 = grad_r2 + (mu_safe / 2) * g_cross_r2;
     end
     if P_cross_r3 > 0
-        grad_r3 = grad_r3 + mu_safe * P_cross_r3 * g_cross_r3;
+        grad_r3 = grad_r3 + (mu_safe / 2) * g_cross_r3;
     end
 
     for n = N:-1:1
@@ -402,21 +402,25 @@ function [P_cross, grad_P] = calc_cross_penalty(pt, x_obs, L_safe, W_safe)
     dy2 = max(0, abs(y_pos) - L_safe); 
     P2 = dx2^2 + dy2^2;
     
-    P_cross = min(P1, P2);
-    grad_P = zeros(2, 1);
+    % --- Mínimo Suave Analítico (Smooth Min) ---
+    epsilon = 1e-4; % Fator de suavização para o L-BFGS não travar
+    diff_P = P1 - P2;
+    delta = sqrt(diff_P^2 + epsilon);
+    P_raw = 0.5 * (P1 + P2 - delta);
     
-    if P_cross > 0
+    % Truncamento suave: só aplica penalidade se estiver fora da cruz
+    if P_raw <= 0
+        P_cross = 0;
+        grad_P = zeros(2, 1);
+    else
+        P_cross = P_raw;
         gP1 = zeros(2,1); gP2 = zeros(2,1);
         if dx1 > 0, gP1(1) = 2 * dx1 * sign(x_pos); end
         if dy1 > 0, gP1(2) = 2 * dy1 * sign(y_pos); end
         if dx2 > 0, gP2(1) = 2 * dx2 * sign(x_pos); end
         if dy2 > 0, gP2(2) = 2 * dy2 * sign(y_pos); end
         
-        % Gradiente aponta para a região mais próxima
-        if P1 <= P2
-            grad_P = gP1;
-        else
-            grad_P = gP2;
-        end
+        % Regra da cadeia para o Smooth Min
+        grad_P = 0.5 * (gP1 + gP2 - (diff_P / delta) * (gP1 - gP2));
     end
 end

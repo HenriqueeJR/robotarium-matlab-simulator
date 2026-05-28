@@ -12,7 +12,7 @@ r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', po
 %% 2. Configurações da Simulação e do NMPC
 Ts = 0.033;                 
 N = 20;                     
-T_sim_total = 150;           
+T_sim_total = 30;           
 n_steps = round(T_sim_total / Ts);
 
 % Limites físicos da plataforma diferencial
@@ -35,7 +35,7 @@ W_min = [repmat([v_min; w_min], N, 1);
          -10; -10];
 
 %% 3. Inicialização do Solver PANOC
-gamma_panoc = 0.01; sigma = 1e-4; max_iter = 100; tol = 1e-3; lbfgs_size = 10;
+gamma_panoc = 0.01; sigma = 1e-4; max_iter = 1000; tol = 1e-3; lbfgs_size = 500;
 solver = PanocSolver(gamma_panoc, sigma, max_iter, tol, W_min, W_max, lbfgs_size);
 
 if exist('wrapper_cost_mex', 'file') == 3 && exist('wrapper_grad_mex', 'file') == 3

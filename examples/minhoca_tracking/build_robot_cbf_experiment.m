@@ -1,0 +1,301 @@
+function [cost, grad] = build_robot_cbf_experiment(W, params)
+    %#codegen
+    % Desempacotamento limpo do vetor params (Tamanho: 30)
+    x_k           = params(1:3);      
+    x_ref         = params(4:5);      
+    eta_safe      = params(6);        
+    gamma_safe    = params(7);        
+    N             = params(8);             
+    Ts            = params(9);           
+    % params(10) era o r_rob. Não subtraímos mais aqui para não inverter os blocos.     
+    blocks_params = params(11:26); % Limites [xmin, xmax, ymin, ymax] dos 4 blocos
+    
+    eta_term      = params(27);
+    eta_eq        = params(28);
+    mu_safe       = params(29);
+    kappa_s       = params(30);
+    
+    Q_pos = 5;         
+    R_v = 0.5;          
+    R_w = 1.5;          
+    
+    u  = W(1:2*N);
+    xs = W(2*N+1 : 2*N+3);
+    us = W(2*N+4 : 2*N+5);
+    v_s = us(1);
+    w_s = us(2);
+    
+    idx_r1 = 2*N + 6;
+    idx_r2 = 2*N + 8;
+    idx_r3 = 2*N + 10;
+    
+    r1 = W(idx_r1 : idx_r1 + 1);
+    r2 = W(idx_r2 : idx_r2 + 1);
+    r3 = W(idx_r3 : idx_r3 + 1);
+    
+    X_hist = zeros(3, N + 1);
+    X_hist(:, 1) = x_k;
+    l_u = 0; 
+    
+    % =====================================================================
+    % FORWARD PASS
+    % =====================================================================
+    for n = 1:N
+        v_n = u((n-1)*2 + 1);
+        w_n = u((n-1)*2 + 2);
+        
+        % --- Estado Atual (k) --- Usa o Mínimo Exato para CBF
+        [P_a_k, P_v_k, P_g_k, P_c_k] = get_blocks_P(x_k(1:2), blocks_params);
+        P_k = min(min(P_a_k, P_v_k), min(P_g_k, P_c_k));
+        h_k = -P_k; 
+        
+        % Dinâmica
+        x_next = zeros(3,1);
+        x_next(1) = x_k(1) + Ts * v_n * cos(x_k(3));
+        x_next(2) = x_k(2) + Ts * v_n * sin(x_k(3));
+        x_next(3) = x_k(3) + Ts * w_n;
+        
+        % --- Estado Futuro (next) ---
+        [P_a_n, P_v_n, P_g_n, P_c_n] = get_blocks_P(x_next(1:2), blocks_params);
+        P_next = min(min(P_a_n, P_v_n), min(P_g_n, P_c_n));
+        h_next = -P_next;
+        
+        % --- Restrição CBF ---
+        g_corridor = (1 - gamma_safe) * h_k - h_next;
+        penalty_corridor = eta_safe * max(0, g_corridor)^2;
+        
+        l_estagio = Q_pos * ((x_k(1) - xs(1))^2 + (x_k(2) - xs(2))^2) + R_v * (v_n - v_s)^2 + R_w * (w_n - w_s)^2;
+        l_u = l_u + l_estagio + penalty_corridor;
+        
+        x_k = x_next;
+        X_hist(:, n+1) = x_k;
+    end
+    
+    cost = l_u;
+    
+    % =====================================================================
+    % TERMINAL E BACKWARD PASS
+    % =====================================================================
+    x_N = X_hist(:, N+1);
+    cost = cost + eta_term * sum((x_N(1:2) - xs(1:2)).^2);
+    cost = cost + eta_eq * Ts^2 * (v_s^2 + w_s^2);
+    
+    r0 = xs(1:2); 
+    r4 = x_ref;     
+    cost = cost + kappa_s * (sum((r1 - r0).^2) + ...
+                             sum((r2 - r1).^2) + ...
+                             sum((r3 - r2).^2) + ...
+                             sum((r4 - r3).^2));
+                         
+    % Custos da Geofence para nós terminais (AQUI USA O SMOOTH MIN)
+    [P_xs, gP_xs] = calc_corridor_penalty(xs(1:2), blocks_params);
+    cost = cost + (mu_safe / 2) * P_xs;
+    
+    [P_r1, gP_r1] = calc_corridor_penalty(r1, blocks_params);
+    cost = cost + (mu_safe / 2) * P_r1;
+    
+    [P_r2, gP_r2] = calc_corridor_penalty(r2, blocks_params);
+    cost = cost + (mu_safe / 2) * P_r2;
+    
+    [P_r3, gP_r3] = calc_corridor_penalty(r3, blocks_params);
+    cost = cost + (mu_safe / 2) * P_r3;
+    
+    if nargout == 1, return; end
+    
+    grad = zeros(length(W), 1);
+    grad_U  = zeros(2*N, 1);
+    grad_xs = zeros(3, 1);
+    grad_us = zeros(2, 1);
+    
+    p_n = zeros(3, 1);
+    p_n(1:2) = p_n(1:2) + 2 * eta_term * (x_N(1:2) - xs(1:2));
+    
+    grad_xs(1:2) = grad_xs(1:2) - 2 * eta_term * (x_N(1:2) - xs(1:2));
+    grad_xs(1:2) = grad_xs(1:2) - 2 * kappa_s * (r1 - r0);
+    grad_r1 = 2 * kappa_s * (2*r1 - r0 - r2); 
+    grad_r2 = 2 * kappa_s * (2*r2 - r1 - r3); 
+    grad_r3 = 2 * kappa_s * (2*r3 - r2 - r4);
+    
+    grad_us(1) = grad_us(1) + 2 * eta_eq * Ts^2 * v_s;
+    grad_us(2) = grad_us(2) + 2 * eta_eq * Ts^2 * w_s;
+    
+    % Gradientes da Geofence para os nós (usa os gradientes do Smooth Min)
+    if P_xs > 0, grad_xs(1:2) = grad_xs(1:2) + (mu_safe / 2) * gP_xs; end
+    if P_r1 > 0, grad_r1 = grad_r1 + (mu_safe / 2) * gP_r1; end
+    if P_r2 > 0, grad_r2 = grad_r2 + (mu_safe / 2) * gP_r2; end
+    if P_r3 > 0, grad_r3 = grad_r3 + (mu_safe / 2) * gP_r3; end
+    
+    for n = N:-1:1
+        x_n = X_hist(:, n);       
+        x_next = X_hist(:, n+1);  
+        v_n = u((n-1)*2 + 1); w_n = u((n-1)*2 + 2);
+        theta_n = x_n(3);
+        
+        grad_x_l_n = [2 * Q_pos * (x_n(1) - xs(1)); 2 * Q_pos * (x_n(2) - xs(2)); 0];
+        grad_u_l_n = [2 * R_v * (v_n - v_s); 2 * R_w * (w_n - w_s)];
+        grad_xs(1) = grad_xs(1) - 2 * Q_pos * (x_n(1) - xs(1));
+        grad_xs(2) = grad_xs(2) - 2 * Q_pos * (x_n(2) - xs(2));
+        grad_us(1) = grad_us(1) - 2 * R_v * (v_n - v_s);
+        grad_us(2) = grad_us(2) - 2 * R_w * (w_n - w_s);
+        
+        % Recalcula penalidades com MÍNIMO EXATO para CBF
+        [P_a_k, P_v_k, P_g_k, P_c_k] = get_blocks_P(x_n(1:2), blocks_params);
+        P_k = min(min(P_a_k, P_v_k), min(P_g_k, P_c_k));
+        h_k = -P_k;
+        
+        [P_a_n, P_v_n, P_g_n, P_c_n] = get_blocks_P(x_next(1:2), blocks_params);
+        P_next = min(min(P_a_n, P_v_n), min(P_g_n, P_c_n));
+        h_next = -P_next;
+        
+        g_corridor = (1 - gamma_safe) * h_k - h_next;
+        
+        grad_x_k_cbf = [0; 0; 0];
+        grad_x_next_cbf = [0; 0; 0];
+        
+        if g_corridor > 0
+            % Busca o gradiente exato apenas para o bloco mais próximo
+            gP_k = get_exact_grad(x_n(1:2), blocks_params, P_a_k, P_v_k, P_g_k, P_c_k);
+            gP_next = get_exact_grad(x_next(1:2), blocks_params, P_a_n, P_v_n, P_g_n, P_c_n);
+            
+            gh_k = -gP_k;
+            gh_next = -gP_next;
+            
+            gg_k = (1 - gamma_safe) * gh_k;
+            gg_next = -1 * gh_next;
+            
+            grad_x_k_cbf(1:2) = grad_x_k_cbf(1:2) + (2 * eta_safe * g_corridor * gg_k);
+            grad_x_next_cbf(1:2) = grad_x_next_cbf(1:2) + (2 * eta_safe * g_corridor * gg_next);
+        end
+        
+        p_prev = p_n + grad_x_next_cbf; 
+        grad_x_total = grad_x_l_n + grad_x_k_cbf;
+        
+        J_x_T = [1, 0, 0; 0, 1, 0; -Ts * v_n * sin(theta_n), Ts * v_n * cos(theta_n), 1];
+        J_u_T = [Ts * cos(theta_n), Ts * sin(theta_n), 0; 0, 0, Ts];
+        
+        p_n = J_x_T * p_prev + grad_x_total;
+        grad_U((n-1)*2 + 1 : n*2) = J_u_T * p_prev + grad_u_l_n;
+    end
+    
+    grad(1:2*N) = grad_U;
+    grad(2*N+1:2*N+3) = grad_xs;
+    grad(2*N+4:2*N+5) = grad_us;
+    grad(idx_r1 : idx_r1 + 1) = grad_r1;
+    grad(idx_r2 : idx_r2 + 1) = grad_r2;
+    grad(idx_r3 : idx_r3 + 1) = grad_r3;
+end
+
+% =========================================================================
+% FUNÇÃO AUXILIAR 1: Avalia Distância P para cada bloco
+% =========================================================================
+function [P_a, P_v, P_g, P_c] = get_blocks_P(pt, blocks)
+    %#codegen
+    x_pos = pt(1); y_pos = pt(2);
+    % Bloco Azul
+    v_a1 = max(0, blocks(1) - x_pos); v_a2 = max(0, x_pos - blocks(2));
+    v_a3 = max(0, blocks(3) - y_pos); v_a4 = max(0, y_pos - blocks(4));
+    P_a = v_a1^2 + v_a2^2 + v_a3^2 + v_a4^2;
+    % Bloco Vermelho
+    v_v1 = max(0, blocks(5) - x_pos); v_v2 = max(0, x_pos - blocks(6));
+    v_v3 = max(0, blocks(7) - y_pos); v_v4 = max(0, y_pos - blocks(8));
+    P_v = v_v1^2 + v_v2^2 + v_v3^2 + v_v4^2;
+    % Bloco Verde
+    v_g1 = max(0, blocks(9) - x_pos); v_g2 = max(0, x_pos - blocks(10));
+    v_g3 = max(0, blocks(11)- y_pos); v_g4 = max(0, y_pos - blocks(12));
+    P_g = v_g1^2 + v_g2^2 + v_g3^2 + v_g4^2;
+    % Bloco Ciano
+    v_c1 = max(0, blocks(13)- x_pos); v_c2 = max(0, x_pos - blocks(14));
+    v_c3 = max(0, blocks(15)- y_pos); v_c4 = max(0, y_pos - blocks(16));
+    P_c = v_c1^2 + v_c2^2 + v_c3^2 + v_c4^2;
+end
+
+% =========================================================================
+% FUNÇÃO AUXILIAR 2: Gradiente Mínimo Exato (Para o CBF Dinâmico)
+% =========================================================================
+function gP_min = get_exact_grad(pt, blocks, P_a, P_v, P_g, P_c)
+    %#codegen
+    x_pos = pt(1); y_pos = pt(2);
+    P_min = min(min(P_a, P_v), min(P_g, P_c));
+    gP_min = zeros(2,1);
+    
+    if P_min == P_a
+        if blocks(1) - x_pos > 0, gP_min(1) = gP_min(1) - 2*(blocks(1) - x_pos); end
+        if x_pos - blocks(2) > 0, gP_min(1) = gP_min(1) + 2*(x_pos - blocks(2)); end
+        if blocks(3) - y_pos > 0, gP_min(2) = gP_min(2) - 2*(blocks(3) - y_pos); end
+        if y_pos - blocks(4) > 0, gP_min(2) = gP_min(2) + 2*(y_pos - blocks(4)); end
+    elseif P_min == P_v
+        if blocks(5) - x_pos > 0, gP_min(1) = gP_min(1) - 2*(blocks(5) - x_pos); end
+        if x_pos - blocks(6) > 0, gP_min(1) = gP_min(1) + 2*(x_pos - blocks(6)); end
+        if blocks(7) - y_pos > 0, gP_min(2) = gP_min(2) - 2*(blocks(7) - y_pos); end
+        if y_pos - blocks(8) > 0, gP_min(2) = gP_min(2) + 2*(y_pos - blocks(8)); end
+    elseif P_min == P_g
+        if blocks(9) - x_pos > 0, gP_min(1) = gP_min(1) - 2*(blocks(9) - x_pos); end
+        if x_pos - blocks(10)> 0, gP_min(1) = gP_min(1) + 2*(x_pos - blocks(10)); end
+        if blocks(11)- y_pos > 0, gP_min(2) = gP_min(2) - 2*(blocks(11)- y_pos); end
+        if y_pos - blocks(12)> 0, gP_min(2) = gP_min(2) + 2*(y_pos - blocks(12)); end
+    else
+        if blocks(13)- x_pos > 0, gP_min(1) = gP_min(1) - 2*(blocks(13)- x_pos); end
+        if x_pos - blocks(14)> 0, gP_min(1) = gP_min(1) + 2*(x_pos - blocks(14)); end
+        if blocks(15)- y_pos > 0, gP_min(2) = gP_min(2) - 2*(blocks(15)- y_pos); end
+        if y_pos - blocks(16)> 0, gP_min(2) = gP_min(2) + 2*(y_pos - blocks(16)); end
+    end
+end
+
+% =========================================================================
+% FUNÇÃO AUXILIAR 3: Smooth Min Hierárquico (Para os Custos Terminais)
+% =========================================================================
+function [P_total, grad_P] = calc_corridor_penalty(pt, blocks)
+    %#codegen
+    x_pos = pt(1); y_pos = pt(2);
+    
+    [P_a, P_v, P_g, P_c] = get_blocks_P(pt, blocks);
+    
+    gP_a = zeros(2, 1);
+    if blocks(1) - x_pos > 0, gP_a(1) = gP_a(1) - 2*(blocks(1) - x_pos); end
+    if x_pos - blocks(2) > 0, gP_a(1) = gP_a(1) + 2*(x_pos - blocks(2)); end
+    if blocks(3) - y_pos > 0, gP_a(2) = gP_a(2) - 2*(blocks(3) - y_pos); end
+    if y_pos - blocks(4) > 0, gP_a(2) = gP_a(2) + 2*(y_pos - blocks(4)); end
+    
+    gP_v = zeros(2, 1);
+    if blocks(5) - x_pos > 0, gP_v(1) = gP_v(1) - 2*(blocks(5) - x_pos); end
+    if x_pos - blocks(6) > 0, gP_v(1) = gP_v(1) + 2*(x_pos - blocks(6)); end
+    if blocks(7) - y_pos > 0, gP_v(2) = gP_v(2) - 2*(blocks(7) - y_pos); end
+    if y_pos - blocks(8) > 0, gP_v(2) = gP_v(2) + 2*(y_pos - blocks(8)); end
+    
+    gP_g = zeros(2, 1);
+    if blocks(9) - x_pos > 0, gP_g(1) = gP_g(1) - 2*(blocks(9) - x_pos); end
+    if x_pos - blocks(10)> 0, gP_g(1) = gP_g(1) + 2*(x_pos - blocks(10)); end
+    if blocks(11)- y_pos > 0, gP_g(2) = gP_g(2) - 2*(blocks(11)- y_pos); end
+    if y_pos - blocks(12)> 0, gP_g(2) = gP_g(2) + 2*(y_pos - blocks(12)); end
+    
+    gP_c = zeros(2, 1);
+    if blocks(13)- x_pos > 0, gP_c(1) = gP_c(1) - 2*(blocks(13)- x_pos); end
+    if x_pos - blocks(14)> 0, gP_c(1) = gP_c(1) + 2*(x_pos - blocks(14)); end
+    if blocks(15)- y_pos > 0, gP_c(2) = gP_c(2) - 2*(blocks(15)- y_pos); end
+    if y_pos - blocks(16)> 0, gP_c(2) = gP_c(2) + 2*(y_pos - blocks(16)); end
+    
+    epsilon = 1e-4; 
+    
+    % Nível 1A: Smooth Min entre Azul e Vermelho
+    diff_1 = P_a - P_v; delta_1 = sqrt(diff_1^2 + epsilon);
+    S1 = 0.5 * (P_a + P_v - delta_1);
+    gS1 = 0.5 * (gP_a + gP_v - (diff_1 / delta_1) * (gP_a - gP_v));
+    
+    % Nível 1B: Smooth Min entre Verde e Ciano
+    diff_2 = P_g - P_c; delta_2 = sqrt(diff_2^2 + epsilon);
+    S2 = 0.5 * (P_g + P_c - delta_2);
+    gS2 = 0.5 * (gP_g + gP_c - (diff_2 / delta_2) * (gP_g - gP_c));
+    
+    % Nível 2: Smooth Min entre Resultados
+    diff_3 = S1 - S2; delta_3 = sqrt(diff_3^2 + epsilon);
+    P_raw = 0.5 * (S1 + S2 - delta_3);
+    grad_raw = 0.5 * (gS1 + gS2 - (diff_3 / delta_3) * (gS1 - gS2));
+    
+    if P_raw <= 0
+        P_total = 0;
+        grad_P = zeros(2, 1);
+    else
+        P_total = P_raw;
+        grad_P = grad_raw;
+    end
+end

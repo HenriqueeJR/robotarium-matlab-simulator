@@ -22,6 +22,6 @@
 
 /* Function Declarations */
 real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
-                                  const real_T params[17], real_T grad[51]);
+                                  const real_T params[30], real_T grad[51]);
 
 /* End of code generation (build_robot_cbf_experiment.h) */

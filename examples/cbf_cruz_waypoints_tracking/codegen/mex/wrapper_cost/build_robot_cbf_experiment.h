@@ -21,7 +21,7 @@
 #include <string.h>
 
 /* Function Declarations */
-real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[51],
-                                  const real_T params[17]);
+real_T calc_cross_penalty(const real_T pt[2], const real_T x_obs[2],
+                          real_T L_safe, real_T W_safe, real_T grad_P[2]);
 
 /* End of code generation (build_robot_cbf_experiment.h) */

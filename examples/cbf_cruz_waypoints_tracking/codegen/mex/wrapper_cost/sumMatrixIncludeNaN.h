@@ -21,10 +21,10 @@
 #include <string.h>
 
 /* Function Declarations */
-real_T b_sumColumnB(const real_T x[3]);
+real_T b_sumColumnB(const real_T x[2]);
 
-real_T c_sumColumnB(const real_T x[2]);
+real_T c_sumColumnB(const real_T x[24]);
 
-real_T sumColumnB(const real_T x[24]);
+real_T sumColumnB(const real_T x[3]);
 
 /* End of code generation (sumMatrixIncludeNaN.h) */
