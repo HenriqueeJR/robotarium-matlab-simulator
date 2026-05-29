@@ -21,7 +21,7 @@ const volatile char_T *emlrtBreakCheckR2012bFlagVar = NULL;
 emlrtContext emlrtContextGlobal = {
     true,                                                 /* bFirstTime */
     false,                                                /* bInitialized */
-    131675U,                                              /* fVersionInfo */
+    131674U,                                              /* fVersionInfo */
     NULL,                                                 /* fErrorFunction */
     "wrapper_cost",                                       /* fFunctionName */
     NULL,                                                 /* fRTCallStack */

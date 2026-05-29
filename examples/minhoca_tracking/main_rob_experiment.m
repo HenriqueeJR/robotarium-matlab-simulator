@@ -1,5 +1,5 @@
 % =========================================================================
-% Main Simulation - NMPC com CBF Dinâmico
+% Main Simulation - NMPC com CBF Dinâmico e Generalized P2S-HSD
 % =========================================================================
 clear; clc; close all;
 
@@ -11,26 +11,29 @@ r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', po
 %% 2. Configurações da Simulação e do NMPC
 Ts = 0.033;                 
 N = 20;                     
-T_sim_total = 40;           
+T_sim_total = 120;           
 n_steps = round(T_sim_total / Ts);
 
 v_max = 0.1; v_min = 0.0;
 w_max = 1.5;  w_min = -1.5;
-nW = 2*N + 11;
 
+% CORREÇÃO 1: Tamanho do vetor ajustado para 2D (Tiramos o theta do xs)
+nW = 2*N + 10; 
+
+% CORREÇÃO 2: Limites ajustados (removidos os +- 2*pi)
 W_max = [repmat([v_max; w_max], N, 1);
-         3; 2; 2*pi;
-         v_max; w_max;
-         3; 2;
-         3; 2;
-         3; 2];
+         3; 2;           % xs
+         v_max; w_max;   % us
+         3; 2;           % r1
+         3; 2;           % r2
+         3; 2];          % r3
          
 W_min = [repmat([v_min; w_min], N, 1);
-        -3; -2; -2*pi;
-         v_min; w_min;
-         -3; -2;
-         -3; -2;
-         -3; -2];
+        -3; -2;          % xs
+         v_min; w_min;   % us
+        -3; -2;          % r1
+        -3; -2;          % r2
+        -3; -2];         % r3
          
 %% 3. Inicialização do Solver PANOC
 gamma_panoc = 0.01; sigma = 1e-4; max_iter = 1000; tol = 1e-3; lbfgs_size = 1000;
@@ -50,7 +53,7 @@ end
 X_k = posicoes_iniciais;  
 
 % Waypoints (Vermelho -> Verde -> Verde -> Ciano)
-x_ref = [-0.25,  -0.25,  1.20,  1.20;  
+x_ref = [1,  -0.25,  1.20,  1.20;  
          0.35,  0.25,  0.25, -0.25];
 
 % =========================================================================
@@ -74,20 +77,18 @@ blocks_params = [b1_xmin; b1_xmax; b1_ymin; b1_ymax; ...
 % PESOS DO NMPC
 % =========================================================================
 r_rob      = 0.15;            
-eta_safe   = 1e7;           
+eta_safe   = 1e6;           
 gamma_safe = 0.5;  
-%eta_safe = 0;
-%gamma_safe = 0;
-eta_term   = 400.0;
-eta_eq     = 1000.0;
-mu_safe    = 10;
-kappa_s    = 800.0;
+eta_term   = 200.0;
+eta_eq     = 500.0;
+mu_safe    = 0;
+kappa_s    = 800;
 
 w_init = zeros(nW,1);
-w_init(2*N+1:2*N+3) = [-1.0; -0.5; 0];
-w_init(2*N+6 : 2*N+7)   = [-0.5; -0.25]; 
-w_init(2*N+8 : 2*N+9)  = [0; 0.1]; 
-w_init(2*N+10 : 2*N+11) = [0.75; 0.35];
+w_init(2*N+1:2*N+2) = [-1.0; -0.5];
+w_init(2*N+5:2*N+6) = [-0.5; -0.25]; 
+w_init(2*N+7:2*N+8) = [0; 0.1]; 
+w_init(2*N+9:2*N+10)= [0.75; 0.35];
 
 hist_X = zeros(3, n_steps + 1);
 hist_X(:, 1) = X_k;
@@ -103,7 +104,7 @@ hist_time = zeros(1, n_steps);
 ax = gca;
 hold(ax, 'on');
 
-% Plot Dinâmico dos Blocos usando os parâmetros criados acima
+% Plot Dinâmico dos Blocos
 h_azul = fill(ax, [b1_xmin, b1_xmax, b1_xmax, b1_xmin], [b1_ymin, b1_ymin, b1_ymax, b1_ymax], 'b', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
 h_verm = fill(ax, [b2_xmin, b2_xmax, b2_xmax, b2_xmin], [b2_ymin, b2_ymin, b2_ymax, b2_ymax], 'r', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
 h_verde = fill(ax, [b3_xmin, b3_xmax, b3_xmax, b3_xmin], [b3_ymin, b3_ymin, b3_ymax, b3_ymax], 'g', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
@@ -159,7 +160,7 @@ for k = 1:n_steps
     
     % Armazena a ação executada e a ação de equilíbrio (us)
     hist_U(:, k)  = [v_cmd; w_cmd];
-    hist_us(:, k) = w_opt(2*N+4 : 2*N+5);
+    hist_us(:, k) = w_opt(2*N+3 : 2*N+4);
     
     hist_iter(k) = iter_count;
     hist_time(k) = tempo_solve;
@@ -180,10 +181,10 @@ for k = 1:n_steps
     set(h_robot_body, 'XData', x_centro + r_rob*cos(theta_circle), 'YData', y_centro + r_rob*sin(theta_circle));
     set(h_robot_body_intern, 'XData', x_centro + (0.07)*cos(theta_circle), 'YData', y_centro + (0.07)*sin(theta_circle));
     
-    xs_opt = w_opt(2*N+1:2*N+3);
-    r1_opt = w_opt(2*N+6:2*N+7);
-    r2_opt = w_opt(2*N+8:2*N+9);
-    r3_opt = w_opt(2*N+10:2*N+11);
+    xs_opt = w_opt(2*N+1:2*N+2);
+    r1_opt = w_opt(2*N+5:2*N+6);
+    r2_opt = w_opt(2*N+7:2*N+8);
+    r3_opt = w_opt(2*N+9:2*N+10);
     
     set(h_xs,'XData',xs_opt(1),'YData',xs_opt(2));
     set(h_r1, 'XData', r1_opt(1), 'YData', r1_opt(2));
@@ -193,11 +194,12 @@ for k = 1:n_steps
     
     %% Warm start
     U_opt  = w_opt(1:2*N);
-    xs_opt = w_opt(2*N+1:2*N+3);
-    us_opt = w_opt(2*N+4:end);
+    xs_opt = w_opt(2*N+1:2*N+2);
+    us_opt = w_opt(2*N+3:2*N+4);
     
+    % CORREÇÃO 3: Faltavam os nós artificiais no vetor de Warm Start!
     U_warm = [U_opt(3:end); U_opt(end-1:end)];
-    w_init = [U_warm; xs_opt; us_opt];
+    w_init = [U_warm; xs_opt; us_opt; r1_opt; r2_opt; r3_opt];
     
     %% Gestão Inteligente de Waypoints
     if norm(X_k(1:2) - x_ref_current(1:2)) < 0.15
@@ -223,7 +225,6 @@ disp(['Tempo Médio de Solve   : ', num2str(mean(hist_time(1:n_steps)) * 1000), 
 disp(['Tempo Máximo de Solve  : ', num2str(max(hist_time(1:n_steps)) * 1000), ' ms']);
 disp(['Máximo de Iterações    : ', num2str(max(hist_iter(1:n_steps)))]);
 
-% Adicionado 'hist_us' ao salvamento
 save('dados_nmpc.mat', 'hist_X', 'hist_U', 'hist_us', 'hist_iter', 'hist_time', 'Ts', 'n_steps');
 disp('Dados salvos com sucesso!');
 r.debug();
@@ -235,7 +236,7 @@ t_sim = (0:n_steps-1) * Ts;
 % Subplot da Velocidade Linear (v e v_s)
 subplot(2, 1, 1); hold on; grid on;
 stairs(t_sim, hist_U(1, 1:n_steps), 'b-', 'LineWidth', 2);
-stairs(t_sim, hist_us(1, 1:n_steps), 'c--', 'LineWidth', 1.5); % Adicionado v_s
+stairs(t_sim, hist_us(1, 1:n_steps), 'c--', 'LineWidth', 1.5); 
 yline(v_max, 'r--', 'LineWidth', 1.2); yline(v_min, 'r--', 'LineWidth', 2);
 xlabel('Tempo [s]'); ylabel('v [m/s]'); title('Velocidade Linear');
 legend('Ação Real (v)', 'Ação de Equilíbrio (v_s)', 'Limites', 'Location', 'best');
@@ -244,7 +245,7 @@ ylim([v_min - 0.1, v_max + 0.1]);
 % Subplot da Velocidade Angular (w e w_s)
 subplot(2, 1, 2); hold on; grid on;
 stairs(t_sim, hist_U(2, 1:n_steps), 'm-', 'LineWidth', 2);
-stairs(t_sim, hist_us(2, 1:n_steps), 'k--', 'LineWidth', 1.5); % Adicionado w_s
+stairs(t_sim, hist_us(2, 1:n_steps), 'k--', 'LineWidth', 1.5); 
 yline(w_max, 'r--', 'LineWidth', 1.2); yline(w_min, 'r--', 'LineWidth', 2);
 xlabel('Tempo [s]'); ylabel('\omega [rad/s]'); title('Velocidade Angular');
 legend('Ação Real (\omega)', 'Ação de Equilíbrio (\omega_s)', 'Limites', 'Location', 'best');

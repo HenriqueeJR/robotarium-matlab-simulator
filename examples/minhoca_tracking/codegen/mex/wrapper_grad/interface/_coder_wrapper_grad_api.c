@@ -17,7 +17,7 @@
 
 /* Function Declarations */
 static real_T (*b_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u,
-                                   const emlrtMsgIdentifier *parentId))[51];
+                                   const emlrtMsgIdentifier *parentId))[50];
 
 static real_T (*c_emlrt_marshallIn(const emlrtStack *sp, const mxArray *nullptr,
                                    const char_T *identifier))[30];
@@ -26,21 +26,21 @@ static real_T (*d_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u,
                                    const emlrtMsgIdentifier *parentId))[30];
 
 static real_T (*e_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src,
-                                   const emlrtMsgIdentifier *msgId))[51];
+                                   const emlrtMsgIdentifier *msgId))[50];
 
 static real_T (*emlrt_marshallIn(const emlrtStack *sp, const mxArray *nullptr,
-                                 const char_T *identifier))[51];
+                                 const char_T *identifier))[50];
 
-static const mxArray *emlrt_marshallOut(real_T u[51]);
+static const mxArray *emlrt_marshallOut(real_T u[50]);
 
 static real_T (*f_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src,
                                    const emlrtMsgIdentifier *msgId))[30];
 
 /* Function Definitions */
 static real_T (*b_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u,
-                                   const emlrtMsgIdentifier *parentId))[51]
+                                   const emlrtMsgIdentifier *parentId))[50]
 {
-  real_T(*y)[51];
+  real_T(*y)[50];
   y = e_emlrt_marshallIn(sp, emlrtAlias(u), parentId);
   emlrtDestroyArray(&u);
   return y;
@@ -69,24 +69,24 @@ static real_T (*d_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u,
 }
 
 static real_T (*e_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src,
-                                   const emlrtMsgIdentifier *msgId))[51]
+                                   const emlrtMsgIdentifier *msgId))[50]
 {
-  static const int32_T dims = 51;
-  real_T(*ret)[51];
+  static const int32_T dims = 50;
+  real_T(*ret)[50];
   int32_T i;
   boolean_T b = false;
   emlrtCheckVsBuiltInR2012b((emlrtConstCTX)sp, msgId, src, "double", false, 1U,
                             (const void *)&dims, &b, &i);
-  ret = (real_T(*)[51])emlrtMxGetData(src);
+  ret = (real_T(*)[50])emlrtMxGetData(src);
   emlrtDestroyArray(&src);
   return ret;
 }
 
 static real_T (*emlrt_marshallIn(const emlrtStack *sp, const mxArray *nullptr,
-                                 const char_T *identifier))[51]
+                                 const char_T *identifier))[50]
 {
   emlrtMsgIdentifier thisId;
-  real_T(*y)[51];
+  real_T(*y)[50];
   thisId.fIdentifier = (const char_T *)identifier;
   thisId.fParent = NULL;
   thisId.bParentIsCell = false;
@@ -95,19 +95,14 @@ static real_T (*emlrt_marshallIn(const emlrtStack *sp, const mxArray *nullptr,
   return y;
 }
 
-static const mxArray *emlrt_marshallOut(real_T u[51])
+static const mxArray *emlrt_marshallOut(real_T u[50])
 {
   static const int32_T i = 0;
-  static const int32_T i1 = 51;
+  static const int32_T i1 = 50;
   const mxArray *m;
   const mxArray *y;
-  void *existingData;
   y = NULL;
   m = emlrtCreateNumericArray(1, (const void *)&i, mxDOUBLE_CLASS, mxREAL);
-  existingData = emlrtMxGetData((mxArray *)m);
-  if (existingData != (void *)&u[0]) {
-    emlrtFreeMex(existingData);
-  }
   emlrtMxSetData((mxArray *)m, &u[0]);
   emlrtSetDimensions((mxArray *)m, &i1, 1);
   emlrtAssign(&y, m);
@@ -135,11 +130,11 @@ void wrapper_grad_api(const mxArray *const prhs[2], const mxArray **plhs)
       NULL, /* tls */
       NULL  /* prev */
   };
-  real_T(*grad)[51];
-  real_T(*u)[51];
+  real_T(*grad)[50];
+  real_T(*u)[50];
   real_T(*params)[30];
   st.tls = emlrtRootTLSGlobal;
-  grad = (real_T(*)[51])mxMalloc(sizeof(real_T[51]));
+  grad = (real_T(*)[50])mxMalloc(sizeof(real_T[50]));
   /* Marshall function inputs */
   u = emlrt_marshallIn(&st, emlrtAlias(prhs[0]), "u");
   params = c_emlrt_marshallIn(&st, emlrtAlias(prhs[1]), "params");

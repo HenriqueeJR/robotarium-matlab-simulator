@@ -21,7 +21,7 @@
 #include <string.h>
 
 /* Function Declarations */
-real_T wrapper_cost(const emlrtStack *sp, const real_T u[51],
+real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
                     const real_T params[30]);
 
 /* End of code generation (wrapper_cost.h) */

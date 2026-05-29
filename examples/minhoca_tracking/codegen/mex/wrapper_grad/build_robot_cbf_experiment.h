@@ -21,13 +21,7 @@
 #include <string.h>
 
 /* Function Declarations */
-real_T calc_corridor_penalty(const real_T pt[2], const real_T blocks[16],
-                             real_T grad_P[2]);
-
-real_T get_blocks_P(const real_T pt[2], const real_T blocks[16], real_T *P_v,
-                    real_T *P_g, real_T *P_c);
-
-void get_exact_grad(const real_T pt[2], const real_T blocks[16], real_T P_a,
-                    real_T P_v, real_T P_g, real_T P_c, real_T gP_min[2]);
+real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[50],
+                                  const real_T params[30], real_T grad[50]);
 
 /* End of code generation (build_robot_cbf_experiment.h) */
