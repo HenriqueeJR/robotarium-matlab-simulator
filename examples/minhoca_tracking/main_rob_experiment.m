@@ -79,10 +79,10 @@ blocks_params = [b1_xmin; b1_xmax; b1_ymin; b1_ymax; ...
 r_rob      = 0.15;            
 eta_safe   = 1e6;           
 gamma_safe = 0.1;  
-eta_term   = 200.0;
+eta_term   = 900.0;
 eta_eq     = 500.0;
-mu_safe    = 1e4;
-kappa_s    = 800;
+mu_safe    = 2e4;
+kappa_s    = 1500;
 
 w_init = zeros(nW,1);
 w_init(2*N+1:2*N+2) = [-1.0; -0.5];
