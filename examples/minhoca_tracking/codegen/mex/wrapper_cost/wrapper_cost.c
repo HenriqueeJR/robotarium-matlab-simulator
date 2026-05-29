@@ -312,10 +312,9 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
   __m128d r;
   emlrtStack st;
   emxArray_real_T *X_hist;
-  real_T b_a[24];
   real_T f_y[24];
   real_T g_y[24];
-  real_T varargin_1[4];
+  real_T h_y[24];
   real_T x_k[3];
   real_T x_next[3];
   real_T a[2];
@@ -328,30 +327,18 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
   real_T r3[2];
   real_T xs[2];
   real_T y[2];
+  real_T P_c_n;
   real_T P_k;
   real_T P_next;
-  real_T Pa;
-  real_T Pc;
-  real_T Pg;
-  real_T Pv;
   real_T Ts;
-  real_T b_Pa;
-  real_T b_Pc;
-  real_T b_Pg;
-  real_T b_Pv;
-  real_T b_tmp2;
+  real_T b_a;
   real_T b_xs_tmp;
-  real_T c_Pa;
-  real_T c_Pc;
-  real_T c_Pg;
-  real_T c_Pv;
+  real_T c_a;
   real_T cost;
-  real_T d_Pa;
+  real_T d;
   real_T l_u;
   real_T tmp2;
-  real_T v_n;
   real_T v_s_tmp;
-  real_T w_n;
   real_T w_s;
   real_T xs_tmp;
   real_T *X_hist_data;
@@ -364,7 +351,7 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
   st.tls = sp->tls;
   emlrtHeapReferenceStackEnterFcnR2012b((emlrtConstCTX)sp);
   st.site = &emlrtRSI;
-  /*  Desempacotamento do vetor params (Tamanho: 30) */
+  /*  Desempacotamento limpo do vetor params (Tamanho: 30) */
   x_k[0] = params[0];
   x_k[1] = params[1];
   x_k[2] = params[2];
@@ -473,8 +460,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
   if (!(params[7] + 1.0 >= 0.0)) {
     emlrtNonNegativeCheckR2012b(params[7] + 1.0, &c_emlrtDCI, &st);
   }
-  Pa = (int32_T)muDoubleScalarFloor(params[7] + 1.0);
-  if (params[7] + 1.0 != Pa) {
+  d = (int32_T)muDoubleScalarFloor(params[7] + 1.0);
+  if (params[7] + 1.0 != d) {
     emlrtIntegerCheckR2012b(params[7] + 1.0, &b_emlrtDCI, &st);
   }
   emxInit_real_T(&st, &X_hist, &b_emlrtRTEI);
@@ -495,14 +482,17 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
   X_hist_data[1] = params[1];
   X_hist_data[2] = params[2];
   l_u = 0.0;
-  /*  Parâmetro h para a Generalized P2S-HSD (suavização) */
+  /*  Parâmetro h para a Generalized P2S-HSD */
   /*  ===================================================================== */
-  /*  FORWARD PASS (Dinâmica com CBF - Mantém a Distância Exata Quadratica) */
+  /*  FORWARD PASS (Dinâmica com CBF - Mínimo Exato) */
   /*  ===================================================================== */
   i1 = (int32_T)params[7];
   emlrtForLoopVectorCheckR2021a(1.0, 1.0, params[7], mxDOUBLE_CLASS,
                                 (int32_T)params[7], &emlrtRTEI, &st);
   for (n = 0; n < i1; n++) {
+    real_T varargin_1[4];
+    real_T v_n;
+    real_T w_n;
     int32_T b_k;
     boolean_T exitg1;
     idx = (int32_T)(((uint32_T)n << 1) + 1U);
@@ -515,11 +505,11 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
       emlrtDynamicBoundsCheckR2012b(idx, 1, i, &f_emlrtBCI, &st);
     }
     w_n = u[idx - 1];
-    P_k = get_exact_blocks_P(&x_k[0], &params[10], &cost, &tmp2, &b_tmp2);
+    P_k = get_exact_blocks_P(&x_k[0], &params[10], &cost, &tmp2, &P_next);
     varargin_1[0] = P_k;
     varargin_1[1] = cost;
     varargin_1[2] = tmp2;
-    varargin_1[3] = b_tmp2;
+    varargin_1[3] = P_next;
     if (!muDoubleScalarIsNaN(P_k)) {
       idx = 1;
     } else {
@@ -549,11 +539,11 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
     x_next[0] = x_k[0] + cost * muDoubleScalarCos(x_k[2]);
     x_next[1] = x_k[1] + cost * muDoubleScalarSin(x_k[2]);
     x_next[2] = x_k[2] + Ts * w_n;
-    P_next = get_exact_blocks_P(&x_next[0], &params[10], &cost, &tmp2, &b_tmp2);
+    P_next = get_exact_blocks_P(&x_next[0], &params[10], &cost, &tmp2, &P_c_n);
     varargin_1[0] = P_next;
     varargin_1[1] = cost;
     varargin_1[2] = tmp2;
-    varargin_1[3] = b_tmp2;
+    varargin_1[3] = P_c_n;
     if (!muDoubleScalarIsNaN(P_next)) {
       idx = 1;
     } else {
@@ -579,14 +569,14 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
         }
       }
     }
-    b_tmp2 = muDoubleScalarMax(0.0, (1.0 - params[6]) * -P_k - (-P_next));
-    P_next = x_k[0] - xs_tmp;
-    P_k = x_k[1] - b_xs_tmp;
+    P_k = muDoubleScalarMax(0.0, (1.0 - params[6]) * -P_k - (-P_next));
+    b_a = x_k[0] - xs_tmp;
+    c_a = x_k[1] - b_xs_tmp;
     tmp2 = v_n - v_s_tmp;
     cost = w_n - w_s;
-    l_u = (l_u + ((5.0 * (P_next * P_next + P_k * P_k) + 0.5 * (tmp2 * tmp2)) +
+    l_u = (l_u + ((5.0 * (b_a * b_a + c_a * c_a) + 0.5 * (tmp2 * tmp2)) +
                   cost * cost)) +
-          params[5] * (b_tmp2 * b_tmp2);
+          params[5] * (P_k * P_k);
     x_k[0] = x_next[0];
     x_k[1] = x_next[1];
     x_k[2] = x_next[2];
@@ -606,7 +596,7 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
   /*  ===================================================================== */
   /*  TERMINAL E BACKWARD PASS */
   /*  ===================================================================== */
-  if (params[7] + 1.0 != Pa) {
+  if (params[7] + 1.0 != d) {
     emlrtIntegerCheckR2012b(params[7] + 1.0, &emlrtDCI, &st);
   }
   if (((int32_T)(params[7] + 1.0) < 1) ||
@@ -632,158 +622,34 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
   r = _mm_sub_pd(_mm_loadu_pd(&params[3]), b_r1);
   _mm_storeu_pd(&e_y[0], _mm_mul_pd(r, r));
   /*  ===================================================================== */
-  /*  GEOFENCE PONTO A PONTO USANDO GENERALIZED P2S-HSD */
+  /*  GEOFENCE PONTO A PONTO (Generalized P2S-HSD Incondicional) */
+  /*  A matemática resolve sozinha se o gradiente deve atuar ou zerar. */
   /*  ===================================================================== */
-  /*  =========================================================================
-   */
-  /*  FUNÇÃO AUXILIAR: Penalidade Ponto a Ponto (Regra do Produto com P2S) */
-  /*  =========================================================================
-   */
-  varargin_1[0] = params[10];
-  varargin_1[1] = params[11];
-  varargin_1[2] = params[12];
-  varargin_1[3] = params[13];
-  P_next = get_single_block_p2s(xs, varargin_1, a);
-  varargin_1[0] = params[14];
-  varargin_1[1] = params[15];
-  varargin_1[2] = params[16];
-  varargin_1[3] = params[17];
-  P_k = get_single_block_p2s(xs, varargin_1, a);
-  varargin_1[0] = params[18];
-  varargin_1[1] = params[19];
-  varargin_1[2] = params[20];
-  varargin_1[3] = params[21];
-  v_n = get_single_block_p2s(xs, varargin_1, a);
-  varargin_1[0] = params[22];
-  varargin_1[1] = params[23];
-  varargin_1[2] = params[24];
-  varargin_1[3] = params[25];
-  w_n = get_single_block_p2s(xs, varargin_1, a);
-  /*  Multiplicatório P(p) da união */
-  /*  =========================================================================
-   */
-  /*  FUNÇÃO AUXILIAR: Penalidade Ponto a Ponto (Regra do Produto com P2S) */
-  /*  =========================================================================
-   */
-  varargin_1[0] = params[10];
-  varargin_1[1] = params[11];
-  varargin_1[2] = params[12];
-  varargin_1[3] = params[13];
-  Pa = get_single_block_p2s(r1, varargin_1, a);
-  varargin_1[0] = params[14];
-  varargin_1[1] = params[15];
-  varargin_1[2] = params[16];
-  varargin_1[3] = params[17];
-  Ts = get_single_block_p2s(r1, varargin_1, a);
-  varargin_1[0] = params[18];
-  varargin_1[1] = params[19];
-  varargin_1[2] = params[20];
-  varargin_1[3] = params[21];
-  xs_tmp = get_single_block_p2s(r1, varargin_1, a);
-  varargin_1[0] = params[22];
-  varargin_1[1] = params[23];
-  varargin_1[2] = params[24];
-  varargin_1[3] = params[25];
-  b_xs_tmp = get_single_block_p2s(r1, varargin_1, a);
-  /*  Multiplicatório P(p) da união */
-  /*  =========================================================================
-   */
-  /*  FUNÇÃO AUXILIAR: Penalidade Ponto a Ponto (Regra do Produto com P2S) */
-  /*  =========================================================================
-   */
-  varargin_1[0] = params[10];
-  varargin_1[1] = params[11];
-  varargin_1[2] = params[12];
-  varargin_1[3] = params[13];
-  b_Pa = get_single_block_p2s(r2, varargin_1, a);
-  varargin_1[0] = params[14];
-  varargin_1[1] = params[15];
-  varargin_1[2] = params[16];
-  varargin_1[3] = params[17];
-  Pv = get_single_block_p2s(r2, varargin_1, a);
-  varargin_1[0] = params[18];
-  varargin_1[1] = params[19];
-  varargin_1[2] = params[20];
-  varargin_1[3] = params[21];
-  Pg = get_single_block_p2s(r2, varargin_1, a);
-  varargin_1[0] = params[22];
-  varargin_1[1] = params[23];
-  varargin_1[2] = params[24];
-  varargin_1[3] = params[25];
-  Pc = get_single_block_p2s(r2, varargin_1, a);
-  /*  Multiplicatório P(p) da união */
-  /*  =========================================================================
-   */
-  /*  FUNÇÃO AUXILIAR: Penalidade Ponto a Ponto (Regra do Produto com P2S) */
-  /*  =========================================================================
-   */
-  varargin_1[0] = params[10];
-  varargin_1[1] = params[11];
-  varargin_1[2] = params[12];
-  varargin_1[3] = params[13];
-  c_Pa = get_single_block_p2s(r3, varargin_1, a);
-  varargin_1[0] = params[14];
-  varargin_1[1] = params[15];
-  varargin_1[2] = params[16];
-  varargin_1[3] = params[17];
-  b_Pv = get_single_block_p2s(r3, varargin_1, a);
-  varargin_1[0] = params[18];
-  varargin_1[1] = params[19];
-  varargin_1[2] = params[20];
-  varargin_1[3] = params[21];
-  b_Pg = get_single_block_p2s(r3, varargin_1, a);
-  varargin_1[0] = params[22];
-  varargin_1[1] = params[23];
-  varargin_1[2] = params[24];
-  varargin_1[3] = params[25];
-  b_Pc = get_single_block_p2s(r3, varargin_1, a);
-  /*  Multiplicatório P(p) da união */
-  /*  =========================================================================
-   */
-  /*  FUNÇÃO AUXILIAR: Penalidade Ponto a Ponto (Regra do Produto com P2S) */
-  /*  =========================================================================
-   */
-  varargin_1[0] = params[10];
-  varargin_1[1] = params[11];
-  varargin_1[2] = params[12];
-  varargin_1[3] = params[13];
-  d_Pa = get_single_block_p2s(&params[3], varargin_1, a);
-  varargin_1[0] = params[14];
-  varargin_1[1] = params[15];
-  varargin_1[2] = params[16];
-  varargin_1[3] = params[17];
-  c_Pv = get_single_block_p2s(&params[3], varargin_1, a);
-  varargin_1[0] = params[18];
-  varargin_1[1] = params[19];
-  varargin_1[2] = params[20];
-  varargin_1[3] = params[21];
-  c_Pg = get_single_block_p2s(&params[3], varargin_1, a);
-  varargin_1[0] = params[22];
-  varargin_1[1] = params[23];
-  varargin_1[2] = params[24];
-  varargin_1[3] = params[25];
-  c_Pc = get_single_block_p2s(&params[3], varargin_1, a);
-  /*  Multiplicatório P(p) da união */
+  P_next = calc_point_p2s_penalty(xs, &params[10], a);
+  P_c_n = calc_point_p2s_penalty(r1, &params[10], a);
+  P_k = calc_point_p2s_penalty(r2, &params[10], a);
+  b_a = calc_point_p2s_penalty(r3, &params[10], a);
+  c_a = calc_point_p2s_penalty(&params[3], &params[10], a);
   /*  Pesos de suavização  */
   cost = u[0];
   for (k = 0; k < 24; k++) {
     tmp2 = cost;
     cost = u[(k + 1) << 1];
-    b_a[k] = cost - tmp2;
+    f_y[k] = cost - tmp2;
   }
   for (k = 0; k <= 22; k += 2) {
-    r = _mm_loadu_pd(&b_a[k]);
-    _mm_storeu_pd(&f_y[k], _mm_mul_pd(r, r));
+    r = _mm_loadu_pd(&f_y[k]);
+    _mm_storeu_pd(&g_y[k], _mm_mul_pd(r, r));
   }
   cost = u[1];
   for (k = 0; k < 24; k++) {
-    b_tmp2 = cost;
+    tmp2 = cost;
     cost = u[((k + 1) << 1) + 1];
-    b_a[k] = cost - b_tmp2;
+    f_y[k] = cost - tmp2;
   }
   for (k = 0; k <= 22; k += 2) {
-    r = _mm_loadu_pd(&b_a[k]);
-    _mm_storeu_pd(&g_y[k], _mm_mul_pd(r, r));
+    r = _mm_loadu_pd(&f_y[k]);
+    _mm_storeu_pd(&h_y[k], _mm_mul_pd(r, r));
   }
   /*  Custo total */
   cost = ((((((((l_u + params[26] * sumColumnB(y)) +
@@ -792,12 +658,12 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
                params[29] *
                    (((sumColumnB(b_y) + sumColumnB(c_y)) + sumColumnB(d_y)) +
                     sumColumnB(e_y))) +
-              params[28] * (P_next * P_k * v_n * w_n)) +
-             params[28] * (Pa * Ts * xs_tmp * b_xs_tmp)) +
-            params[28] * (b_Pa * Pv * Pg * Pc)) +
-           params[28] * (c_Pa * b_Pv * b_Pg * b_Pc)) +
-          params[28] * (d_Pa * c_Pv * c_Pg * c_Pc)) +
-         (0.2 * b_sumColumnB(f_y) + 0.2 * b_sumColumnB(g_y));
+              params[28] * P_next) +
+             params[28] * P_c_n) +
+            params[28] * P_k) +
+           params[28] * b_a) +
+          params[28] * c_a) +
+         (0.2 * b_sumColumnB(g_y) + 0.2 * b_sumColumnB(h_y));
   emlrtHeapReferenceStackLeaveFcnR2012b((emlrtConstCTX)sp);
   return cost;
 }

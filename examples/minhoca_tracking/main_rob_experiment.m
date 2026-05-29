@@ -53,8 +53,8 @@ end
 X_k = posicoes_iniciais;  
 
 % Waypoints (Vermelho -> Verde -> Verde -> Ciano)
-x_ref = [1,  -0.25,  1.20,  1.20;  
-         0.35,  0.25,  0.25, -0.25];
+x_ref = [1.20,  -0.25,  1.20,  1.20;  
+         -0.25,  0.25,  0.25, -0.25];
 
 % =========================================================================
 % DEFINIÇÃO DOS BLOCOS DO CORREDOR (x_min, x_max, y_min, y_max) [Metros]
@@ -78,10 +78,10 @@ blocks_params = [b1_xmin; b1_xmax; b1_ymin; b1_ymax; ...
 % =========================================================================
 r_rob      = 0.15;            
 eta_safe   = 1e6;           
-gamma_safe = 0.5;  
+gamma_safe = 0.1;  
 eta_term   = 200.0;
 eta_eq     = 500.0;
-mu_safe    = 0;
+mu_safe    = 1e4;
 kappa_s    = 800;
 
 w_init = zeros(nW,1);

@@ -1,6 +1,6 @@
 function [cost, grad] = build_robot_cbf_experiment(W, params)
     %#codegen
-    % Desempacotamento do vetor params (Tamanho: 30)
+    % Desempacotamento limpo do vetor params (Tamanho: 30)
     x_k           = params(1:3);      
     x_ref         = params(4:5);      
     eta_safe      = params(6);        
@@ -36,11 +36,11 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     X_hist(:, 1) = x_k;
     l_u = 0; 
     
-    % Parâmetro h para a Generalized P2S-HSD (suavização)
-    h_p2s = 0.00001; 
+    % Parâmetro h para a Generalized P2S-HSD
+    h_p2s = 0.05; 
     
     % =====================================================================
-    % FORWARD PASS (Dinâmica com CBF - Mantém a Distância Exata Quadratica)
+    % FORWARD PASS (Dinâmica com CBF - Mínimo Exato)
     % =====================================================================
     for n = 1:N
         v_n = u((n-1)*2 + 1);
@@ -86,22 +86,23 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
                              sum((r4 - r3).^2));
                          
     % =====================================================================
-    % GEOFENCE PONTO A PONTO USANDO GENERALIZED P2S-HSD
+    % GEOFENCE PONTO A PONTO (Generalized P2S-HSD Incondicional)
+    % A matemática resolve sozinha se o gradiente deve atuar ou zerar.
     % =====================================================================
     [P_xs, gP_xs] = calc_point_p2s_penalty(xs, blocks_params, h_p2s);
-    cost = cost + (mu_safe) * P_xs;
+    cost = cost + mu_safe * P_xs;
     
     [P_r1, gP_r1] = calc_point_p2s_penalty(r1, blocks_params, h_p2s);
-    cost = cost + (mu_safe) * P_r1;
+    cost = cost + mu_safe * P_r1;
     
     [P_r2, gP_r2] = calc_point_p2s_penalty(r2, blocks_params, h_p2s);
-    cost = cost + (mu_safe) * P_r2;
+    cost = cost + mu_safe * P_r2;
     
     [P_r3, gP_r3] = calc_point_p2s_penalty(r3, blocks_params, h_p2s);
-    cost = cost + (mu_safe) * P_r3;
+    cost = cost + mu_safe * P_r3;
     
     [P_r4, ~] = calc_point_p2s_penalty(r4, blocks_params, h_p2s);
-    cost = cost + (mu_safe) * P_r4; 
+    cost = cost + mu_safe * P_r4; 
     
     if nargout == 1, return; end
     
@@ -122,11 +123,11 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     grad_us(1) = grad_us(1) + 2 * eta_eq * Ts^2 * v_s;
     grad_us(2) = grad_us(2) + 2 * eta_eq * Ts^2 * w_s;
     
-    % Acumulação dos Gradientes Nodais
-    if P_xs > 0, grad_xs = grad_xs + (mu_safe) * gP_xs; end
-    if P_r1 > 0, grad_r1 = grad_r1 + (mu_safe) * gP_r1; end
-    if P_r2 > 0, grad_r2 = grad_r2 + (mu_safe) * gP_r2; end
-    if P_r3 > 0, grad_r3 = grad_r3 + (mu_safe) * gP_r3; end
+    % Acumulação Incondicional dos Gradientes Nodais
+    grad_xs = grad_xs + mu_safe * gP_xs;
+    grad_r1 = grad_r1 + mu_safe * gP_r1;
+    grad_r2 = grad_r2 + mu_safe * gP_r2;
+    grad_r3 = grad_r3 + mu_safe * gP_r3;
     
     for n = N:-1:1
         x_n = X_hist(:, n);       
@@ -187,14 +188,12 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
 end
 
 % =========================================================================
-% FUNÇÃO BASE: Generalized P2S-HSD (Função Phi e sua Derivada)
+% FUNÇÃO BASE: Generalized P2S-HSD (Phi e Phi')
 % =========================================================================
 function [val, grad] = phi_func(s, h)
     %#codegen
     if s >= 0
-        % Função Phi(s)
         val = (s^3) / (2 * (s + h));
-        % Derivada Analítica Phi'(s)
         grad = (s^2 * (2*s + 3*h)) / (2 * (s + h)^2);
     else
         val = 0;
@@ -203,35 +202,44 @@ function [val, grad] = phi_func(s, h)
 end
 
 % =========================================================================
-% FUNÇÃO AUXILIAR: P2S-HSD para UM Polítopo Convexo (Bloco 2D)
+% FUNÇÃO AUXILIAR: P2S-HSD para UM Polítopo Convexo
 % =========================================================================
 function [P, gP] = get_single_block_p2s(pt, blk, h)
     %#codegen
     x_pos = pt(1); y_pos = pt(2);
     
-    % Distâncias para as 4 faces do bloco (a_i^T p - b_i <= 0)
-    s1 = blk(1) - x_pos; % Face esquerda
-    s2 = x_pos - blk(2); % Face direita
-    s3 = blk(3) - y_pos; % Face inferior
-    s4 = y_pos - blk(4); % Face superior
+    s1 = blk(1) - x_pos; 
+    s2 = x_pos - blk(2); 
+    s3 = blk(3) - y_pos; 
+    s4 = y_pos - blk(4); 
     
     [v1, g1] = phi_func(s1, h);
     [v2, g2] = phi_func(s2, h);
     [v3, g3] = phi_func(s3, h);
     [v4, g4] = phi_func(s4, h);
     
-    % Weak Generalized P2S-HSD: (1/N) * Sum(Phi)
-    % Como temos 4 faces (N=4), multiplicamos por 1/4 = 0.25
     P = 0.25 * (v1 + v2 + v3 + v4);
     
     gP = zeros(2,1);
-    % Derivadas da cadeia considerando a normal de cada face
     gP(1) = 0.25 * (-g1 + g2);
     gP(2) = 0.25 * (-g3 + g4);
 end
 
 % =========================================================================
-% FUNÇÃO AUXILIAR: Penalidade Ponto a Ponto (Regra do Produto com P2S)
+% FUNÇÃO AUXILIAR: Mínimo Suave Base (Smooth Min)
+% =========================================================================
+function [M, gM] = smooth_min_func(a, b, ga, gb)
+    %#codegen
+    epsilon = 1e-4; % Fator de suavização Numérica
+    diff = a - b;
+    delta = sqrt(diff^2 + epsilon);
+    M = 0.5 * (a + b - delta);
+    % O gradiente repassa perfeitamente a direção correspondente ao menor valor
+    gM = 0.5 * (ga + gb - (diff / delta) * (ga - gb));
+end
+
+% =========================================================================
+% FUNÇÃO AUXILIAR: Penalidade Ponto a Ponto (Smooth Min Incondicional)
 % =========================================================================
 function [P_total, grad_P] = calc_point_p2s_penalty(pt, blocks, h)
     %#codegen
@@ -240,21 +248,15 @@ function [P_total, grad_P] = calc_point_p2s_penalty(pt, blocks, h)
     [Pg, gPg] = get_single_block_p2s(pt, blocks(9:12), h);
     [Pc, gPc] = get_single_block_p2s(pt, blocks(13:16), h);
     
-    % Multiplicatório P(p) da união
-    P_total = Pa * Pv * Pg * Pc;
-    grad_P = zeros(2,1);
+    [P1, g1] = smooth_min_func(Pa, Pv, gPa, gPv);
+    [P2, g2] = smooth_min_func(Pg, Pc, gPg, gPc);
+    [P_total, grad_P] = smooth_min_func(P1, P2, g1, g2);
     
-    if P_total > 0
-        % Gradiente da Regra do Produto (Analítico e Suave)
-        grad_P = gPa * (Pv * Pg * Pc) + ...
-                 gPv * (Pa * Pg * Pc) + ...
-                 gPg * (Pa * Pv * Pc) + ...
-                 gPc * (Pa * Pv * Pg);
-    end
+    % NENHUM CLAMPING AQUI. Deixamos a matemática suave cuidar dos gradientes.
 end
 
 % =========================================================================
-% FUNÇÕES DO CBF (Avaliação Exata Mantida para Freios Corretos da Dinâmica)
+% FUNÇÕES DO CBF (Mantidas usando Mínimo Exato para Barreira Precisa)
 % =========================================================================
 function [P_a, P_v, P_g, P_c] = get_exact_blocks_P(pt, blocks)
     %#codegen

@@ -21,10 +21,10 @@
 #include <string.h>
 
 /* Function Declarations */
+real_T calc_point_p2s_penalty(const real_T pt[2], const real_T blocks[16],
+                              real_T grad_P[2]);
+
 real_T get_exact_blocks_P(const real_T pt[2], const real_T blocks[16],
                           real_T *P_v, real_T *P_g, real_T *P_c);
-
-real_T get_single_block_p2s(const real_T pt[2], const real_T blk[4],
-                            real_T gP[2]);
 
 /* End of code generation (build_robot_cbf_experiment.h) */
