@@ -5,7 +5,8 @@ clear; clc; close all;
 
 %% 1. Setup the Robotarium object
 Nr = 1;
-posicoes_iniciais = [-1.3; -0.5; 0]; 
+posicoes_iniciais = [1.2; -0.5; pi/2]; 
+%posicoes_iniciais = [-1.2; -0.5; 0]; 
 r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', posicoes_iniciais);
 
 %% 2. Configurações da Simulação e do NMPC
@@ -17,10 +18,9 @@ n_steps = round(T_sim_total / Ts);
 v_max = 0.1; v_min = 0.0;
 w_max = 1.5;  w_min = -1.5;
 
-% CORREÇÃO 1: Tamanho do vetor ajustado para 2D (Tiramos o theta do xs)
+
 nW = 2*N + 10; 
 
-% CORREÇÃO 2: Limites ajustados (removidos os +- 2*pi)
 W_max = [repmat([v_max; w_max], N, 1);
          3; 2;           % xs
          v_max; w_max;   % us
@@ -53,8 +53,10 @@ end
 X_k = posicoes_iniciais;  
 
 % Waypoints (Vermelho -> Verde -> Verde -> Ciano)
-x_ref = [1.20,  -0.25,  1.20,  1.20;  
-         -0.5,  0.25,  0.25, -0.25];
+x_ref = [-1.3,  -1.3,  1.20,  1.20;  
+         -0.5,  -0.5,  0.25, -0.25];
+% x_ref = [1.2,  -1.3,  1.20,  1.20;  
+%          -0.5,  -0.5,  0.25, -0.25];
 
 % =========================================================================
 % DEFINIÇÃO DOS BLOCOS DO CORREDOR (x_min, x_max, y_min, y_max) [Metros]
@@ -70,11 +72,12 @@ b4_xmin = 0.9;  b4_xmax = 1.4;  b4_ymin = -0.75; b4_ymax = 0.1+0.2;
 
 b1_ymax_encolhido = b1_ymax - 0.15;
 b2_xmax_encolhido = b2_xmax - 0.15;
-b3_ymin_encolhido = b3_ymin + 0.1;
+b2_xmin_encolhido = b2_xmin + 0.05;
+b3_ymin_encolhido = b3_ymin + 0.09;
 b4_xmin_encolhido = b4_xmin + 0.15;
 
 blocks_params = [b1_xmin; b1_xmax; b1_ymin; b1_ymax_encolhido; ...
-                 b2_xmin; b2_xmax_encolhido; b2_ymin; b2_ymax; ...
+                 b2_xmin_encolhido; b2_xmax_encolhido; b2_ymin; b2_ymax; ...
                  b3_xmin; b3_xmax; b3_ymin_encolhido; b3_ymax; ...
                  b4_xmin_encolhido; b4_xmax; b4_ymin; b4_ymax];
 
@@ -83,8 +86,8 @@ blocks_params = [b1_xmin; b1_xmax; b1_ymin; b1_ymax_encolhido; ...
 % =========================================================================
 r_rob      = 0.15;            
 eta_safe   = 1e5;           
-gamma_safe = 0.2;  
-eta_term   = 200.0;
+gamma_safe = 0.3;  
+eta_term   = 800.0;
 eta_eq     = 500.0;
 mu_safe    = 1e4;
 kappa_s    = 900;
