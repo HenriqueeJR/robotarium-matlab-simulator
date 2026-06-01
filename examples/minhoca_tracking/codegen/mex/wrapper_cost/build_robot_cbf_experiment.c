@@ -118,7 +118,7 @@ real_T calc_point_p2s_penalty(const real_T pt[2], const real_T blocks[16],
    */
   /*  Fator de suavização Numérica */
   P_total = a - b;
-  b_delta = muDoubleScalarSqrt(P_total * P_total + 0.0001);
+  b_delta = muDoubleScalarSqrt(P_total * P_total + 1.0E-10);
   g1 = 0.5 * ((a + b) - b_delta);
   /*  O gradiente repassa perfeitamente a direção correspondente ao menor valor
    */
@@ -137,7 +137,7 @@ real_T calc_point_p2s_penalty(const real_T pt[2], const real_T blocks[16],
    */
   /*  Fator de suavização Numérica */
   P_total = b_a - v3;
-  delta = muDoubleScalarSqrt(P_total * P_total + 0.0001);
+  delta = muDoubleScalarSqrt(P_total * P_total + 1.0E-10);
   v3 = 0.5 * ((b_a + v3) - delta);
   /*  O gradiente repassa perfeitamente a direção correspondente ao menor valor
    */
@@ -155,7 +155,7 @@ real_T calc_point_p2s_penalty(const real_T pt[2], const real_T blocks[16],
    */
   /*  Fator de suavização Numérica */
   delta = g1 - v3;
-  b_delta = muDoubleScalarSqrt(delta * delta + 0.0001);
+  b_delta = muDoubleScalarSqrt(delta * delta + 1.0E-10);
   P_total = 0.5 * ((g1 + v3) - b_delta);
   /*  O gradiente repassa perfeitamente a direção correspondente ao menor valor
    */

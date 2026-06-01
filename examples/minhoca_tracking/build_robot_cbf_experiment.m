@@ -230,7 +230,7 @@ end
 % =========================================================================
 function [M, gM] = smooth_min_func(a, b, ga, gb)
     %#codegen
-    epsilon = 1e-4; % Fator de suavização Numérica
+    epsilon = 1e-10; % Fator de suavização Numérica
     diff = a - b;
     delta = sqrt(diff^2 + epsilon);
     M = 0.5 * (a + b - delta);
