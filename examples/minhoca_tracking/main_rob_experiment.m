@@ -54,7 +54,7 @@ X_k = posicoes_iniciais;
 
 % Waypoints (Vermelho -> Verde -> Verde -> Ciano)
 x_ref = [1.20,  -0.25,  1.20,  1.20;  
-         -0.25,  0.25,  0.25, -0.25];
+         -0.5,  0.25,  0.25, -0.25];
 
 % =========================================================================
 % DEFINIÇÃO DOS BLOCOS DO CORREDOR (x_min, x_max, y_min, y_max) [Metros]
@@ -68,9 +68,12 @@ b3_xmin = 0.0;  b3_xmax = 1.4;  b3_ymin = 0.1;   b3_ymax = 0.5;
 % 4. Bloco Ciano
 b4_xmin = 0.9;  b4_xmax = 1.4;  b4_ymin = -0.75; b4_ymax = 0.1;
 
+b2_xmax_expandido = b2_xmax - 0.15;
+b3_ymin_expandido = b3_ymin - 0.05;
+
 blocks_params = [b1_xmin; b1_xmax; b1_ymin; b1_ymax; ...
-                 b2_xmin; b2_xmax; b2_ymin; b2_ymax; ...
-                 b3_xmin; b3_xmax; b3_ymin; b3_ymax; ...
+                 b2_xmin; b2_xmax_expandido; b2_ymin; b2_ymax; ...
+                 b3_xmin; b3_xmax; b3_ymin_expandido; b3_ymax; ...
                  b4_xmin; b4_xmax; b4_ymin; b4_ymax];
 
 % =========================================================================
@@ -79,7 +82,7 @@ blocks_params = [b1_xmin; b1_xmax; b1_ymin; b1_ymax; ...
 r_rob      = 0.15;            
 eta_safe   = 1e6;           
 gamma_safe = 0.1;  
-eta_term   = 200.0;
+eta_term   = 400.0;
 eta_eq     = 500.0;
 mu_safe    = 1e4;
 kappa_s    = 800;
