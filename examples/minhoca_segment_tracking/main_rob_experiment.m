@@ -68,25 +68,19 @@ b2_xmin = -0.5; b2_xmax = 0.0;  b2_ymin = -0.75; b2_ymax = 0.50;
 % 3. Bloco Verde
 b3_xmin = 0.0;  b3_xmax = 1.4;  b3_ymin = 0.1;   b3_ymax = 0.5;
 % 4. Bloco Ciano
-b4_xmin = 0.9;  b4_xmax = 1.4;  b4_ymin = -0.75; b4_ymax = 0.1+0.2;
+b4_xmin = 0.9;  b4_xmax = 1.4;  b4_ymin = -0.75; b4_ymax = 0.1;
 
-b1_ymax_encolhido = b1_ymax - 0.05;
-b2_xmax_encolhido = b2_xmax - 0.1;
-b2_xmin_encolhido = b2_xmin + 0.05;
-b3_ymin_encolhido = b3_ymin + 0.09;
-b4_xmin_encolhido = b4_xmin + 0.15;
-
-blocks_params = [b1_xmin; b1_xmax; b1_ymin; b1_ymax_encolhido; ...
-                 b2_xmin; b2_xmax_encolhido; b2_ymin; b2_ymax; ...
-                 b3_xmin; b3_xmax; b3_ymin_encolhido; b3_ymax; ...
-                 b4_xmin; b4_xmax; b4_ymin; b4_ymax];
+r_rob      = 0.15;
+blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
+                 b2_xmin+r_rob; b2_xmax-r_rob; b2_ymin; b2_ymax; ...
+                 b3_xmin-r_rob; b3_xmax; b3_ymin+r_rob; b3_ymax; ...
+                 b4_xmin+r_rob; b4_xmax; b4_ymin; b4_ymax+r_rob];
 
 % =========================================================================
 % PESOS DO NMPC
-% =========================================================================
-r_rob      = 0.15;            
+% =========================================================================            
 eta_safe   = 1e3;           
-gamma_safe = 0.4;  
+gamma_safe = 0.8;  
 eta_term   = 1200.0;
 eta_eq     = 500.0;
 mu_safe    = 1e4;
