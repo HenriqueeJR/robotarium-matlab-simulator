@@ -22,21 +22,21 @@ static const mxArray *c_emlrtMexFcnResolvedFunctionsI(void)
 {
   const mxArray *nameCaptureInfo;
   const char_T *data[5] = {
-      "789cdd55cd4ac34010de8a8a827f270f8ae00b287a51f466fda9162ca2155a8dc44d3235"
-      "a1bbd9b0bbb1ad07f1e05d5f4cf0a688075fc127d0fea54d1742c462"
-      "44e732f9f2cdee3733d9cca2d4de7e0a2134815a363fd6f2e36d3cd5f603a8d7543ea5c4"
-      "a57ac3d1101aec5917f0776d6f32574255b6808b2974565a8c3a2e76",
-      "65bee601e22018b904abc9941c027987c25118e41a88ee84a80e68508de74d1bccf2914f"
-      "11b745374312069d7e9c47d43b18d30fd5d47ea871819ef74dbd60ff"
-      "b118bd80af70ec79c075930919d63fef537f3852bfc558cc370874f51efbd4f3148c94b8"
-      "803fdd3edb5cd78e0570a1d9e07247db025196ccd3383398c4dcf1a9",
-      "5e113a2356e8cd02c59260634138d4275832ae4115538f80d0ea87d26626d625c766d971"
-      "2fb4704717695c3f27bf589feabbf1234d3ffbfcdaa492d2bbb97f98"
-      "4b522fb0dfd2ab46ecf7d5f3391da137a5f0cb2756ba78582c14d60a4b956c2e0b193bbf"
-      "bddbcde32046272e0f148193daffbfffe7377dd63713535fc01bbe43",
-      "2cbd99b96e1a251daaf55cea779bdbbe3a7f6b8ebff5a9771da9d7cbfffcf78deef0224d"
-      "6e0e7dbc273bd76f5f9e4693d40becbfcf75524c97d6760fb756f22b"
-      "1ba5d5cce5c955eeb896fefb73fd134d28f347",
+      "789ced55bd4ec3301076112006fe26062636262a584065a3fc15242a548ad44250ea2457"
+      "12d58e23dba185015899782f261e0009265e8017a07f69534b511085"
+      "2010b75cbe7c677f7717e78c527b072984d034ead8c264c74f75f16cd78fa04153f99412"
+      "971a0c47636874605dc0df77bdc95c090dd9012ea6d05b6931eab8d8",
+      "95c54b0f1007c1c805586da6ea10283a148ec220df42742744f5408b6a3d6fda60d68e7c"
+      "8ab82dfa199230e8f5a31251ef684c3f5453fba1c6057ade27f582fd"
+      "2763f402beceb1e701d74d266458bf32a4fe78a47e87b1986f10e8eb3d0ea9e729182971"
+      "017fba7db6b9ae1d0be042b3c1e58eb605a22699a771663089b9e353",
+      "bd2e7446acd09b258a25c1c69270a84fb0645c8306a61e01a1350fa5cd4cac4b8ecd9ae3"
+      "9e6be18ea6695c3f673e589feafbf1136d7ff7f6d4a692d25b7c7ebc"
+      "49522fb09fd26b44ecf7d1f33917a137abf02b2756b65c28974a99d2727d3fbf0fbb7671"
+      "3bd7cfe33046272e0f148193daffafffe7b743d6371f535fc01bbe43",
+      "2cbd9db96e1a551d1acd5c9a779bdbbd3a7f6a8ebf0ca9771da937c87ffff78dee709a26"
+      "3787929eebaf8b0fff731d7dfd5c27e56c35932b6cad165737aa6bbb"
+      "172757f9e3cbecef9febefb265f3cf",
       ""};
   nameCaptureInfo = NULL;
   emlrtNameCaptureMxArrayR2016a(&data[0], 3128U, &nameCaptureInfo);
@@ -89,7 +89,7 @@ mxArray *emlrtMexFcnProperties(void)
           "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
           "simulator\\examples\\minhoca_tracking\\wrapper_cost.m"));
   emlrtSetField(xEntryPoints, 0, "TimeStamp",
-                emlrtMxCreateDoubleScalar(740101.74987268518));
+                emlrtMxCreateDoubleScalar(740136.65832175931));
   emlrtSetField(xEntryPoints, 0, "Visible", emlrtMxCreateLogicalScalar(true));
   xResult =
       emlrtCreateStructMatrix(1, 1, 7, (const char_T **)&propFieldName[0]);

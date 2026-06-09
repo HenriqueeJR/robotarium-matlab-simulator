@@ -5,8 +5,8 @@ clear; clc; close all;
 
 %% 1. Setup the Robotarium object
 Nr = 1;
-posicoes_iniciais = [1.2; -0.5; pi/2]; 
-%posicoes_iniciais = [-1.2; -0.5; 0]; 
+%posicoes_iniciais = [1.2; -0.5; pi/2]; 
+posicoes_iniciais = [-1.2; -0.5; 0]; 
 r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', posicoes_iniciais);
 
 %% 2. Configurações da Simulação e do NMPC
@@ -53,10 +53,10 @@ end
 X_k = posicoes_iniciais;  
 
 % Waypoints (Vermelho -> Verde -> Verde -> Ciano)
-x_ref = [-1.3,  -1.3,  1.20,  1.20;  
-         -0.5,  -0.5,  0.25, -0.25];
-% x_ref = [1.2,  -1.3,  1.20,  1.20;  
+% x_ref = [-1.3,  -1.3,  1.20,  1.20;  
 %          -0.5,  -0.5,  0.25, -0.25];
+x_ref = [1.2,  -1.3,  1.20,  1.20;  
+         -0.5,  -0.5,  0.25, -0.25];
 
 % =========================================================================
 % DEFINIÇÃO DOS BLOCOS DO CORREDOR (x_min, x_max, y_min, y_max) [Metros]
