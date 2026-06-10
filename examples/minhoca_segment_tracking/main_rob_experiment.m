@@ -78,13 +78,12 @@ blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
 % =========================================================================
 % PESOS DO NMPC
 % =========================================================================            
-eta_safe   = 1e9;           
+eta_safe   = 1e3;           
 gamma_safe = 0.8;  
-eta_term   = 300.0;
+eta_term   = 1200.0;
 eta_eq     = 500.0;
 mu_safe    = 1e4;
 kappa_s    = 200;
-
 
 w_init = zeros(nW,1);
 w_init(2*N+1:2*N+2) = [-1.0; -0.5];
