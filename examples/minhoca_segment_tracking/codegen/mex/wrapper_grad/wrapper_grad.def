@@ -1,0 +1,12 @@
+LIBRARY wrapper_grad.mexw64
+EXPORTS
+mexFunction
+mexfilerequiredapiversion
+emlrtMexFcnProperties
+wrapper_grad
+wrapper_grad_initialize
+wrapper_grad_terminate
+wrapper_grad_atexit
+emxEnsureCapacity_real_T
+emxFree_real_T
+emxInit_real_T

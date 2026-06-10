@@ -21,10 +21,8 @@
 static emlrtRSInfo emlrtRSI = {
     3,              /* lineNo */
     "wrapper_grad", /* fcnName */
-    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
-    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
-    "tracking\\wra"
-    "pper_grad.m" /* pathName */
+    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
+    "simulator\\examples\\minhoca_tracking\\wrapper_grad.m" /* pathName */
 };
 
 /* Function Definitions */

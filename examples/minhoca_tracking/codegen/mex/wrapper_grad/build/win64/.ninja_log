@@ -1,14 +1,14 @@
-# ninja log v5
-0	109	8017187134088220	build/win64/wrapper_grad_data.o	9f0e0146ee2b380a
-12	123	8017187134198679	build/win64/rt_nonfinite.o	1d5a3234e9ef6ef4
-7	129	8017187134313806	build/win64/wrapper_grad_initialize.o	743310ddf974b254
-18	142	8017187134441820	build/win64/wrapper_grad_terminate.o	85025276c513d484
-26	147	8017187134441820	build/win64/sumMatrixIncludeNaN.o	f70c80ea9600b35c
-59	163	8017187134650561	build/win64/c_mexapi_version.o	7647b03c46fc0940
-33	169	8017187134715090	build/win64/wrapper_grad.o	b08ee2a639d7dfff
-44	172	8017187134715090	build/win64/_coder_wrapper_grad_api.o	f49f014565200ccd
-52	187	8017187134900733	build/win64/wrapper_grad_emxutil.o	f171968d61dcb21
-75	196	8017187134980671	build/win64/_coder_wrapper_grad_info.o	7b647158041a835
-84	204	8017187135070008	build/win64/_coder_wrapper_grad_mex.o	ed7e0c698b18697e
-67	366	8017187136692008	build/win64/build_robot_cbf_experiment.o	9312b818bbb11cf6
-368	462	8017187137634056	wrapper_grad_mex.mexw64	2d5969be030b6d6e
+# ninja log v7
+0	219	8027262791034861	build/win64/wrapper_grad_data.o	1f15d19408f06d19
+34	224	8027262791364883	build/win64/sumMatrixIncludeNaN.o	769d20489acbc31b
+11	225	8027262791136974	build/win64/wrapper_grad_terminate.o	6921d6f13d738cb8
+30	226	8027262791287553	build/win64/_coder_wrapper_grad_mex.o	498f7fdd7666731c
+4	227	8027262791075001	build/win64/rt_nonfinite.o	9c288ad71fcd29d5
+43	229	8027262791444636	build/win64/_coder_wrapper_grad_info.o	40f80a7c5b1c1525
+6	230	8027262791095011	build/win64/wrapper_grad_initialize.o	a27c00295337bfe
+26	231	8027262791287553	build/win64/_coder_wrapper_grad_api.o	72c9de158e726dac
+17	232	8027262791198329	build/win64/wrapper_grad.o	6f3e5bebc1434ed6
+38	233	8027262791404936	build/win64/wrapper_grad_emxutil.o	d19904cb80344c30
+48	235	8027262791504641	build/win64/c_mexapi_version.o	d036f06c7adda053
+22	339	8027262791247573	build/win64/build_robot_cbf_experiment.o	18c12c7c51794672
+340	433	8027262794437171	wrapper_grad_mex.mexw64	df5c3af25ae93f0a
