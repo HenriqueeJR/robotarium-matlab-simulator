@@ -52,7 +52,7 @@ X_k = posicoes_iniciais;
 
 % Waypoints (Vermelho -> Verde -> Verde -> Ciano)
 % x_ref = [-1.3,  -1.3,  1.20,  1.20;  
-%          -0.5,  -0.5,  0.25, -0.25];
+%          -0.6,  -0.5,  0.25, -0.25];
 x_ref = [1.2,  -1.3,  1.20,  1.20;  
          -0.5,  -0.5,  0.25, -0.25];
 
@@ -84,7 +84,6 @@ eta_term   = 300.0;
 eta_eq     = 500.0;
 mu_safe    = 1e4;
 kappa_s    = 200;
-
 
 w_init = zeros(nW,1);
 w_init(2*N+1:2*N+2) = [-1.0; -0.5];
