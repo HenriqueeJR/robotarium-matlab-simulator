@@ -40,14 +40,13 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     h_p2s = 0.05; 
     
     % =====================================================================
-    % FORWARD PASS (Dinâmica com CBF - Mínimo Exato)
+    % FORWARD PASS (Dinâmica com CBF - Ponto a Ponto Suavizado)
     % =====================================================================
     for n = 1:N
         v_n = u((n-1)*2 + 1);
         w_n = u((n-1)*2 + 2);
         
-        [P_a_k, P_v_k, P_g_k, P_c_k] = get_exact_blocks_P(x_k(1:2), blocks_params);
-        P_k = min([P_a_k, P_v_k, P_g_k, P_c_k]);
+        [P_k, ~] = calc_point_p2s_penalty(x_k(1:2), blocks_params, h_p2s);
         h_k = -P_k; 
         
         x_next = zeros(3,1);
@@ -55,8 +54,7 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
         x_next(2) = x_k(2) + Ts * v_n * sin(x_k(3));
         x_next(3) = x_k(3) + Ts * w_n;
         
-        [P_a_n, P_v_n, P_g_n, P_c_n] = get_exact_blocks_P(x_next(1:2), blocks_params);
-        P_next = min([P_a_n, P_v_n, P_g_n, P_c_n]);
+        [P_next, ~] = calc_point_p2s_penalty(x_next(1:2), blocks_params, h_p2s);
         h_next = -P_next;
         
         g_corridor = (1 - gamma_safe) * h_k - h_next;
@@ -77,6 +75,18 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     x_N = X_hist(:, N+1);
     cost = cost + eta_term * sum((x_N(1:2) - xs).^2);
     cost = cost + eta_eq * Ts^2 * (v_s^2 + w_s^2);
+
+% =====================================================================
+    % CUSTO DE ALINHAMENTO DIRECIONAL (Look-ahead xs -> r1)
+    % =====================================================================
+    eta_dir = 100; % Peso do alinhamento direcional
+    dx_dir = r1(1) - xs(1);
+    dy_dir = r1(2) - xs(2);
+    
+    % Recompensa o robô por apontar a frente na direção do trecho xs -> r1
+    cost_dir = -eta_dir * (cos(x_N(3))*dx_dir + sin(x_N(3))*dy_dir);
+    cost = cost + cost_dir;
+
     
     r0 = xs; 
     r4 = x_ref;     
@@ -86,23 +96,23 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
                              sum((r4 - r3).^2));
                          
     % =====================================================================
-    % GEOFENCE PONTO A PONTO (Generalized P2S-HSD Incondicional)
-    % A matemática resolve sozinha se o gradiente deve atuar ou zerar.
+    % GEOFENCE DE SEGMENTOS (Contenção Convexa Suavizada)
     % =====================================================================
-    [P_xs, gP_xs] = calc_point_p2s_penalty(xs, blocks_params, h_p2s);
-    cost = cost + mu_safe * P_xs;
+    % Segmento 1: xs até r1
+    [P_seg0, gP_seg0_xs, gP_seg0_r1] = calc_segment_p2s_penalty(xs, r1, blocks_params, h_p2s);
+    cost = cost + mu_safe * P_seg0;
     
-    [P_r1, gP_r1] = calc_point_p2s_penalty(r1, blocks_params, h_p2s);
-    cost = cost + mu_safe * P_r1;
+    % Segmento 2: r1 até r2
+    [P_seg1, gP_seg1_r1, gP_seg1_r2] = calc_segment_p2s_penalty(r1, r2, blocks_params, h_p2s);
+    cost = cost + mu_safe * P_seg1;
     
-    [P_r2, gP_r2] = calc_point_p2s_penalty(r2, blocks_params, h_p2s);
-    cost = cost + mu_safe * P_r2;
+    % Segmento 3: r2 até r3
+    [P_seg2, gP_seg2_r2, gP_seg2_r3] = calc_segment_p2s_penalty(r2, r3, blocks_params, h_p2s);
+    cost = cost + mu_safe * P_seg2;
     
-    [P_r3, gP_r3] = calc_point_p2s_penalty(r3, blocks_params, h_p2s);
-    cost = cost + mu_safe * P_r3;
-    
-    [P_r4, ~] = calc_point_p2s_penalty(r4, blocks_params, h_p2s);
-    cost = cost + mu_safe * P_r4; 
+    % Segmento 4: r3 até r4 (x_ref)
+    [P_seg3, gP_seg3_r3, ~] = calc_segment_p2s_penalty(r3, r4, blocks_params, h_p2s);
+    cost = cost + mu_safe * P_seg3; 
     
     if nargout == 1, return; end
     
@@ -111,23 +121,42 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     grad_xs = zeros(2, 1);
     grad_us = zeros(2, 1);
     
+    % (Inicialização existente de p_n)
     p_n = zeros(3, 1);
     p_n(1:2) = p_n(1:2) + 2 * eta_term * (x_N(1:2) - xs);
     
+    % --- NOVO: Gradiente da orientação terminal (theta_N) ---
+    p_n(3) = p_n(3) - eta_dir * (-sin(x_N(3))*dx_dir + cos(x_N(3))*dy_dir);
+    
+    % (Inicialização existente de grad_xs e grad_r1)
     grad_xs = grad_xs - 2 * eta_term * (x_N(1:2) - xs);
-    grad_xs = grad_xs - 2 * kappa_s * (r1 - r0);
+    
+    % ---> LINHA QUE ESTAVA FALTANDO (Derivada da mola para xs) <---
+    grad_xs = grad_xs - 2 * kappa_s * (r1 - r0); 
+    
     grad_r1 = 2 * kappa_s * (2*r1 - r0 - r2); 
+    
+    % --- NOVO: Gradientes distribuídos para xs e r1 ---
+    grad_xs(1) = grad_xs(1) + eta_dir * cos(x_N(3));
+    grad_xs(2) = grad_xs(2) + eta_dir * sin(x_N(3));
+    
+    grad_r1(1) = grad_r1(1) - eta_dir * cos(x_N(3));
+    grad_r1(2) = grad_r1(2) - eta_dir * sin(x_N(3));
+    
+    % O restante continua igual...
     grad_r2 = 2 * kappa_s * (2*r2 - r1 - r3); 
     grad_r3 = 2 * kappa_s * (2*r3 - r2 - r4);
     
     grad_us(1) = grad_us(1) + 2 * eta_eq * Ts^2 * v_s;
     grad_us(2) = grad_us(2) + 2 * eta_eq * Ts^2 * w_s;
     
-    % Acumulação Incondicional dos Gradientes Nodais
-    grad_xs = grad_xs + mu_safe * gP_xs;
-    grad_r1 = grad_r1 + mu_safe * gP_r1;
-    grad_r2 = grad_r2 + mu_safe * gP_r2;
-    grad_r3 = grad_r3 + mu_safe * gP_r3;
+    % Acumulação Incondicional dos Gradientes de Segmento
+    grad_xs = grad_xs + mu_safe * gP_seg0_xs;
+    
+    % Cada ponto r intermediário acumula gradiente das duas retas conectadas a ele
+    grad_r1 = grad_r1 + mu_safe * (gP_seg0_r1 + gP_seg1_r1);
+    grad_r2 = grad_r2 + mu_safe * (gP_seg1_r2 + gP_seg2_r2);
+    grad_r3 = grad_r3 + mu_safe * (gP_seg2_r3 + gP_seg3_r3);
     
     for n = N:-1:1
         x_n = X_hist(:, n);       
@@ -142,12 +171,11 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
         grad_us(1) = grad_us(1) - 2 * R_v * (v_n - v_s);
         grad_us(2) = grad_us(2) - 2 * R_w * (w_n - w_s);
         
-        [P_a_k, P_v_k, P_g_k, P_c_k] = get_exact_blocks_P(x_n(1:2), blocks_params);
-        P_k = min([P_a_k, P_v_k, P_g_k, P_c_k]);
+        % Avaliação Suavizada Ponto a Ponto para CBF
+        [P_k, gP_k] = calc_point_p2s_penalty(x_n(1:2), blocks_params, h_p2s);
         h_k = -P_k;
         
-        [P_a_n, P_v_n, P_g_n, P_c_n] = get_exact_blocks_P(x_next(1:2), blocks_params);
-        P_next = min([P_a_n, P_v_n, P_g_n, P_c_n]);
+        [P_next, gP_next] = calc_point_p2s_penalty(x_next(1:2), blocks_params, h_p2s);
         h_next = -P_next;
         
         g_corridor = (1 - gamma_safe) * h_k - h_next;
@@ -156,9 +184,6 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
         grad_x_next_cbf = [0; 0; 0];
         
         if g_corridor > 0
-            gP_k = get_exact_grad(x_n(1:2), blocks_params, P_a_k, P_v_k, P_g_k, P_c_k);
-            gP_next = get_exact_grad(x_next(1:2), blocks_params, P_a_n, P_v_n, P_g_n, P_c_n);
-            
             gh_k = -gP_k;
             gh_next = -gP_next;
             
@@ -230,7 +255,7 @@ end
 % =========================================================================
 function [M, gM] = smooth_min_func(a, b, ga, gb)
     %#codegen
-    epsilon = 1e-4; % Fator de suavização Numérica
+    epsilon = 1e-10; % Fator de suavização Numérica
     diff = a - b;
     delta = sqrt(diff^2 + epsilon);
     M = 0.5 * (a + b - delta);
@@ -239,7 +264,41 @@ function [M, gM] = smooth_min_func(a, b, ga, gb)
 end
 
 % =========================================================================
-% FUNÇÃO AUXILIAR: Penalidade Ponto a Ponto (Smooth Min Incondicional)
+% FUNÇÃO AUXILIAR: Penalidade de Segmento (Contenção Convexa Suavizada)
+% =========================================================================
+function [Cost, grad_pa, grad_pb] = calc_segment_p2s_penalty(pa, pb, blocks, h)
+    %#codegen
+    [Pa1, gPa1] = get_single_block_p2s(pa, blocks(1:4), h);
+    [Pa2, gPa2] = get_single_block_p2s(pa, blocks(5:8), h);
+    [Pa3, gPa3] = get_single_block_p2s(pa, blocks(9:12), h);
+    [Pa4, gPa4] = get_single_block_p2s(pa, blocks(13:16), h);
+    
+    [Pb1, gPb1] = get_single_block_p2s(pb, blocks(1:4), h);
+    [Pb2, gPb2] = get_single_block_p2s(pb, blocks(5:8), h);
+    [Pb3, gPb3] = get_single_block_p2s(pb, blocks(9:12), h);
+    [Pb4, gPb4] = get_single_block_p2s(pb, blocks(13:16), h);
+    
+    C1 = Pa1 + Pb1;
+    C2 = Pa2 + Pb2;
+    C3 = Pa3 + Pb3;
+    C4 = Pa4 + Pb4;
+    
+    gC1 = [gPa1; gPb1];
+    gC2 = [gPa2; gPb2];
+    gC3 = [gPa3; gPb3];
+    gC4 = [gPa4; gPb4];
+    
+    [M12, gM12] = smooth_min_func(C1, C2, gC1, gC2);
+    [M34, gM34] = smooth_min_func(C3, C4, gC3, gC4);
+    
+    [Cost, gTotal] = smooth_min_func(M12, M34, gM12, gM34);
+    
+    grad_pa = gTotal(1:2);
+    grad_pb = gTotal(3:4);
+end
+
+% =========================================================================
+% FUNÇÃO AUXILIAR: Penalidade Ponto a Ponto (Smooth Min para a CBF)
 % =========================================================================
 function [P_total, grad_P] = calc_point_p2s_penalty(pt, blocks, h)
     %#codegen
@@ -251,59 +310,4 @@ function [P_total, grad_P] = calc_point_p2s_penalty(pt, blocks, h)
     [P1, g1] = smooth_min_func(Pa, Pv, gPa, gPv);
     [P2, g2] = smooth_min_func(Pg, Pc, gPg, gPc);
     [P_total, grad_P] = smooth_min_func(P1, P2, g1, g2);
-    
-    % NENHUM CLAMPING AQUI. Deixamos a matemática suave cuidar dos gradientes.
-end
-
-% =========================================================================
-% FUNÇÕES DO CBF (Mantidas usando Mínimo Exato para Barreira Precisa)
-% =========================================================================
-function [P_a, P_v, P_g, P_c] = get_exact_blocks_P(pt, blocks)
-    %#codegen
-    x_pos = pt(1); y_pos = pt(2);
-    
-    v_a1 = max(0, blocks(1) - x_pos); v_a2 = max(0, x_pos - blocks(2));
-    v_a3 = max(0, blocks(3) - y_pos); v_a4 = max(0, y_pos - blocks(4));
-    P_a = v_a1^2 + v_a2^2 + v_a3^2 + v_a4^2;
-    
-    v_v1 = max(0, blocks(5) - x_pos); v_v2 = max(0, x_pos - blocks(6));
-    v_v3 = max(0, blocks(7) - y_pos); v_v4 = max(0, y_pos - blocks(8));
-    P_v = v_v1^2 + v_v2^2 + v_v3^2 + v_v4^2;
-    
-    v_g1 = max(0, blocks(9) - x_pos); v_g2 = max(0, x_pos - blocks(10));
-    v_g3 = max(0, blocks(11)- y_pos); v_g4 = max(0, y_pos - blocks(12));
-    P_g = v_g1^2 + v_g2^2 + v_g3^2 + v_g4^2;
-    
-    v_c1 = max(0, blocks(13)- x_pos); v_c2 = max(0, x_pos - blocks(14));
-    v_c3 = max(0, blocks(15)- y_pos); v_c4 = max(0, y_pos - blocks(16));
-    P_c = v_c1^2 + v_c2^2 + v_c3^2 + v_c4^2;
-end
-
-function gP_min = get_exact_grad(pt, blocks, P_a, P_v, P_g, P_c)
-    %#codegen
-    x_pos = pt(1); y_pos = pt(2);
-    P_min = min([P_a, P_v, P_g, P_c]);
-    gP_min = zeros(2,1);
-    
-    if P_min == P_a
-        if blocks(1) - x_pos > 0, gP_min(1) = gP_min(1) - 2*(blocks(1) - x_pos); end
-        if x_pos - blocks(2) > 0, gP_min(1) = gP_min(1) + 2*(x_pos - blocks(2)); end
-        if blocks(3) - y_pos > 0, gP_min(2) = gP_min(2) - 2*(blocks(3) - y_pos); end
-        if y_pos - blocks(4) > 0, gP_min(2) = gP_min(2) + 2*(y_pos - blocks(4)); end
-    elseif P_min == P_v
-        if blocks(5) - x_pos > 0, gP_min(1) = gP_min(1) - 2*(blocks(5) - x_pos); end
-        if x_pos - blocks(6) > 0, gP_min(1) = gP_min(1) + 2*(x_pos - blocks(6)); end
-        if blocks(7) - y_pos > 0, gP_min(2) = gP_min(2) - 2*(blocks(7) - y_pos); end
-        if y_pos - blocks(8) > 0, gP_min(2) = gP_min(2) + 2*(y_pos - blocks(8)); end
-    elseif P_min == P_g
-        if blocks(9) - x_pos > 0, gP_min(1) = gP_min(1) - 2*(blocks(9) - x_pos); end
-        if x_pos - blocks(10)> 0, gP_min(1) = gP_min(1) + 2*(x_pos - blocks(10)); end
-        if blocks(11)- y_pos > 0, gP_min(2) = gP_min(2) - 2*(blocks(11)- y_pos); end
-        if y_pos - blocks(12)> 0, gP_min(2) = gP_min(2) + 2*(y_pos - blocks(12)); end
-    else
-        if blocks(13)- x_pos > 0, gP_min(1) = gP_min(1) - 2*(blocks(13)- x_pos); end
-        if x_pos - blocks(14)> 0, gP_min(1) = gP_min(1) + 2*(x_pos - blocks(14)); end
-        if blocks(15)- y_pos > 0, gP_min(2) = gP_min(2) - 2*(blocks(15)- y_pos); end
-        if y_pos - blocks(16)> 0, gP_min(2) = gP_min(2) + 2*(y_pos - blocks(16)); end
-    end
 end

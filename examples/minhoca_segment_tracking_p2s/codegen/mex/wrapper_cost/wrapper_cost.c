@@ -24,9 +24,10 @@
 static emlrtRSInfo emlrtRSI = {
     3,              /* lineNo */
     "wrapper_cost", /* fcnName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\wrapper_cost."
-    "m" /* pathName */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\wrapper_cost.m" /* pathName */
 };
 
 static emlrtBCInfo emlrtBCI = {
@@ -36,20 +37,22 @@ static emlrtBCInfo emlrtBCI = {
     21,                           /* colNo */
     "X_hist",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtDCInfo emlrtDCI = {
     75,                           /* lineNo */
     21,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    1                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    1                                        /* checkKind */
 };
 
 static emlrtBCInfo b_emlrtBCI = {
@@ -59,10 +62,11 @@ static emlrtBCInfo b_emlrtBCI = {
     19,                           /* colNo */
     "X_hist",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtBCInfo c_emlrtBCI = {
@@ -72,39 +76,43 @@ static emlrtBCInfo c_emlrtBCI = {
     15,                           /* colNo */
     "X_hist",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtRTEInfo emlrtRTEI = {
     45,                           /* lineNo */
     13,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m" /* pName */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m" /* pName */
 };
 
 static emlrtDCInfo b_emlrtDCI = {
     35,                           /* lineNo */
     23,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    1                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    1                                        /* checkKind */
 };
 
 static emlrtDCInfo c_emlrtDCI = {
     35,                           /* lineNo */
     23,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    4                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    4                                        /* checkKind */
 };
 
 static emlrtBCInfo d_emlrtBCI = {
@@ -114,20 +122,22 @@ static emlrtBCInfo d_emlrtBCI = {
     14,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtDCInfo d_emlrtDCI = {
     21,                           /* lineNo */
     14,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    1                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    1                                        /* checkKind */
 };
 
 static emlrtBCInfo e_emlrtBCI = {
@@ -137,10 +147,11 @@ static emlrtBCInfo e_emlrtBCI = {
     17,                           /* colNo */
     "u",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtBCInfo f_emlrtBCI = {
@@ -150,20 +161,22 @@ static emlrtBCInfo f_emlrtBCI = {
     17,                           /* colNo */
     "u",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtDCInfo e_emlrtDCI = {
     23,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    1                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    1                                        /* checkKind */
 };
 
 static emlrtBCInfo g_emlrtBCI = {
@@ -173,10 +186,11 @@ static emlrtBCInfo g_emlrtBCI = {
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtBCInfo h_emlrtBCI = {
@@ -186,20 +200,22 @@ static emlrtBCInfo h_emlrtBCI = {
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtDCInfo f_emlrtDCI = {
     33,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    1                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    1                                        /* checkKind */
 };
 
 static emlrtBCInfo i_emlrtBCI = {
@@ -209,20 +225,22 @@ static emlrtBCInfo i_emlrtBCI = {
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtDCInfo g_emlrtDCI = {
     32,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    1                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    1                                        /* checkKind */
 };
 
 static emlrtBCInfo j_emlrtBCI = {
@@ -232,20 +250,22 @@ static emlrtBCInfo j_emlrtBCI = {
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtDCInfo h_emlrtDCI = {
     31,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    1                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    1                                        /* checkKind */
 };
 
 static emlrtBCInfo k_emlrtBCI = {
@@ -255,29 +275,32 @@ static emlrtBCInfo k_emlrtBCI = {
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    0                                        /* checkKind */
 };
 
 static emlrtDCInfo i_emlrtDCI = {
     22,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    1                  /* checkKind */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m", /* pName */
+    1                                        /* checkKind */
 };
 
 static emlrtRTEInfo b_emlrtRTEI = {
     35,                           /* lineNo */
     5,                            /* colNo */
     "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m" /* pName */
+    "C:\\Users\\henri\\Dropbox\\HenriqueJr\\codigos-"
+    "modelos\\robotarium\\robotarium-matlab-simulator\\examples\\minhoca_"
+    "segment_track"
+    "ing_p2s\\build_robot_cbf_experiment.m" /* pName */
 };
 
 /* Function Definitions */
@@ -308,11 +331,13 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
   real_T Ts;
   real_T a;
   real_T b_a;
+  real_T b_r1_tmp;
   real_T b_xs_tmp;
   real_T c_a;
   real_T cost;
   real_T d;
   real_T l_u;
+  real_T r1_tmp;
   real_T tmp2;
   real_T v_n;
   real_T v_s_tmp;
@@ -389,7 +414,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
     emlrtDynamicBoundsCheckR2012b((int32_T)(cost + 5.0), 1, 50, &j_emlrtBCI,
                                   &st);
   }
-  r1[0] = u[(int32_T)(cost + 5.0) - 1];
+  r1_tmp = u[(int32_T)(cost + 5.0) - 1];
+  r1[0] = r1_tmp;
   if ((cost + 5.0) + 1.0 != (int32_T)muDoubleScalarFloor((cost + 5.0) + 1.0)) {
     emlrtIntegerCheckR2012b((cost + 5.0) + 1.0, &h_emlrtDCI, &st);
   }
@@ -398,7 +424,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
     emlrtDynamicBoundsCheckR2012b((int32_T)((cost + 5.0) + 1.0), 1, 50,
                                   &j_emlrtBCI, &st);
   }
-  r1[1] = u[(int32_T)((cost + 5.0) + 1.0) - 1];
+  b_r1_tmp = u[(int32_T)((cost + 5.0) + 1.0) - 1];
+  r1[1] = b_r1_tmp;
   if (cost + 7.0 != (int32_T)muDoubleScalarFloor(cost + 7.0)) {
     emlrtIntegerCheckR2012b(cost + 7.0, &g_emlrtDCI, &st);
   }
@@ -488,8 +515,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
     c_a = x_k[1] - b_xs_tmp;
     tmp2 = v_n - v_s_tmp;
     cost = w_n - w_s;
-    l_u = (l_u + ((5.0 * (b_a * b_a + c_a * c_a) + 0.5 * (tmp2 * tmp2)) +
-                  cost * cost)) +
+    l_u = (l_u + ((0.5 * (b_a * b_a + c_a * c_a) + 0.05 * (tmp2 * tmp2)) +
+                  0.01 * (cost * cost))) +
           params[5] * (a * a);
     x_k[0] = x_next[0];
     x_k[1] = x_next[1];
@@ -518,11 +545,16 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
     emlrtDynamicBoundsCheckR2012b((int32_T)(params[7] + 1.0), 1,
                                   X_hist->size[1], &emlrtBCI, &st);
   }
-  r = _mm_loadu_pd(&X_hist_data[3 * ((int32_T)(params[7] + 1.0) - 1)]);
-  emxFree_real_T(&st, &X_hist);
+  loop_ub = 3 * ((int32_T)(params[7] + 1.0) - 1);
+  r = _mm_loadu_pd(&X_hist_data[loop_ub]);
   b_r1 = _mm_loadu_pd(&xs[0]);
   r = _mm_sub_pd(r, b_r1);
   _mm_storeu_pd(&y[0], _mm_mul_pd(r, r));
+  /*  ===================================================================== */
+  /*  CUSTO DE ALINHAMENTO DIRECIONAL (Look-ahead xs -> r1) */
+  /*  ===================================================================== */
+  /*  Peso do alinhamento direcional */
+  /*  Recompensa o robô por apontar a frente na direção do trecho xs -> r1 */
   b_r1 = _mm_loadu_pd(&r1[0]);
   r = _mm_loadu_pd(&xs[0]);
   r = _mm_sub_pd(b_r1, r);
@@ -568,9 +600,13 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
     _mm_storeu_pd(&h_y[n], _mm_mul_pd(r, r));
   }
   /*  Custo total */
-  cost = (((((((l_u + params[26] * sumColumnB(y)) +
-               params[27] * (params[8] * params[8]) *
-                   (v_s_tmp * v_s_tmp + w_s * w_s)) +
+  cost = X_hist_data[loop_ub + 2];
+  emxFree_real_T(sp, &X_hist);
+  cost = ((((((((l_u + params[26] * sumColumnB(y)) +
+                params[27] * (params[8] * params[8]) *
+                    (v_s_tmp * v_s_tmp + w_s * w_s)) +
+               -0.0 * (muDoubleScalarCos(cost) * (r1_tmp - xs_tmp) +
+                       muDoubleScalarSin(cost) * (b_r1_tmp - b_xs_tmp))) +
               params[29] *
                   (((sumColumnB(b_y) + sumColumnB(c_y)) + sumColumnB(d_y)) +
                    sumColumnB(e_y))) +

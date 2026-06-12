@@ -14,9 +14,9 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     mu_safe       = params(29);
     kappa_s       = params(30); 
     
-    Q_pos = 5;         
-    R_v = 0.5;          
-    R_w = 1;          
+    Q_pos = 0.5;         
+    R_v = 0.05;          
+    R_w = 0.01;          
     
     u  = W(1:2*N);
     xs = W(2*N+1 : 2*N+2); 
@@ -75,6 +75,18 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     x_N = X_hist(:, N+1);
     cost = cost + eta_term * sum((x_N(1:2) - xs).^2);
     cost = cost + eta_eq * Ts^2 * (v_s^2 + w_s^2);
+
+% =====================================================================
+    % CUSTO DE ALINHAMENTO DIRECIONAL (Look-ahead xs -> r1)
+    % =====================================================================
+    eta_dir = 0; % Peso do alinhamento direcional
+    dx_dir = r1(1) - xs(1);
+    dy_dir = r1(2) - xs(2);
+    
+    % Recompensa o robô por apontar a frente na direção do trecho xs -> r1
+    cost_dir = -eta_dir * (cos(x_N(3))*dx_dir + sin(x_N(3))*dy_dir);
+    cost = cost + cost_dir;
+
     
     r0 = xs; 
     r4 = x_ref;     
@@ -109,12 +121,29 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     grad_xs = zeros(2, 1);
     grad_us = zeros(2, 1);
     
+    % (Inicialização existente de p_n)
     p_n = zeros(3, 1);
     p_n(1:2) = p_n(1:2) + 2 * eta_term * (x_N(1:2) - xs);
     
+    % --- NOVO: Gradiente da orientação terminal (theta_N) ---
+    p_n(3) = p_n(3) - eta_dir * (-sin(x_N(3))*dx_dir + cos(x_N(3))*dy_dir);
+    
+    % (Inicialização existente de grad_xs e grad_r1)
     grad_xs = grad_xs - 2 * eta_term * (x_N(1:2) - xs);
-    grad_xs = grad_xs - 2 * kappa_s * (r1 - r0);
+    
+    % ---> LINHA QUE ESTAVA FALTANDO (Derivada da mola para xs) <---
+    grad_xs = grad_xs - 2 * kappa_s * (r1 - r0); 
+    
     grad_r1 = 2 * kappa_s * (2*r1 - r0 - r2); 
+    
+    % --- NOVO: Gradientes distribuídos para xs e r1 ---
+    grad_xs(1) = grad_xs(1) + eta_dir * cos(x_N(3));
+    grad_xs(2) = grad_xs(2) + eta_dir * sin(x_N(3));
+    
+    grad_r1(1) = grad_r1(1) - eta_dir * cos(x_N(3));
+    grad_r1(2) = grad_r1(2) - eta_dir * sin(x_N(3));
+    
+    % O restante continua igual...
     grad_r2 = 2 * kappa_s * (2*r2 - r1 - r3); 
     grad_r3 = 2 * kappa_s * (2*r3 - r2 - r4);
     

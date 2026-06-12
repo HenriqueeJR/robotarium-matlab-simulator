@@ -101,13 +101,8 @@ static const mxArray *emlrt_marshallOut(real_T u[50])
   static const int32_T i1 = 50;
   const mxArray *m;
   const mxArray *y;
-  void *existingData;
   y = NULL;
   m = emlrtCreateNumericArray(1, (const void *)&i, mxDOUBLE_CLASS, mxREAL);
-  existingData = emlrtMxGetData((mxArray *)m);
-  if (existingData != (void *)&u[0]) {
-    emlrtFreeMex(existingData);
-  }
   emlrtMxSetData((mxArray *)m, &u[0]);
   emlrtSetDimensions((mxArray *)m, &i1, 1);
   emlrtAssign(&y, m);
