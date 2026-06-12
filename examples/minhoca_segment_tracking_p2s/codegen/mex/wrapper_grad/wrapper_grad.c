@@ -874,13 +874,13 @@ void wrapper_grad(const emlrtStack *sp, const real_T u[50],
                                     &st);
     }
     loop_ub = 3 * ((int32_T)r1_tmp - 1);
-    grad_xs_tmp = X_hist_data[loop_ub] - xs_tmp;
+    grad_xs_tmp = 2.0 * (X_hist_data[loop_ub] - xs_tmp);
     grad_xs[0] -= grad_xs_tmp;
-    b_grad_xs_tmp = X_hist_data[loop_ub + 1] - b_xs_tmp;
+    b_grad_xs_tmp = 2.0 * (X_hist_data[loop_ub + 1] - b_xs_tmp);
     grad_xs[1] -= b_grad_xs_tmp;
-    grad_us_idx_0_tmp = 0.1 * (v_n - v_s);
+    grad_us_idx_0_tmp = v_n - v_s;
     grad_us_idx_0 -= grad_us_idx_0_tmp;
-    grad_us_idx_1_tmp = 0.02 * (u[(int32_T)b_u + 1] - w_s);
+    grad_us_idx_1_tmp = u[(int32_T)b_u + 1] - w_s;
     grad_us_idx_1 -= grad_us_idx_1_tmp;
     /*  Avaliação Suavizada Ponto a Ponto para CBF */
     cost_dir_tmp_tmp =

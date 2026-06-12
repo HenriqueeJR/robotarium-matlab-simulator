@@ -515,8 +515,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
     c_a = x_k[1] - b_xs_tmp;
     tmp2 = v_n - v_s_tmp;
     cost = w_n - w_s;
-    l_u = (l_u + ((0.5 * (b_a * b_a + c_a * c_a) + 0.05 * (tmp2 * tmp2)) +
-                  0.01 * (cost * cost))) +
+    l_u = (l_u + (((b_a * b_a + c_a * c_a) + 0.5 * (tmp2 * tmp2)) +
+                  0.5 * (cost * cost))) +
           params[5] * (a * a);
     x_k[0] = x_next[0];
     x_k[1] = x_next[1];

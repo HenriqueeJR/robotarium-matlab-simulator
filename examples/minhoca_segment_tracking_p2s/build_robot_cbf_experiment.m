@@ -14,9 +14,9 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     mu_safe       = params(29);
     kappa_s       = params(30); 
     
-    Q_pos = 0.5;         
-    R_v = 0.05;          
-    R_w = 0.01;          
+    Q_pos = 1;         
+    R_v = 0.5;          
+    R_w = 0.5;          
     
     u  = W(1:2*N);
     xs = W(2*N+1 : 2*N+2); 
