@@ -5,8 +5,8 @@ clear; clc; close all;
 
 %% 1. Setup the Robotarium object
 Nr = 1;
-posicoes_iniciais = [1.2; -0.5; pi/2]; 
-%posicoes_iniciais = [-1.2; -0.5; 0]; 
+%posicoes_iniciais = [1.2; -0.5; pi/2]; 
+posicoes_iniciais = [-1.2; -0.5; 0]; 
 r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', posicoes_iniciais);
 
 %% 2. Configurações da Simulação e do NMPC
@@ -48,10 +48,10 @@ end
 
 %% 4. Condições Iniciais e Parâmetros Geométricos
 X_k = posicoes_iniciais;  
-x_ref = [-1.3,  -1.3,  1.20,  1.20;  
-         -0.6,  -0.5,  0.25, -0.25];
-% x_ref = [1.2,  -1.3,  1.20,  1.20;  
-%          -0.5,  -0.5,  0.25, -0.25];
+% x_ref = [-1.3,  -1.3,  1.20,  1.20;  
+%          -0.6,  -0.5,  0.25, -0.25];
+x_ref = [1.2,  -1.3,  1.20,  1.20;  
+         -0.5,  -0.5,  0.25, -0.25];
 
 % =========================================================================
 % DEFINIÇÃO DOS BLOCOS DO CORREDOR
@@ -72,10 +72,10 @@ blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
 % =========================================================================            
 eta_safe   = 1e9;           
 gamma_safe = 0.5;  
-eta_term   = 2400.0;
-eta_eq     = 5000.0;
+eta_term   = 300.0;
+eta_eq     = 1000.0;
 mu_safe    = 1e4;
-kappa_s    = 300;
+kappa_s    = 200;
 
 w_init = zeros(nW,1);
 w_init(2*N+1:2*N+2) = [-1.0; -0.5];
