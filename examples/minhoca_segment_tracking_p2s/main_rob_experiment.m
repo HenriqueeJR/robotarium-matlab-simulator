@@ -48,8 +48,8 @@ end
 
 %% 4. Condições Iniciais e Parâmetros Geométricos
 X_k = posicoes_iniciais;  
-x_ref = [-1.3,  -1.3,  1.20,  1.20;  
-         -0.6,  -0.5,  0.25, -0.25];
+x_ref = [-1.3,  1.3;  
+         -0.6,  -0.5];
 % x_ref = [1.3,  -1.3,  1.20,  1.20;  
 %          -0.6,  -0.5,  0.25, -0.25];
 
@@ -86,6 +86,8 @@ w_init(2*N+5:2*N+6) = [-0.5; -0.25];
 w_init(2*N+7:2*N+8) = [0; 0.1]; 
 w_init(2*N+9:2*N+10)= [0.75; 0.35];
 
+target_block = blocks_params(1:4);
+
 hist_X = zeros(3, n_steps + 1);
 hist_X(:, 1) = X_k;
 
@@ -114,14 +116,14 @@ h_verm = fill(ax, [b2_xmin, b2_xmax, b2_xmax, b2_xmin], [b2_ymin, b2_ymin, b2_ym
 h_verde = fill(ax, [b3_xmin, b3_xmax, b3_xmax, b3_xmin], [b3_ymin, b3_ymin, b3_ymax, b3_ymax], 'g', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
 h_ciano = fill(ax, [b4_xmin, b4_xmax, b4_xmax, b4_xmin], [b4_ymin, b4_ymin, b4_ymax, b4_ymax], 'c', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
 
-plot(ax, [blocks_params(1), blocks_params(2), blocks_params(2), blocks_params(1), blocks_params(1)], ...
-         [blocks_params(3), blocks_params(3), blocks_params(4), blocks_params(4), blocks_params(3)], 'b--', 'LineWidth', 1.5);
-plot(ax, [blocks_params(5), blocks_params(6), blocks_params(6), blocks_params(5), blocks_params(5)], ...
-         [blocks_params(7), blocks_params(7), blocks_params(8), blocks_params(8), blocks_params(7)], 'r--', 'LineWidth', 1.5);
-plot(ax, [blocks_params(9), blocks_params(10), blocks_params(10), blocks_params(9), blocks_params(9)], ...
-         [blocks_params(11), blocks_params(11), blocks_params(12), blocks_params(12), blocks_params(11)], 'g--', 'LineWidth', 1.5);
-plot(ax, [blocks_params(13), blocks_params(14), blocks_params(14), blocks_params(13), blocks_params(13)], ...
-         [blocks_params(15), blocks_params(15), blocks_params(16), blocks_params(16), blocks_params(15)], 'c--', 'LineWidth', 1.5);
+% plot(ax, [blocks_params(1), blocks_params(2), blocks_params(2), blocks_params(1), blocks_params(1)], ...
+%          [blocks_params(3), blocks_params(3), blocks_params(4), blocks_params(4), blocks_params(3)], 'b--', 'LineWidth', 1.5);
+% plot(ax, [blocks_params(5), blocks_params(6), blocks_params(6), blocks_params(5), blocks_params(5)], ...
+%          [blocks_params(7), blocks_params(7), blocks_params(8), blocks_params(8), blocks_params(7)], 'r--', 'LineWidth', 1.5);
+% plot(ax, [blocks_params(9), blocks_params(10), blocks_params(10), blocks_params(9), blocks_params(9)], ...
+%          [blocks_params(11), blocks_params(11), blocks_params(12), blocks_params(12), blocks_params(11)], 'g--', 'LineWidth', 1.5);
+% plot(ax, [blocks_params(13), blocks_params(14), blocks_params(14), blocks_params(13), blocks_params(13)], ...
+%          [blocks_params(15), blocks_params(15), blocks_params(16), blocks_params(16), blocks_params(15)], 'c--', 'LineWidth', 1.5);
 
 h_ref = plot(ax, x_ref(1,1), x_ref(2,1), 'g*', 'MarkerSize', 20, 'LineWidth', 20);
 h_traj = plot(ax, X_k(1), X_k(2), 'black', 'LineWidth', 8); 
@@ -150,7 +152,9 @@ for k = 1:n_steps
     X_k = r.get_poses();
     hist_X(:, k+1) = X_k;
      
-    params = [X_k; x_ref_current; eta_safe; gamma_safe; N; Ts; r_rob; blocks_params; eta_term; eta_eq; mu_safe; kappa_min; kappa_extra; alpha_kappa];
+    params = [X_k; x_ref_current; eta_safe; gamma_safe; N; Ts; r_rob; ...
+        blocks_params; eta_term; eta_eq; mu_safe; kappa_min; ...
+        kappa_extra; alpha_kappa; target_block];
     
     t_start = tic;
     [w_opt, res_norm, iter_count] = solver.solve(w_init, params);
@@ -255,7 +259,7 @@ for k = 1:n_steps
     %% Gestão Inteligente de Waypoints
     if norm(X_k(1:2) - x_ref_current(1:2)) < 0.15
         disp(['Alvo alcançado em ', num2str(k * Ts), ' segundos!']);
-        break; % <--- COMENTADO PARA NÃO ABORTAR NOS WAYPOINTS INTERMEDIÁRIOS
+        %break; % <--- COMENTADO PARA NÃO ABORTAR NOS WAYPOINTS INTERMEDIÁRIOS
         
         idx_atual = find(vecnorm(x_ref - x_ref_current, 2, 1) < 1e-3, 1);
         
@@ -268,6 +272,25 @@ for k = 1:n_steps
             break;
         end
     end
+
+    % Encontra automaticamente o bloco alvo baseado na referência
+    target_block = zeros(4,1);
+    num_blocks = length(blocks_params) / 4;
+    
+    for b = 1:num_blocks
+        idx = (b-1)*4 + 1;
+        blk = blocks_params(idx:idx+3);
+        
+        % Verifica se x_ref_current está contido nos limites do bloco 'b'
+        % Adicionamos uma pequena margem (1e-3) para erros de ponto flutuante na borda
+        if x_ref_current(1) >= blk(1)-1e-3 && x_ref_current(1) <= blk(2)+1e-3 && ...
+           x_ref_current(2) >= blk(3)-1e-3 && x_ref_current(2) <= blk(4)+1e-3
+            
+            target_block = blk;
+            break; % Achou o bloco, interrompe a busca
+        end
+    end
+
     r.step();
 end
 

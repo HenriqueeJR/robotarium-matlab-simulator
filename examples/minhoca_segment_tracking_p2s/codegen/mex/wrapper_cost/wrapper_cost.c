@@ -32,7 +32,7 @@ static emlrtRSInfo emlrtRSI = {
 static emlrtBCInfo emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
-    88,                           /* lineNo */
+    89,                           /* lineNo */
     21,                           /* colNo */
     "X_hist",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -43,7 +43,7 @@ static emlrtBCInfo emlrtBCI = {
 };
 
 static emlrtDCInfo emlrtDCI = {
-    88,                           /* lineNo */
+    89,                           /* lineNo */
     21,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -55,7 +55,7 @@ static emlrtDCInfo emlrtDCI = {
 static emlrtBCInfo b_emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
-    80,                           /* lineNo */
+    81,                           /* lineNo */
     19,                           /* colNo */
     "X_hist",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -68,7 +68,7 @@ static emlrtBCInfo b_emlrtBCI = {
 static emlrtBCInfo c_emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
-    36,                           /* lineNo */
+    37,                           /* lineNo */
     15,                           /* colNo */
     "X_hist",                     /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -79,7 +79,7 @@ static emlrtBCInfo c_emlrtBCI = {
 };
 
 static emlrtRTEInfo emlrtRTEI = {
-    58,                           /* lineNo */
+    59,                           /* lineNo */
     13,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -88,7 +88,7 @@ static emlrtRTEInfo emlrtRTEI = {
 };
 
 static emlrtDCInfo b_emlrtDCI = {
-    35,                           /* lineNo */
+    36,                           /* lineNo */
     23,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -98,7 +98,7 @@ static emlrtDCInfo b_emlrtDCI = {
 };
 
 static emlrtDCInfo c_emlrtDCI = {
-    35,                           /* lineNo */
+    36,                           /* lineNo */
     23,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -110,7 +110,7 @@ static emlrtDCInfo c_emlrtDCI = {
 static emlrtBCInfo d_emlrtBCI = {
     1,                            /* iFirst */
     50,                           /* iLast */
-    21,                           /* lineNo */
+    22,                           /* lineNo */
     14,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -121,7 +121,7 @@ static emlrtBCInfo d_emlrtBCI = {
 };
 
 static emlrtDCInfo d_emlrtDCI = {
-    21,                           /* lineNo */
+    22,                           /* lineNo */
     14,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -131,19 +131,6 @@ static emlrtDCInfo d_emlrtDCI = {
 };
 
 static emlrtBCInfo e_emlrtBCI = {
-    -1,                           /* iFirst */
-    -1,                           /* iLast */
-    59,                           /* lineNo */
-    17,                           /* colNo */
-    "u",                          /* aName */
-    "build_robot_cbf_experiment", /* fName */
-    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
-    "bf_experiment.m", /* pName */
-    0                  /* checkKind */
-};
-
-static emlrtBCInfo f_emlrtBCI = {
     -1,                           /* iFirst */
     -1,                           /* iLast */
     60,                           /* lineNo */
@@ -156,8 +143,21 @@ static emlrtBCInfo f_emlrtBCI = {
     0                  /* checkKind */
 };
 
+static emlrtBCInfo f_emlrtBCI = {
+    -1,                           /* iFirst */
+    -1,                           /* iLast */
+    61,                           /* lineNo */
+    17,                           /* colNo */
+    "u",                          /* aName */
+    "build_robot_cbf_experiment", /* fName */
+    "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
+    "simulator\\examples\\minhoca_segment_tracking_p2s\\build_robot_c"
+    "bf_experiment.m", /* pName */
+    0                  /* checkKind */
+};
+
 static emlrtDCInfo e_emlrtDCI = {
-    23,                           /* lineNo */
+    24,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -169,7 +169,7 @@ static emlrtDCInfo e_emlrtDCI = {
 static emlrtBCInfo g_emlrtBCI = {
     1,                            /* iFirst */
     50,                           /* iLast */
-    23,                           /* lineNo */
+    24,                           /* lineNo */
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -182,7 +182,7 @@ static emlrtBCInfo g_emlrtBCI = {
 static emlrtBCInfo h_emlrtBCI = {
     1,                            /* iFirst */
     50,                           /* iLast */
-    33,                           /* lineNo */
+    34,                           /* lineNo */
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -193,7 +193,7 @@ static emlrtBCInfo h_emlrtBCI = {
 };
 
 static emlrtDCInfo f_emlrtDCI = {
-    33,                           /* lineNo */
+    34,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -205,7 +205,7 @@ static emlrtDCInfo f_emlrtDCI = {
 static emlrtBCInfo i_emlrtBCI = {
     1,                            /* iFirst */
     50,                           /* iLast */
-    32,                           /* lineNo */
+    33,                           /* lineNo */
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -216,7 +216,7 @@ static emlrtBCInfo i_emlrtBCI = {
 };
 
 static emlrtDCInfo g_emlrtDCI = {
-    32,                           /* lineNo */
+    33,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -228,7 +228,7 @@ static emlrtDCInfo g_emlrtDCI = {
 static emlrtBCInfo j_emlrtBCI = {
     1,                            /* iFirst */
     50,                           /* iLast */
-    31,                           /* lineNo */
+    32,                           /* lineNo */
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -239,7 +239,7 @@ static emlrtBCInfo j_emlrtBCI = {
 };
 
 static emlrtDCInfo h_emlrtDCI = {
-    31,                           /* lineNo */
+    32,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -251,7 +251,7 @@ static emlrtDCInfo h_emlrtDCI = {
 static emlrtBCInfo k_emlrtBCI = {
     1,                            /* iFirst */
     50,                           /* iLast */
-    22,                           /* lineNo */
+    23,                           /* lineNo */
     12,                           /* colNo */
     "W",                          /* aName */
     "build_robot_cbf_experiment", /* fName */
@@ -262,7 +262,7 @@ static emlrtBCInfo k_emlrtBCI = {
 };
 
 static emlrtDCInfo i_emlrtDCI = {
-    22,                           /* lineNo */
+    23,                           /* lineNo */
     12,                           /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -272,7 +272,7 @@ static emlrtDCInfo i_emlrtDCI = {
 };
 
 static emlrtRTEInfo b_emlrtRTEI = {
-    35,                           /* lineNo */
+    36,                           /* lineNo */
     5,                            /* colNo */
     "build_robot_cbf_experiment", /* fName */
     "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
@@ -282,7 +282,7 @@ static emlrtRTEInfo b_emlrtRTEI = {
 
 /* Function Definitions */
 real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
-                    const real_T params[32])
+                    const real_T params[36])
 {
   __m128d b_r1;
   __m128d b_r2;
@@ -463,18 +463,18 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[50],
   X_hist_data[2] = params[2];
   l_u = 0.0;
   /*  Parâmetro h para a Generalized P2S-HSD */
+  /*  ===================================================================== */
+  /*  ADAPTAÇÃO SUAVE DE PARÂMETROS (State-Dependent Weight) */
+  /*  ===================================================================== */
   /*  =========================================================================
    */
   /*  FUNÇÃO AUXILIAR: P2S-HSD para UM Polítopo Convexo */
   /*  =========================================================================
    */
-  v1 = phi_func(params[10] - params[0], &cost);
-  v2 = phi_func(params[0] - params[11], &cost);
-  v3 = phi_func(params[12] - params[1], &cost);
-  v4 = phi_func(params[1] - params[13], &cost);
-  /*  ===================================================================== */
-  /*  ADAPTAÇÃO SUAVE DE PARÂMETROS (State-Dependent Weight) */
-  /*  ===================================================================== */
+  v1 = phi_func(params[32] - params[0], &cost);
+  v2 = phi_func(params[0] - params[33], &cost);
+  v3 = phi_func(params[34] - params[1], &cost);
+  v4 = phi_func(params[1] - params[35], &cost);
   /*  Ajuste para definir quão "firme" é a transição */
   /*  Substitui o IF/ELSE por uma transição C1 estrita */
   /*  ===================================================================== */

@@ -1,14 +1,14 @@
 # ninja log v7
-1	50	8033334357960904	build/win64/wrapper_cost_data.o	1c4a27b341058754
-5	54	8033334358000905	build/win64/rt_nonfinite.o	f818c98e758896ef
-7	64	8033334358030905	build/win64/wrapper_cost_initialize.o	2445242514b72eaf
-13	66	8033334358085468	build/win64/wrapper_cost_terminate.o	bbc76e54a907be9
-22	76	8033334358175465	build/win64/_coder_wrapper_cost_api.o	2f45fb8817fd63c1
-25	79	8033334358201399	build/win64/_coder_wrapper_cost_mex.o	26851a5db3c8d94f
-46	89	8033334358417012	build/win64/c_mexapi_version.o	4ae8272c9ebd1ce9
-34	92	8033334358294408	build/win64/sumMatrixIncludeNaN.o	81ed3328b7ada4e9
-38	95	8033334358334417	build/win64/wrapper_cost_emxutil.o	f997fd8930bd98f0
-41	97	8033334358364424	build/win64/_coder_wrapper_cost_info.o	520fafc0dba01a62
-17	111	8033334358125466	build/win64/wrapper_cost.o	d2d63329d0e8ecbe
-29	114	8033334358241399	build/win64/build_robot_cbf_experiment.o	5d3dab69d057d262
-115	160	8033334359109054	wrapper_cost_mex.mexw64	3c4002fe69d4e92e
+1	45	8033352201112213	build/win64/wrapper_cost_data.o	1c4a27b341058754
+4	50	8033352201138126	build/win64/rt_nonfinite.o	f818c98e758896ef
+8	61	8033352201188231	build/win64/wrapper_cost_terminate.o	bbc76e54a907be9
+6	62	8033352201168232	build/win64/wrapper_cost_initialize.o	2445242514b72eaf
+19	71	8033352201291611	build/win64/_coder_wrapper_cost_api.o	2f45fb8817fd63c1
+21	73	8033352201321710	build/win64/_coder_wrapper_cost_mex.o	26851a5db3c8d94f
+29	77	8033352201385535	build/win64/sumMatrixIncludeNaN.o	81ed3328b7ada4e9
+41	84	8033352201515538	build/win64/c_mexapi_version.o	4ae8272c9ebd1ce9
+37	86	8033352201475540	build/win64/_coder_wrapper_cost_info.o	520fafc0dba01a62
+33	95	8033352201425535	build/win64/wrapper_cost_emxutil.o	f997fd8930bd98f0
+13	108	8033352201238231	build/win64/wrapper_cost.o	d2d63329d0e8ecbe
+24	118	8033352201341708	build/win64/build_robot_cbf_experiment.o	5d3dab69d057d262
+119	162	8033352202297644	wrapper_cost_mex.mexw64	3c4002fe69d4e92e

@@ -22,6 +22,6 @@
 
 /* Function Declarations */
 void wrapper_grad(const emlrtStack *sp, const real_T u[50],
-                  const real_T params[32], real_T grad[50]);
+                  const real_T params[36], real_T grad[50]);
 
 /* End of code generation (wrapper_grad.h) */
