@@ -12,7 +12,7 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     eta_term      = params(27);
     eta_eq        = params(28);
     mu_safe       = params(29);
-    kappa_s       = params(30); 
+ 
     
     Q_pos = 1;         
     R_v = 0.5;          
@@ -38,6 +38,19 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     
     % Parâmetro h para a Generalized P2S-HSD
     h_p2s = 0.05; 
+
+    [Pa_test, ~] = get_single_block_p2s(x_k(1:2), blocks_params(1:4), h_p2s);
+    % =====================================================================
+    % ADAPTAÇÃO SUAVE DE PARÂMETROS (State-Dependent Weight)
+    % =====================================================================
+    k_min   = params(30);
+    k_extra = params(31);
+    alpha_k = params(32); % Ajuste para definir quão "firme" é a transição
+    
+    % Substitui o IF/ELSE por uma transição C1 estrita
+    kappa_s = k_min + k_extra * exp(-alpha_k * Pa_test);
+
+
     
     % =====================================================================
     % FORWARD PASS (Dinâmica com CBF - Ponto a Ponto Suavizado)
@@ -76,24 +89,13 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     cost = cost + eta_term * sum((x_N(1:2) - xs).^2);
     cost = cost + eta_eq * Ts^2 * (v_s^2 + w_s^2);
 
-% =====================================================================
-    % CUSTO DE ALINHAMENTO DIRECIONAL (Look-ahead xs -> r1)
-    % =====================================================================
-    eta_dir = 0; % Peso do alinhamento direcional
-    dx_dir = r1(1) - xs(1);
-    dy_dir = r1(2) - xs(2);
-    
-    % Recompensa o robô por apontar a frente na direção do trecho xs -> r1
-    cost_dir = -eta_dir * (cos(x_N(3))*dx_dir + sin(x_N(3))*dy_dir);
-    cost = cost + cost_dir;
-
-    
     r0 = xs; 
-    r4 = x_ref;     
-    cost = cost + kappa_s * (sum((r1 - r0).^2) + ...
-                             sum((r2 - r1).^2) + ...
-                             sum((r3 - r2).^2) + ...
-                             sum((r4 - r3).^2));
+    r4 = x_ref;  
+    E_k = (sum((r1 - r0).^2) + ...
+           sum((r2 - r1).^2) + ...
+           sum((r3 - r2).^2) + ...
+           sum((r4 - r3).^2));
+    cost = cost + kappa_s * E_k;
                          
     % =====================================================================
     % GEOFENCE DE SEGMENTOS (Contenção Convexa Suavizada)
@@ -125,25 +127,10 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     p_n = zeros(3, 1);
     p_n(1:2) = p_n(1:2) + 2 * eta_term * (x_N(1:2) - xs);
     
-    % --- NOVO: Gradiente da orientação terminal (theta_N) ---
-    p_n(3) = p_n(3) - eta_dir * (-sin(x_N(3))*dx_dir + cos(x_N(3))*dy_dir);
-    
     % (Inicialização existente de grad_xs e grad_r1)
     grad_xs = grad_xs - 2 * eta_term * (x_N(1:2) - xs);
-    
-    % ---> LINHA QUE ESTAVA FALTANDO (Derivada da mola para xs) <---
     grad_xs = grad_xs - 2 * kappa_s * (r1 - r0); 
-    
     grad_r1 = 2 * kappa_s * (2*r1 - r0 - r2); 
-    
-    % --- NOVO: Gradientes distribuídos para xs e r1 ---
-    grad_xs(1) = grad_xs(1) + eta_dir * cos(x_N(3));
-    grad_xs(2) = grad_xs(2) + eta_dir * sin(x_N(3));
-    
-    grad_r1(1) = grad_r1(1) - eta_dir * cos(x_N(3));
-    grad_r1(2) = grad_r1(2) - eta_dir * sin(x_N(3));
-    
-    % O restante continua igual...
     grad_r2 = 2 * kappa_s * (2*r2 - r1 - r3); 
     grad_r3 = 2 * kappa_s * (2*r3 - r2 - r4);
     

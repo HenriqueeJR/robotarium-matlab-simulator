@@ -15,29 +15,7 @@
 #include "mwmathutil.h"
 #include <emmintrin.h>
 
-/* Function Declarations */
-static real_T phi_func(real_T s, real_T *grad);
-
 /* Function Definitions */
-static real_T phi_func(real_T s, real_T *grad)
-{
-  real_T val;
-  /*  =========================================================================
-   */
-  /*  FUNÇÃO BASE: Generalized P2S-HSD (Phi e Phi') */
-  /*  =========================================================================
-   */
-  if (s >= 0.0) {
-    val = muDoubleScalarPower(s, 3.0) / (2.0 * (s + 0.05));
-    *grad = s * s * (2.0 * s + 0.15000000000000002) /
-            (2.0 * ((s + 0.05) * (s + 0.05)));
-  } else {
-    val = 0.0;
-    *grad = 0.0;
-  }
-  return val;
-}
-
 real_T calc_point_p2s_penalty(const real_T pt[2], const real_T blocks[16],
                               real_T grad_P[2])
 {
@@ -418,6 +396,25 @@ real_T calc_segment_p2s_penalty(const real_T pa[2], const real_T pb[2],
   grad_pa[1] = gC1[1];
   grad_pb[1] = gC1[3];
   return Cost;
+}
+
+real_T phi_func(real_T s, real_T *grad)
+{
+  real_T val;
+  /*  =========================================================================
+   */
+  /*  FUNÇÃO BASE: Generalized P2S-HSD (Phi e Phi') */
+  /*  =========================================================================
+   */
+  if (s >= 0.0) {
+    val = muDoubleScalarPower(s, 3.0) / (2.0 * (s + 0.05));
+    *grad = s * s * (2.0 * s + 0.15000000000000002) /
+            (2.0 * ((s + 0.05) * (s + 0.05)));
+  } else {
+    val = 0.0;
+    *grad = 0.0;
+  }
+  return val;
 }
 
 /* End of code generation (build_robot_cbf_experiment.c) */

@@ -5,8 +5,8 @@ clear; clc; close all;
 
 %% 1. Setup the Robotarium object
 Nr = 1;
-%posicoes_iniciais = [1.2; -0.5; pi/2]; 
-posicoes_iniciais = [-1.2; -0.5; 0]; 
+posicoes_iniciais = [1.2; -0.5; pi/2]; 
+%posicoes_iniciais = [-1.2; -0.5; 0]; 
 r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', posicoes_iniciais);
 
 %% 2. Configurações da Simulação e do NMPC
@@ -48,10 +48,10 @@ end
 
 %% 4. Condições Iniciais e Parâmetros Geométricos
 X_k = posicoes_iniciais;  
-% x_ref = [-1.3,  -1.3,  1.20,  1.20;  
+x_ref = [-1.3,  -1.3,  1.20,  1.20;  
+         -0.6,  -0.5,  0.25, -0.25];
+% x_ref = [1.3,  -1.3,  1.20,  1.20;  
 %          -0.6,  -0.5,  0.25, -0.25];
-x_ref = [1.2,  -1.3,  1.20,  1.20;  
-         -0.5,  -0.5,  0.25, -0.25];
 
 % =========================================================================
 % DEFINIÇÃO DOS BLOCOS DO CORREDOR
@@ -72,10 +72,13 @@ blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
 % =========================================================================            
 eta_safe   = 1e9;           
 gamma_safe = 0.5;  
-eta_term   = 300.0;
+eta_term   = 3000.0;
 eta_eq     = 1000.0;
 mu_safe    = 1e4;
-kappa_s    = 200;
+kappa_min  = 200;
+kappa_extra= 700;
+alpha_kappa= 5000;
+
 
 w_init = zeros(nW,1);
 w_init(2*N+1:2*N+2) = [-1.0; -0.5];
@@ -141,12 +144,13 @@ disp('Iniciando simulação NMPC no Robotarium...');
 tic;
 x_ref_current = x_ref(:,1);
 
+
 %% 5. O Loop NMPC
 for k = 1:n_steps
     X_k = r.get_poses();
     hist_X(:, k+1) = X_k;
      
-    params = [X_k; x_ref_current; eta_safe; gamma_safe; N; Ts; r_rob; blocks_params; eta_term; eta_eq; mu_safe; kappa_s];
+    params = [X_k; x_ref_current; eta_safe; gamma_safe; N; Ts; r_rob; blocks_params; eta_term; eta_eq; mu_safe; kappa_min; kappa_extra; alpha_kappa];
     
     t_start = tic;
     [w_opt, res_norm, iter_count] = solver.solve(w_init, params);
@@ -191,6 +195,12 @@ for k = 1:n_steps
     r1_opt = w_opt(2*N+5:2*N+6);
     r2_opt = w_opt(2*N+7:2*N+8);
     r3_opt = w_opt(2*N+9:2*N+10);
+
+    % UPDATE E_PREV FOR THE NEXT TIMESTEP
+    E_prev = (sum((r1_opt - xs_opt).^2) + ...
+              sum((r2_opt - r1_opt).^2) + ...
+              sum((r3_opt - r2_opt).^2) + ...
+              sum((x_ref_current - r3_opt).^2));
     
     % =====================================================================
     % EXTRAÇÃO DE CUSTOS PARA PLOTAGEM
@@ -212,8 +222,10 @@ for k = 1:n_steps
     
     c_term = eta_term * norm(X_pred(1:2, N+1) - xs_opt)^2;
     c_eq   = eta_eq * Ts^2 * (us_opt(1)^2 + us_opt(2)^2);
-    c_elast = kappa_s * (norm(r1_opt - xs_opt)^2 + norm(r2_opt - r1_opt)^2 + ...
-                         norm(r3_opt - r2_opt)^2 + norm(x_ref_current - r3_opt)^2);
+    c_elast = kappa_min * (sum((r1_opt - xs_opt).^2) + ...
+                           sum((r2_opt - r1_opt).^2) + ...
+                           sum((r3_opt - r2_opt).^2) + ...
+                           sum((x_ref_current - r3_opt).^2));
                      
     [Pseg0, ~, ~] = calc_segment_p2s_penalty(xs_opt, r1_opt, blocks_params, h_p_plot);
     [Pseg1, ~, ~] = calc_segment_p2s_penalty(r1_opt, r2_opt, blocks_params, h_p_plot);

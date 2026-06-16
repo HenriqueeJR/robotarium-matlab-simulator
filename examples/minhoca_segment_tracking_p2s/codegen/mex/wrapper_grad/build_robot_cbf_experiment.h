@@ -28,4 +28,6 @@ real_T calc_segment_p2s_penalty(const real_T pa[2], const real_T pb[2],
                                 const real_T blocks[16], real_T grad_pa[2],
                                 real_T grad_pb[2]);
 
+real_T phi_func(real_T s, real_T *grad);
+
 /* End of code generation (build_robot_cbf_experiment.h) */
