@@ -76,7 +76,7 @@ eta_term   = 3000.0;
 eta_eq     = 1000.0;
 mu_safe    = 1e4;
 kappa_min  = 200;
-kappa_extra= 700;
+kappa_extra= 500;
 alpha_kappa= 5000;
 
 
@@ -259,7 +259,7 @@ for k = 1:n_steps
     %% Gestão Inteligente de Waypoints
     if norm(X_k(1:2) - x_ref_current(1:2)) < 0.15
         disp(['Alvo alcançado em ', num2str(k * Ts), ' segundos!']);
-        %break; % <--- COMENTADO PARA NÃO ABORTAR NOS WAYPOINTS INTERMEDIÁRIOS
+        break; % <--- COMENTADO PARA NÃO ABORTAR NOS WAYPOINTS INTERMEDIÁRIOS
         
         idx_atual = find(vecnorm(x_ref - x_ref_current, 2, 1) < 1e-3, 1);
         
@@ -356,6 +356,19 @@ title('Dinâmica de Competição dos Pesos do NMPC');
 legend('Location', 'bestoutside');
 fontsize(14, "points");
 
+%% 8. Plotagem da Evolução do Custo Total (NOVO)
+% Somando todos os componentes para obter o custo total em cada passo
+hist_cost_total = hist_cost_stage + hist_cost_cbf + hist_cost_term + ...
+                  hist_cost_eq + hist_cost_elastic + hist_cost_geofence;
+
+% Criando a figura para o custo total
+figure('Name', 'Evolução do Custo Total', 'Color', 'w');
+plot(t_sim, hist_cost_total(1:n_steps), 'k-', 'LineWidth', 2);
+grid on;
+xlabel('Tempo [s]');
+ylabel('Custo Total');
+title('Evolução do Custo Total do NMPC ao longo do tempo');
+fontsize(14, "points");
 % =========================================================================
 % FUNÇÃO BASE: Generalized P2S-HSD (Phi e Phi')
 % =========================================================================

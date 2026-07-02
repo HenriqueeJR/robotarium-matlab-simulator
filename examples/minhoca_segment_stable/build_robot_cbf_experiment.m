@@ -12,9 +12,10 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     eta_term      = params(27);
     eta_eq        = params(28);
     mu_safe       = params(29);
+    target_block  = params(33:36);
+    c_pos         = params(37);
  
-    
-    Q_pos = 1;         
+            
     R_v = 0.5;          
     R_w = 0.5;          
     
@@ -39,16 +40,17 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     % Parâmetro h para a Generalized P2S-HSD
     h_p2s = 0.05; 
 
-    [Pa_test, ~] = get_single_block_p2s(x_k(1:2), blocks_params(13:16), h_p2s);
     % =====================================================================
     % ADAPTAÇÃO SUAVE DE PARÂMETROS (State-Dependent Weight)
     % =====================================================================
+    [P_test, ~] = get_single_block_p2s(x_k(1:2), target_block, h_p2s);
     k_min   = params(30);
     k_extra = params(31);
     alpha_k = params(32); % Ajuste para definir quão "firme" é a transição
     
     % Substitui o IF/ELSE por uma transição C1 estrita
-    kappa_s = k_min + k_extra * exp(-alpha_k * Pa_test);
+    kappa_s = k_min + k_extra * exp(-alpha_k * P_test);
+    delta_huber = 0.01;
 
 
     
@@ -73,7 +75,12 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
         g_corridor = (1 - gamma_safe) * h_k - h_next;
         penalty_corridor = eta_safe * max(0, g_corridor)^2;
         
-        l_estagio = Q_pos * ((x_k(1) - xs(1))^2 + (x_k(2) - xs(2))^2) + R_v * (v_n - v_s)^2 + R_w * (w_n - w_s)^2;
+        % IMPLEMENTAÇÃO PSEUDO-HUBER UTILIZANDO O PARÂMETRO C_POS
+        erro_quad = (x_k(1) - xs(1))^2 + (x_k(2) - xs(2))^2;
+        erro_pos_linearizado = sqrt(erro_quad + delta_huber^2) - delta_huber;
+        
+        l_estagio = c_pos * erro_pos_linearizado + R_v * (v_n - v_s)^2 + R_w * (w_n - w_s)^2;
+
         l_u = l_u + l_estagio + penalty_corridor;
         
         x_k = x_next;
@@ -151,10 +158,16 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
         v_n = u((n-1)*2 + 1); w_n = u((n-1)*2 + 2);
         theta_n = x_n(3);
         
-        grad_x_l_n = [2 * Q_pos * (x_n(1) - xs(1)); 2 * Q_pos * (x_n(2) - xs(2)); 0];
+        erro_quad_n = (x_n(1) - xs(1))^2 + (x_n(2) - xs(2))^2;
+        denom_huber = sqrt(erro_quad_n + delta_huber^2);
+        
+        grad_x_l_n = [c_pos * (x_n(1) - xs(1)) / denom_huber; ...
+                      c_pos * (x_n(2) - xs(2)) / denom_huber; ...
+                      0];
+
         grad_u_l_n = [2 * R_v * (v_n - v_s); 2 * R_w * (w_n - w_s)];
-        grad_xs(1) = grad_xs(1) - 2 * Q_pos * (x_n(1) - xs(1));
-        grad_xs(2) = grad_xs(2) - 2 * Q_pos * (x_n(2) - xs(2));
+        grad_xs(1) = grad_xs(1) - c_pos * (x_n(1) - xs(1)) / denom_huber;
+        grad_xs(2) = grad_xs(2) - c_pos * (x_n(2) - xs(2)) / denom_huber;
         grad_us(1) = grad_us(1) - 2 * R_v * (v_n - v_s);
         grad_us(2) = grad_us(2) - 2 * R_w * (w_n - w_s);
         
