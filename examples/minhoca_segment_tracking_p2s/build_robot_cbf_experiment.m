@@ -12,7 +12,7 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     eta_term      = params(27);
     eta_eq        = params(28);
     mu_safe       = params(29);
-    target_block  = params(33:36);
+    kappa_s       = params(30);
  
     
     Q_pos = 1;         
@@ -40,19 +40,6 @@ function [cost, grad] = build_robot_cbf_experiment(W, params)
     % Parâmetro h para a Generalized P2S-HSD
     h_p2s = 0.05; 
 
-    % =====================================================================
-    % ADAPTAÇÃO SUAVE DE PARÂMETROS (State-Dependent Weight)
-    % =====================================================================
-    [P_test, ~] = get_single_block_p2s(x_k(1:2), target_block, h_p2s);
-    k_min   = params(30);
-    k_extra = params(31);
-    alpha_k = params(32); % Ajuste para definir quão "firme" é a transição
-    
-    % Substitui o IF/ELSE por uma transição C1 estrita
-    kappa_s = k_min + k_extra * exp(-alpha_k * P_test);
-
-
-    
     % =====================================================================
     % FORWARD PASS (Dinâmica com CBF - Ponto a Ponto Suavizado)
     % =====================================================================

@@ -15,31 +15,32 @@
 #include "tmwtypes.h"
 
 /* Function Declarations */
-static const mxArray *c_emlrtMexFcnResolvedFunctionsI(void);
+static const mxArray *emlrtMexFcnResolvedFunctionsInfo(void);
 
 /* Function Definitions */
-static const mxArray *c_emlrtMexFcnResolvedFunctionsI(void)
+static const mxArray *emlrtMexFcnResolvedFunctionsInfo(void)
 {
   const mxArray *nameCaptureInfo;
   const char_T *data[5] = {
-      "789cdd94c16ed43010861d5a1087023d81c43bb46a8b84546eb02c2cada82a768b7621c8"
-      "75e26963ad1d47b6d35d2a247a042e3df304bc421fa6873e021212b7"
-      "4a6d369bdd2492958a9552d1b94c26bfed6f669c0c72debc751042f7516adb0ba9bf378e"
-      "17c7fe162a5a59774aeb9ce272741bcd17f665faf1d8fb3234303469",
-      "101201939d540a1692d0743e47801468c90f808e943dc6a1c304b4f3c156128957396912"
-      "2452f2dc08c0efb7638154a0a719f27c30e9c7aea5def98a7e94addc"
-      "8ff2ba8c17fd232f3b7fa18297e90345a20814f6a53679feee8cfc3b567eaa50197b1ca6"
-      "bcb319795facbca2feb1f9a9f1ccddd1a0b41b40a898fb1274dfc8c8",
-      "55d2938628160b3cd058729a7bb32488e1c45bd24cc49c18a95c18121171d0eee5471948"
-      "9f600dfb0242838d227e9f85fb385ad36ebebbcb22e157f5f7c115eb"
-      "2dfbe9fabb23fffdcfa95327efe8e7b7af75f232bb2eded072de55bfd78716de62495ffd"
-      "405ff4def5baddf5eeca60636b035e079d662b37a72b385579204b5c",
-      "d7f96796fd37f5bf3f9ab1dec715f566ba17334ef1a812ec7b7b188697f9b024d354bfae"
-      "39ff7b46de0f2bafa8d77bdff66ea7b75fdf9c3a39af77eecffdfafb"
-      "a84e5e66377deec3e6fa13430f5b2bb4219ebea7ed4ef0bcd56bfeff73ff02ae4d024c",
+      "789ced544d6ed34014fe8c0a6253081b1620955ca0482060d11d2a6d41821294944a1064"
+      "fc3369ac8e3dc61987b0e3063d011207e0121c84bbf0cdd84edc8851"
+      "2255940d2f72defbdecfbc6f669e0defc52b0fc00d54f2fc7aa5376bdca9f5159c97e5b8"
+      "e7d08d5cc5c6b9ba267e56eb48655acc7405b22015f3ca58a5491664",
+      "7af0251728c444c9a9886d649448314852d16f834383d2fd56680e4cc8d8bb63119df6cb"
+      "14c578b26028db607e1e5fbd3fef7763cdf3385bc28ddcaaf5561d78"
+      "8f3d7cc02e7630c41126e056f93fc49856463ba1fd9a96c0338ba6b486f8495b20401731"
+      "751703e200211fc94ac58ca7f47c42692b1457ec629fd1881ec99ac0",
+      "d60d99a358a5a0e931ab9748b1cd27a047da15b7599bd0535aac995bb04e60469422a757"
+      "58be29b332db3b62c4b73b39a1d7ec42136bcb30c2a9cd3ba127c743"
+      "5bf9d94672feccde7de618be1af759ddba0fc779af7b1f771cf7d1598a87652263bf50a1"
+      "d27e148e7c31cb45c119caea116df87cbc209f6b4e3e5524566528c5",
+      "a2dff70bcee33747bf661e77fecf633d8fa1656958f92d3e662e438ca84daf6a5693f97a"
+      "d5ac1a59351f37d7bc2fd7f77413d587fa47e7977799fdee6ef5ef5d"
+      "66bf46fe55bf9963bd75dfb7db8e7e9da5b83c0edebced3d387e994ee3c78747ef9e3cda"
+      "eb25070b1ebd157d56f18003ffedf57f03f6b9bd23",
       ""};
   nameCaptureInfo = NULL;
-  emlrtNameCaptureMxArrayR2016a(&data[0], 3176U, &nameCaptureInfo);
+  emlrtNameCaptureMxArrayR2016a(&data[0], 2144U, &nameCaptureInfo);
   return nameCaptureInfo;
 }
 
@@ -48,61 +49,38 @@ mxArray *emlrtMexFcnProperties(void)
   mxArray *xEntryPoints;
   mxArray *xInputs;
   mxArray *xResult;
-  const char_T *epFieldName[7] = {
-      "QualifiedName",    "NumberOfInputs", "NumberOfOutputs", "ConstantInputs",
-      "ResolvedFilePath", "TimeStamp",      "Visible"};
   const char_T *propFieldName[7] = {
-      "Version",      "ResolvedFunctions", "Checksum", "EntryPoints",
-      "CoverageInfo", "IsPolymorphic",     "AuxData"};
-  uint8_T v[216] = {
-      0U,   1U,   73U,  77U,  0U,   0U,   0U,   0U,   14U,  0U,   0U,   0U,
-      200U, 0U,   0U,   0U,   6U,   0U,   0U,   0U,   8U,   0U,   0U,   0U,
-      2U,   0U,   0U,   0U,   0U,   0U,   0U,   0U,   5U,   0U,   0U,   0U,
-      8U,   0U,   0U,   0U,   1U,   0U,   0U,   0U,   1U,   0U,   0U,   0U,
-      1U,   0U,   0U,   0U,   0U,   0U,   0U,   0U,   5U,   0U,   4U,   0U,
-      17U,  0U,   0U,   0U,   1U,   0U,   0U,   0U,   17U,  0U,   0U,   0U,
-      67U,  108U, 97U,  115U, 115U, 69U,  110U, 116U, 114U, 121U, 80U,  111U,
-      105U, 110U, 116U, 115U, 0U,   0U,   0U,   0U,   0U,   0U,   0U,   0U,
-      14U,  0U,   0U,   0U,   112U, 0U,   0U,   0U,   6U,   0U,   0U,   0U,
-      8U,   0U,   0U,   0U,   2U,   0U,   0U,   0U,   0U,   0U,   0U,   0U,
-      5U,   0U,   0U,   0U,   8U,   0U,   0U,   0U,   1U,   0U,   0U,   0U,
-      0U,   0U,   0U,   0U,   1U,   0U,   0U,   0U,   0U,   0U,   0U,   0U,
-      5U,   0U,   4U,   0U,   14U,  0U,   0U,   0U,   1U,   0U,   0U,   0U,
-      56U,  0U,   0U,   0U,   81U,  117U, 97U,  108U, 105U, 102U, 105U, 101U,
-      100U, 78U,  97U,  109U, 101U, 0U,   77U,  101U, 116U, 104U, 111U, 100U,
-      115U, 0U,   0U,   0U,   0U,   0U,   0U,   0U,   80U,  114U, 111U, 112U,
-      101U, 114U, 116U, 105U, 101U, 115U, 0U,   0U,   0U,   0U,   72U,  97U,
-      110U, 100U, 108U, 101U, 0U,   0U,   0U,   0U,   0U,   0U,   0U,   0U};
+      "Version",      "ResolvedFunctions", "Checksum",    "EntryPoints",
+      "CoverageInfo", "IsPolymorphic",     "PropertyList"};
+  const char_T *epFieldName[6] = {
+      "Name",           "NumberOfInputs", "NumberOfOutputs",
+      "ConstantInputs", "FullPath",       "TimeStamp"};
   xEntryPoints =
-      emlrtCreateStructMatrix(1, 1, 7, (const char_T **)&epFieldName[0]);
+      emlrtCreateStructMatrix(1, 1, 6, (const char_T **)&epFieldName[0]);
   xInputs = emlrtCreateLogicalMatrix(1, 2);
-  emlrtSetField(xEntryPoints, 0, "QualifiedName",
-                emlrtMxCreateString("wrapper_cost"));
+  emlrtSetField(xEntryPoints, 0, "Name", emlrtMxCreateString("wrapper_cost"));
   emlrtSetField(xEntryPoints, 0, "NumberOfInputs",
                 emlrtMxCreateDoubleScalar(2.0));
   emlrtSetField(xEntryPoints, 0, "NumberOfOutputs",
                 emlrtMxCreateDoubleScalar(1.0));
   emlrtSetField(xEntryPoints, 0, "ConstantInputs", xInputs);
   emlrtSetField(
-      xEntryPoints, 0, "ResolvedFilePath",
+      xEntryPoints, 0, "FullPath",
       emlrtMxCreateString(
-          "C:\\Users\\henri\\Desktop\\robotarium_ws_old\\robotarium-matlab-"
-          "simulator\\examples\\minhoca_segment_tracking_p2s\\wrapper_cost."
-          "m"));
+          "C:\\Users\\henri\\OneDrive\\\xc3\x81rea de Trabalho\\Arquivos "
+          "Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_"
+          "tracking_p2s\\wrapper_cost.m"));
   emlrtSetField(xEntryPoints, 0, "TimeStamp",
-                emlrtMxCreateDoubleScalar(740136.65832175931));
-  emlrtSetField(xEntryPoints, 0, "Visible", emlrtMxCreateLogicalScalar(true));
+                emlrtMxCreateDoubleScalar(740172.82792824076));
   xResult =
       emlrtCreateStructMatrix(1, 1, 7, (const char_T **)&propFieldName[0]);
   emlrtSetField(xResult, 0, "Version",
-                emlrtMxCreateString("25.2.0.3150157 (R2025b) Update 4"));
+                emlrtMxCreateString("9.14.0.2206163 (R2023a)"));
   emlrtSetField(xResult, 0, "ResolvedFunctions",
-                (mxArray *)c_emlrtMexFcnResolvedFunctionsI());
+                (mxArray *)emlrtMexFcnResolvedFunctionsInfo());
   emlrtSetField(xResult, 0, "Checksum",
-                emlrtMxCreateString("K3fdocc1K44p8YfAz0cG0C"));
+                emlrtMxCreateString("LYJwNmXF23JfD4vahd6O7D"));
   emlrtSetField(xResult, 0, "EntryPoints", xEntryPoints);
-  emlrtSetField(xResult, 0, "AuxData",
-                emlrtMxCreateRowVectorUINT8((const uint8_T *)&v, 216U));
   return xResult;
 }
 

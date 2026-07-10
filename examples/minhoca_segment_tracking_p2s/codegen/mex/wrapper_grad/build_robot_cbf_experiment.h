@@ -21,13 +21,7 @@
 #include <string.h>
 
 /* Function Declarations */
-real_T calc_point_p2s_penalty(const real_T pt[2], const real_T blocks[16],
-                              real_T grad_P[2]);
-
-real_T calc_segment_p2s_penalty(const real_T pa[2], const real_T pb[2],
-                                const real_T blocks[16], real_T grad_pa[2],
-                                real_T grad_pb[2]);
-
-real_T phi_func(real_T s, real_T *grad);
+real_T build_robot_cbf_experiment(const emlrtStack *sp, const real_T W[50],
+                                  const real_T params[30], real_T grad[50]);
 
 /* End of code generation (build_robot_cbf_experiment.h) */
