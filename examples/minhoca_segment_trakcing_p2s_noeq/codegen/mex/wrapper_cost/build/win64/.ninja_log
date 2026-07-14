@@ -1,0 +1,14 @@
+# ninja log v5
+46	667	8057527292788217	build/win64/wrapper_cost_data.obj	1876455fbb749410
+11	701	8057527293047663	build/win64/wrapper_cost_initialize.obj	c5cc58230846d17a
+85	727	8057527293098162	build/win64/c_mexapi_version.obj	ef99bde288b06709
+22	732	8057527293151193	build/win64/wrapper_cost_terminate.obj	b9ca70e12430e78e
+99	738	8057527293291114	build/win64/sumMatrixIncludeNaN.obj	f4159900dd168345
+1	743	8057527293291114	build/win64/rt_nonfinite.obj	fe47aaf1b4014426
+111	748	8057527293291114	build/win64/_coder_wrapper_cost_mex.obj	24644f71e239e80e
+61	753	8057527293391150	build/win64/_coder_wrapper_cost_api.obj	104584722af6eaad
+73	762	8057527293421158	build/win64/_coder_wrapper_cost_info.obj	714246599e1b0452
+34	896	8057527295342376	build/win64/wrapper_cost.obj	2ae7aa8b5203e5bf
+714	932	8057527295767518	build/win64/wrapper_cost_emxutil.obj	265ec5aeb326d3e9
+688	1006	8057527296514107	build/win64/build_robot_cbf_experiment.obj	9cc04ef4bee2b57c
+1010	1103	8057527297492227	wrapper_cost_mex.mexw64	9200a5c8e4757b3

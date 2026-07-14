@@ -1,0 +1,74 @@
+[
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   wrapper_cost_data.c /Fobuild\\win64\\wrapper_cost_data.obj",
+    "file": "wrapper_cost_data.c",
+    "output": "build/win64/wrapper_cost_data.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   rt_nonfinite.c /Fobuild\\win64\\rt_nonfinite.obj",
+    "file": "rt_nonfinite.c",
+    "output": "build/win64/rt_nonfinite.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   wrapper_cost_initialize.c /Fobuild\\win64\\wrapper_cost_initialize.obj",
+    "file": "wrapper_cost_initialize.c",
+    "output": "build/win64/wrapper_cost_initialize.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   wrapper_cost_terminate.c /Fobuild\\win64\\wrapper_cost_terminate.obj",
+    "file": "wrapper_cost_terminate.c",
+    "output": "build/win64/wrapper_cost_terminate.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   wrapper_cost.c /Fobuild\\win64\\wrapper_cost.obj",
+    "file": "wrapper_cost.c",
+    "output": "build/win64/wrapper_cost.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   build_robot_cbf_experiment.c /Fobuild\\win64\\build_robot_cbf_experiment.obj",
+    "file": "build_robot_cbf_experiment.c",
+    "output": "build/win64/build_robot_cbf_experiment.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   interface\\_coder_wrapper_cost_api.c /Fobuild\\win64\\_coder_wrapper_cost_api.obj",
+    "file": "interface/_coder_wrapper_cost_api.c",
+    "output": "build/win64/_coder_wrapper_cost_api.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   interface\\_coder_wrapper_cost_mex.c /Fobuild\\win64\\_coder_wrapper_cost_mex.obj",
+    "file": "interface/_coder_wrapper_cost_mex.c",
+    "output": "build/win64/_coder_wrapper_cost_mex.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   sumMatrixIncludeNaN.c /Fobuild\\win64\\sumMatrixIncludeNaN.obj",
+    "file": "sumMatrixIncludeNaN.c",
+    "output": "build/win64/sumMatrixIncludeNaN.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   wrapper_cost_emxutil.c /Fobuild\\win64\\wrapper_cost_emxutil.obj",
+    "file": "wrapper_cost_emxutil.c",
+    "output": "build/win64/wrapper_cost_emxutil.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   interface\\_coder_wrapper_cost_info.c /Fobuild\\win64\\_coder_wrapper_cost_info.obj",
+    "file": "interface/_coder_wrapper_cost_info.c",
+    "output": "build/win64/_coder_wrapper_cost_info.obj"
+  },
+  {
+    "directory": "C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\\codegen\\mex\\wrapper_cost",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"C:\\Users\\henri\\OneDrive\\Área de Trabalho\\Arquivos Faculdade\\robotarium-matlab-simulator\\examples\\minhoca_segment_trakcing_p2s_noeq\" /I \".\\interface\" /I \"C:\\Program Files\\MATLAB\\R2023a\\extern\\include\" /I \".\" -DMODEL=wrapper_cost_mex   \"C:\\Program Files\\MATLAB\\R2023a\\extern\\version\\c_mexapi_version.c\" /Fobuild\\win64\\c_mexapi_version.obj",
+    "file": "C:/Program Files/MATLAB/R2023a/extern/version/c_mexapi_version.c",
+    "output": "build/win64/c_mexapi_version.obj"
+  }
+]

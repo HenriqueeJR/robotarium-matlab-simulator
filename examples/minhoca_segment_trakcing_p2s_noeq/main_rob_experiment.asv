@@ -1,5 +1,6 @@
 % =========================================================================
 % Main Simulation - NMPC com CBF Dinâmico e Generalized P2S-HSD
+% (Formulação com Mapeamento de Estado Estacionário Injetado)
 % =========================================================================
 clear; clc; close all;
 
@@ -15,19 +16,19 @@ N = 20;
 T_sim_total = 120;           
 n_steps = round(T_sim_total / Ts);
 v_max = 0.1; v_min = 0.0;
-w_max = 1.5;  w_min = -1.5;
-nW = 2*N + 10; 
+w_max = 1.5; w_min = -1.5;
+
+% TAMANHO DO VETOR ATUALIZADO (Removemos as 2 posições de u_s)
+nW = 2*N + 8; 
 
 W_max = [repmat([v_max; w_max], N, 1);
-         3; 2;           % xs
-         v_max; w_max;   % us
+         3; 2;           % xs (que atua como ys)
          3; 2;           % r1
          3; 2;           % r2
          3; 2];          % r3
          
 W_min = [repmat([v_min; w_min], N, 1);
         -3; -2;          % xs
-         v_min; w_min;   % us
         -3; -2;          % r1
         -3; -2;          % r2
         -3; -2];         % r3
@@ -35,13 +36,12 @@ W_min = [repmat([v_min; w_min], N, 1);
 %% 3. Inicialização do Solver PANOC
 gamma_panoc = 0.01; sigma = 1e-4; max_iter = 1000; tol = 1e-3; lbfgs_size = 1000;
 solver = PanocSolver(gamma_panoc, sigma, max_iter, tol, W_min, W_max, lbfgs_size);
-
 if exist('wrapper_cost_mex', 'file') == 3 && exist('wrapper_grad_mex', 'file') == 3
     disp('MEX files detectados! Rodando versão compilada.');
     solver.cost_func = @wrapper_cost_mex;
     solver.grad_func = @wrapper_grad_mex;
 else
-    disp('Rodando versão nativa .m. Lembre-se de compilar (codegen) com o novo tamanho (30)!');
+    disp('Rodando versão nativa .m. Lembre-se de compilar (codegen) com o novo tamanho (29)!');
     solver.cost_func = @wrapper_cost;
     solver.grad_func = @wrapper_grad;
 end
@@ -49,7 +49,7 @@ end
 %% 4. Condições Iniciais e Parâmetros Geométricos
 X_k = posicoes_iniciais;  
 x_ref = [-1.45,  1.3;  
-         -0.3,  -0.5];
+         -0.7,  -0.5];
 % x_ref = [1.3,  -1.3,  1.20,  1.20;  
 %          -0.6,  -0.5,  0.25, -0.25];
 
@@ -61,7 +61,6 @@ b2_xmin = -0.5; b2_xmax = 0.0;  b2_ymin = -0.75; b2_ymax = 0.50;
 b3_xmin = 0.0;  b3_xmax = 1.4;  b3_ymin = 0.1;   b3_ymax = 0.5;
 b4_xmin = 0.9;  b4_xmax = 1.4;  b4_ymin = -0.75; b4_ymax = 0.1;
 r_rob      = 0.15;
-
 blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
                  b2_xmin+r_rob; b2_xmax-r_rob; b2_ymin; b2_ymax; ...
                  b3_xmin-r_rob; b3_xmax; b3_ymin+r_rob; b3_ymax; ...
@@ -72,43 +71,39 @@ blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
 % =========================================================================            
 eta_safe   = 1e9;           
 gamma_safe = 0.5;  
-eta_term   = 2400.0;
-eta_eq     = 5000.0;
-mu_safe    = 1e5;
-kappa_s  = 550;
+eta_term   = 2000.0;
+mu_safe    = 1e3;
+kappa_s    = 50;
 
-
+% Inicialização ajustada para o novo tamanho
 w_init = zeros(nW,1);
-w_init(2*N+1:2*N+2) = [-1.0; -0.5];
-w_init(2*N+5:2*N+6) = [-0.5; -0.25]; 
-w_init(2*N+7:2*N+8) = [0; 0.1]; 
-w_init(2*N+9:2*N+10)= [0.75; 0.35];
+w_init(2*N+1:2*N+2) = [-1.0; -0.5];  % xs
+w_init(2*N+3:2*N+4) = [-0.5; -0.25]; % r1
+w_init(2*N+5:2*N+6) = [0; 0.1];      % r2
+w_init(2*N+7:2*N+8) = [0.75; 0.35];  % r3
 
 target_block = blocks_params(1:4);
-
 hist_X = zeros(3, n_steps + 1);
 hist_X(:, 1) = X_k;
 
 % Históricos Originais
 hist_U  = zeros(2, n_steps); 
-hist_us = zeros(2, n_steps); 
+hist_us = zeros(2, n_steps); % Mantido para plot, mas usaremos [0;0]
 hist_iter = zeros(1, n_steps);
 hist_time = zeros(1, n_steps);
 
-% =========================================================================
-% NOVOS HISTÓRICOS PARA PLOTAGEM DE CUSTOS
-% =========================================================================
+% Históricos para Plotagem
 hist_cost_stage    = zeros(1, n_steps);
 hist_cost_cbf      = zeros(1, n_steps);
 hist_cost_term     = zeros(1, n_steps);
-hist_cost_eq       = zeros(1, n_steps);
+% hist_cost_eq removido!
 hist_cost_elastic  = zeros(1, n_steps);
 hist_cost_geofence = zeros(1, n_steps);
+hist_norm_term     = zeros(1, n_steps);
 
 %% --- SETUP DO PLOT DIRETO NO ROBOTARIUM ---
 ax = gca;
 hold(ax, 'on');
-
 h_azul = fill(ax, [b1_xmin, b1_xmax, b1_xmax, b1_xmin], [b1_ymin, b1_ymin, b1_ymax, b1_ymax], 'b', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
 h_verm = fill(ax, [b2_xmin, b2_xmax, b2_xmax, b2_xmin], [b2_ymin, b2_ymin, b2_ymax, b2_ymax], 'r', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
 h_verde = fill(ax, [b3_xmin, b3_xmax, b3_xmax, b3_xmin], [b3_ymin, b3_ymin, b3_ymax, b3_ymax], 'g', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
@@ -126,16 +121,13 @@ plot(ax, [blocks_params(13), blocks_params(14), blocks_params(14), blocks_params
 h_ref = plot(ax, x_ref(1,1), x_ref(2,1), 'g*', 'MarkerSize', 20, 'LineWidth', 20);
 h_traj = plot(ax, X_k(1), X_k(2), 'black', 'LineWidth', 8); 
 h_pred = plot(ax, X_k(1), X_k(2), 'black--', 'LineWidth', 15); 
-
 theta_circle = linspace(0, 2*pi, 100);
 h_robot_body = fill(ax, X_k(1) + r_rob*cos(theta_circle), X_k(2) + r_rob*sin(theta_circle), 'y', 'FaceAlpha', 0.75, 'EdgeColor', 'yellow', 'LineWidth', 1.5);
 h_robot_body_intern = fill(ax, X_k(1) + (0.07)*cos(theta_circle), X_k(2) + (0.07)*sin(theta_circle), 'g', 'FaceAlpha', 0.75, 'EdgeColor', 'green', 'LineWidth', 1.5);
-
 h_xs    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','m');
 h_r1    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');
 h_r2    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');
 h_r3    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');
-
 uistack(h_azul, 'bottom'); uistack(h_verm, 'bottom'); 
 uistack(h_verde, 'bottom'); uistack(h_ciano, 'bottom');
 uistack(h_traj, 'bottom'); uistack(h_pred, 'bottom');
@@ -144,14 +136,14 @@ disp('Iniciando simulação NMPC no Robotarium...');
 tic;
 x_ref_current = x_ref(:,1);
 
-
 %% 5. O Loop NMPC
 for k = 1:n_steps
     X_k = r.get_poses();
     hist_X(:, k+1) = X_k;
      
+    % PARÂMETROS ATUALIZADOS: Vetor de tamanho 29 (sem eta_eq)
     params = [X_k; x_ref_current; eta_safe; gamma_safe; N; Ts; r_rob; ...
-        blocks_params; eta_term; eta_eq; mu_safe; kappa_s];
+        blocks_params; eta_term; mu_safe; kappa_s];
     
     t_start = tic;
     [w_opt, res_norm, iter_count] = solver.solve(w_init, params);
@@ -173,7 +165,7 @@ for k = 1:n_steps
     w_cmd = w_opt(2);
     
     hist_U(:, k)  = [v_cmd; w_cmd];
-    hist_us(:, k) = w_opt(2*N+3 : 2*N+4);
+    hist_us(:, k) = [0; 0]; % Estado estacionário exato
     hist_iter(k) = iter_count;
     hist_time(k) = tempo_solve;
     
@@ -192,10 +184,9 @@ for k = 1:n_steps
     set(h_robot_body_intern, 'XData', x_centro + (0.07)*cos(theta_circle), 'YData', y_centro + (0.07)*sin(theta_circle));
     
     xs_opt = w_opt(2*N+1:2*N+2);
-    us_opt = w_opt(2*N+3:2*N+4);
-    r1_opt = w_opt(2*N+5:2*N+6);
-    r2_opt = w_opt(2*N+7:2*N+8);
-    r3_opt = w_opt(2*N+9:2*N+10);
+    r1_opt = w_opt(2*N+3:2*N+4);
+    r2_opt = w_opt(2*N+5:2*N+6);
+    r3_opt = w_opt(2*N+7:2*N+8);
     
     % =====================================================================
     % EXTRAÇÃO DE CUSTOS PARA PLOTAGEM
@@ -205,9 +196,9 @@ for k = 1:n_steps
     
     for i = 1:N
         v_p = w_opt((i-1)*2 + 1); w_p = w_opt((i-1)*2 + 2);
-        % Custo de Estágio
+        % Custo de Estágio (considerando vs=0, ws=0)
         c_stage = c_stage + Q_p_plot * norm(X_pred(1:2, i) - xs_opt)^2 + ...
-                  R_v_p_plot * (v_p - us_opt(1))^2 + R_w_p_plot * (w_p - us_opt(2))^2;
+                  R_v_p_plot * (v_p - 0)^2 + R_w_p_plot * (w_p - 0)^2;
         % Penalidade CBF
         [P_k_p, ~] = calc_point_p2s_penalty(X_pred(1:2, i), blocks_params, h_p_plot);
         [P_next_p, ~] = calc_point_p2s_penalty(X_pred(1:2, i+1), blocks_params, h_p_plot);
@@ -216,7 +207,6 @@ for k = 1:n_steps
     end
     
     c_term = eta_term * norm(X_pred(1:2, N+1) - xs_opt)^2;
-    c_eq   = eta_eq * Ts^2 * (us_opt(1)^2 + us_opt(2)^2);
     c_elast = kappa_s * (sum((r1_opt - xs_opt).^2) + ...
                            sum((r2_opt - r1_opt).^2) + ...
                            sum((r3_opt - r2_opt).^2) + ...
@@ -231,9 +221,9 @@ for k = 1:n_steps
     hist_cost_stage(k)    = c_stage;
     hist_cost_cbf(k)      = c_cbf;
     hist_cost_term(k)     = c_term;
-    hist_cost_eq(k)       = c_eq;
     hist_cost_elastic(k)  = c_elast;
     hist_cost_geofence(k) = c_geo;
+    hist_norm_term(k)     = norm(X_pred(1:2, N+1) - xs_opt);
     % =====================================================================
     
     set(h_xs,'XData',xs_opt(1),'YData',xs_opt(2));
@@ -245,43 +235,13 @@ for k = 1:n_steps
     %% Warm start
     U_opt  = w_opt(1:2*N);
     U_warm = [U_opt(3:end); U_opt(end-1:end)];
-    w_init = [U_warm; xs_opt; us_opt; r1_opt; r2_opt; r3_opt];
+    w_init = [U_warm; xs_opt; r1_opt; r2_opt; r3_opt];
     
-    %% Gestão Inteligente de Waypoints
+    %% Gestão de Waypoints
     if norm(X_k(1:2) - x_ref_current(1:2)) < 0.15
         disp(['Alvo alcançado em ', num2str(k * Ts), ' segundos!']);
-        break; % <--- COMENTADO PARA NÃO ABORTAR NOS WAYPOINTS INTERMEDIÁRIOS
-        
-        idx_atual = find(vecnorm(x_ref - x_ref_current, 2, 1) < 1e-3, 1);
-        
-        if ~isempty(idx_atual) && idx_atual < size(x_ref, 2)
-            x_ref_current = x_ref(:, idx_atual + 1);
-            set(h_ref, 'XData', x_ref_current(1), 'YData', x_ref_current(2));
-        else
-            n_steps = k;
-            title(ax, 'Trajetória Concluída com Sucesso');
-            break;
-        end
+        break;
     end
-
-    % Encontra automaticamente o bloco alvo baseado na referência
-    target_block = zeros(4,1);
-    num_blocks = length(blocks_params) / 4;
-    
-    for b = 1:num_blocks
-        idx = (b-1)*4 + 1;
-        blk = blocks_params(idx:idx+3);
-        
-        % Verifica se x_ref_current está contido nos limites do bloco 'b'
-        % Adicionamos uma pequena margem (1e-3) para erros de ponto flutuante na borda
-        if x_ref_current(1) >= blk(1)-1e-3 && x_ref_current(1) <= blk(2)+1e-3 && ...
-           x_ref_current(2) >= blk(3)-1e-3 && x_ref_current(2) <= blk(4)+1e-3
-            
-            target_block = blk;
-            break; % Achou o bloco, interrompe a busca
-        end
-    end
-
     r.step();
 end
 
@@ -294,8 +254,7 @@ disp(['Máximo de Iterações    : ', num2str(max(hist_iter(1:n_steps)))]);
 %% 6. Plotagem das Ações de Controle e Estados
 figure('Name', 'Ação de Controle ao Longo do Tempo', 'Color', 'w');
 t_sim = (0:n_steps-1) * Ts;
-
-subplot(2, 1, 1); hold on; grid on;
+subplot(3, 1, 1); hold on; grid on;
 stairs(t_sim, hist_U(1, 1:n_steps), 'b-', 'LineWidth', 2);
 stairs(t_sim, hist_us(1, 1:n_steps), 'c--', 'LineWidth', 1.5); 
 yline(v_max, 'r--', 'LineWidth', 1.2); yline(v_min, 'r--', 'LineWidth', 2);
@@ -303,12 +262,19 @@ xlabel('Tempo [s]'); ylabel('v [m/s]'); title('Velocidade Linear');
 legend('Ação Real (v)', 'Ação de Equilíbrio (v_s)', 'Limites', 'Location', 'best');
 ylim([v_min - 0.1, v_max + 0.1]);
 
-subplot(2, 1, 2); hold on; grid on;
+subplot(3, 1, 2); hold on; grid on;
 stairs(t_sim, hist_U(2, 1:n_steps), 'm-', 'LineWidth', 2);
 stairs(t_sim, hist_us(2, 1:n_steps), 'k--', 'LineWidth', 1.5); 
 yline(w_max, 'r--', 'LineWidth', 1.2); yline(w_min, 'r--', 'LineWidth', 2);
 xlabel('Tempo [s]'); ylabel('\omega [rad/s]'); title('Velocidade Angular');
 legend('Ação Real (\omega)', 'Ação de Equilíbrio (\omega_s)', 'Limites', 'Location', 'best');
+ylim([w_min - 0.2, w_max + 0.2]);
+fontsize(18, "points")
+
+
+subplot(3, 1, 3); hold on; grid on;
+stairs(t_sim, hist_U(2, 1:n_steps), 'm-', 'LineWidth', 2);
+xlabel('Tempo [s]'); ylabel('\|xN - xs\|'); title('Norma terminal');
 ylim([w_min - 0.2, w_max + 0.2]);
 fontsize(18, "points")
 
@@ -329,30 +295,24 @@ title('Convergência com Warm Start');
 grid on;
 fontsize(18, "points")
 
-%% 7. Plotagem da Evolução dos Custos (NOVO)
+%% 7. Plotagem da Evolução dos Custos
 figure('Name', 'Evolução dos Componentes da Função de Custo', 'Color', 'w');
 hold on; grid on;
-
-% Nota: O '+ 1e-6' garante que valores exatamente zero não gerem erro no plot logarítmico
 semilogy(t_sim, hist_cost_stage(1:n_steps) + 1e-6, 'LineWidth', 2, 'DisplayName', 'Custo de Estágio (Trajetória)');
 semilogy(t_sim, hist_cost_term(1:n_steps) + 1e-6, 'LineWidth', 2, 'DisplayName', 'Custo Terminal (Âncora xs)');
-semilogy(t_sim, hist_cost_eq(1:n_steps) + 1e-6, 'LineWidth', 2, 'DisplayName', 'Custo de Equilíbrio (Velocidade Estacionária)');
 semilogy(t_sim, hist_cost_elastic(1:n_steps) + 1e-6, 'LineWidth', 2, 'DisplayName', 'Custo Elástico (Molas)');
 semilogy(t_sim, hist_cost_geofence(1:n_steps) + 1e-6, 'LineWidth', 2, 'DisplayName', 'Penalidade Geofence (Segmentos P2S)');
 semilogy(t_sim, hist_cost_cbf(1:n_steps) + 1e-6, 'LineWidth', 2, 'DisplayName', 'Penalidade CBF Dinâmica (P2S)');
-
 xlabel('Tempo [s]');
 ylabel('Valor do Custo (Escala Logarítmica)');
 title('Dinâmica de Competição dos Pesos do NMPC');
 legend('Location', 'bestoutside');
 fontsize(14, "points");
 
-%% 8. Plotagem da Evolução do Custo Total (NOVO)
-% Somando todos os componentes para obter o custo total em cada passo
+%% 8. Plotagem da Evolução do Custo Total
 hist_cost_total = hist_cost_stage + hist_cost_cbf + hist_cost_term + ...
-                  hist_cost_eq + hist_cost_elastic + hist_cost_geofence;
-
-% Criando a figura para o custo total
+                  hist_cost_elastic + hist_cost_geofence;
+                  
 figure('Name', 'Evolução do Custo Total', 'Color', 'w');
 plot(t_sim, hist_cost_total(1:n_steps), 'k-', 'LineWidth', 2);
 grid on;
@@ -360,6 +320,8 @@ xlabel('Tempo [s]');
 ylabel('Custo Total');
 title('Evolução do Custo Total do NMPC ao longo do tempo');
 fontsize(14, "points");
+
+%%
 % =========================================================================
 % FUNÇÃO BASE: Generalized P2S-HSD (Phi e Phi')
 % =========================================================================

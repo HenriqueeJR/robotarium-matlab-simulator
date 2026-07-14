@@ -1,0 +1,54 @@
+# CompilerName=msvc170
+# Mode=optim
+ninja_required_version = 1.3
+
+# Basic folders
+root = .
+builddir = $root\build\win64
+matlabdir = C:\Program Files\MATLAB\R2023a
+startdir = C:\Users\henri\OneDrive\Área de Trabalho\Arquivos Faculdade\robotarium-matlab-simulator\examples\minhoca_segment_trakcing_p2s_noeq
+
+# Toolchain information
+cc = cl
+cxx = cl
+linker = link
+linkerxx = link
+
+cflags =  /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I "$root" /I "$startdir" /I "$root\interface" /I "$matlabdir\extern\include" /I "." -DMODEL=wrapper_grad_mex  
+
+cxxflags =   /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I "$root" /I "$startdir" /I "$root\interface" /I "$matlabdir\extern\include" /I "." -DMODEL=wrapper_grad_mex  
+
+ldflags =  /nologo /manifest   /DLL /LIBPATH:"$matlabdir\extern\lib\win64\microsoft" libmx.lib libmex.lib libmat.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  /out:"wrapper_grad_mex.mexw64" libemlrt.lib libcovrt.lib libut.lib libmwmathutil.lib  /export:mexFunction /export:mexfilerequiredapiversion /export:emlrtMexFcnProperties /export:wrapper_grad /export:wrapper_grad_initialize /export:wrapper_grad_terminate /export:wrapper_grad_atexit /export:emxEnsureCapacity_real_T /export:emxFree_real_T /export:emxInit_real_T
+
+linkobjs = 
+
+# Build Rules
+rule cc
+    command = $cc $cflags $in /Fo$out
+
+rule cxx
+    command = $cxx $cxxflags $in /Fo$out
+
+rule link
+    command = $linker @$out.rsp $linkobjs $ldflags
+    rspfile = $out.rsp
+    rspfile_content = $in
+
+rule linkxx
+    command = $linkerxx $in $linkobjs $ldflags
+
+# Build
+build $builddir\wrapper_grad_data.obj : cc $root\wrapper_grad_data.c
+build $builddir\rt_nonfinite.obj : cc $root\rt_nonfinite.c
+build $builddir\wrapper_grad_initialize.obj : cc $root\wrapper_grad_initialize.c
+build $builddir\wrapper_grad_terminate.obj : cc $root\wrapper_grad_terminate.c
+build $builddir\wrapper_grad.obj : cc $root\wrapper_grad.c
+build $builddir\build_robot_cbf_experiment.obj : cc $root\build_robot_cbf_experiment.c
+build $builddir\_coder_wrapper_grad_api.obj : cc $root\interface\_coder_wrapper_grad_api.c
+build $builddir\_coder_wrapper_grad_mex.obj : cc $root\interface\_coder_wrapper_grad_mex.c
+build $builddir\wrapper_grad_emxutil.obj : cc $root\wrapper_grad_emxutil.c
+build $builddir\_coder_wrapper_grad_info.obj : cc $root\interface\_coder_wrapper_grad_info.c
+build $builddir\c_mexapi_version.obj : cc $matlabdir\extern\version\c_mexapi_version.c
+
+# Link
+build $root\wrapper_grad_mex.mexw64 : link $builddir\wrapper_grad_data.obj $builddir\rt_nonfinite.obj $builddir\wrapper_grad_initialize.obj $builddir\wrapper_grad_terminate.obj $builddir\wrapper_grad.obj $builddir\build_robot_cbf_experiment.obj $builddir\_coder_wrapper_grad_api.obj $builddir\_coder_wrapper_grad_mex.obj $builddir\wrapper_grad_emxutil.obj $builddir\_coder_wrapper_grad_info.obj $builddir\c_mexapi_version.obj 
