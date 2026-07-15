@@ -6,8 +6,8 @@ clear; clc; close all;
 
 %% 1. Setup the Robotarium object
 Nr = 1;
-posicoes_iniciais = [1.2; -0.5; pi/2]; 
-%posicoes_iniciais = [-1.2; -0.5; 0]; 
+%posicoes_iniciais = [1.2; -0.5; pi/2]; 
+posicoes_iniciais = [-1.2; -0.5; 0]; 
 r = Robotarium('NumberOfRobots', Nr, 'ShowFigure', true, 'InitialConditions', posicoes_iniciais);
 
 %% 2. Configurações da Simulação e do NMPC
@@ -48,10 +48,10 @@ end
 
 %% 4. Condições Iniciais e Parâmetros Geométricos
 X_k = posicoes_iniciais;  
-x_ref = [-1.45,  1.3;  
-         -0.7,  -0.5];
-% x_ref = [1.3,  -1.3,  1.20,  1.20;  
-%          -0.6,  -0.5,  0.25, -0.25];
+% x_ref = [-1.2,  1.3;  
+%          -0.5,  -0.5];
+x_ref = [1.3,  -1.3,  1.20,  1.20;  
+         -0.5,  -0.5,  0.25, -0.25];
 
 % =========================================================================
 % DEFINIÇÃO DOS BLOCOS DO CORREDOR
@@ -69,18 +69,18 @@ blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
 % =========================================================================
 % PESOS DO NMPC
 % =========================================================================            
-eta_safe   = 1e9;           
+eta_safe   = 0;           
 gamma_safe = 0.5;  
-eta_term   = 1000.0;
+eta_term   = 5000.0;
 mu_safe    = 1e4;
-kappa_s    = 80;
+kappa_s    = 100;
 
 % Inicialização ajustada para o novo tamanho
 w_init = zeros(nW,1);
-w_init(2*N+1:2*N+2) = [-1.0; -0.5];  % xs
-w_init(2*N+3:2*N+4) = [-0.5; -0.25]; % r1
-w_init(2*N+5:2*N+6) = [0; 0.1];      % r2
-w_init(2*N+7:2*N+8) = [0.75; 0.35];  % r3
+w_init(2*N+1:2*N+2) = [-1.2; -0.5];  % xs
+w_init(2*N+3:2*N+4) = [-1.2; -0.5]; % r1
+w_init(2*N+5:2*N+6) = [-1.2; -0.5];      % r2
+w_init(2*N+7:2*N+8) = [-1.2; -0.5];  % r3
 
 target_block = blocks_params(1:4);
 hist_X = zeros(3, n_steps + 1);
@@ -125,6 +125,12 @@ theta_circle = linspace(0, 2*pi, 100);
 h_robot_body = fill(ax, X_k(1) + r_rob*cos(theta_circle), X_k(2) + r_rob*sin(theta_circle), 'y', 'FaceAlpha', 0.75, 'EdgeColor', 'yellow', 'LineWidth', 1.5);
 h_robot_body_intern = fill(ax, X_k(1) + (0.07)*cos(theta_circle), X_k(2) + (0.07)*sin(theta_circle), 'g', 'FaceAlpha', 0.75, 'EdgeColor', 'green', 'LineWidth', 1.5);
 h_xs    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','m');
+
+plot(ax, w_init(2*N+1),w_init(2*N+2),'mo','MarkerFaceColor','m');
+plot(ax, w_init(2*N+3),w_init(2*N+4),'mo','MarkerFaceColor','m');
+plot(ax, w_init(2*N+5),w_init(2*N+6),'mo','MarkerFaceColor','m');
+plot(ax, w_init(2*N+7),w_init(2*N+8),'mo','MarkerFaceColor','m');
+
 h_r1    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');
 h_r2    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');
 h_r3    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');
@@ -240,6 +246,8 @@ for k = 1:n_steps
     %% Gestão de Waypoints
     if norm(X_k(1:2) - x_ref_current(1:2)) < 0.15
         disp(['Alvo alcançado em ', num2str(k * Ts), ' segundos!']);
+        %x_ref_current = [-1.25;  
+                            %-0.5];
         break;
     end
     r.step();
@@ -275,7 +283,7 @@ fontsize(18, "points")
 subplot(3, 1, 3); hold on; grid on;
 stairs(t_sim, hist_norm_term(1:n_steps), 'm-', 'LineWidth', 2);
 yline(0.05, 'r--', 'LineWidth', 1.2); 
-xlabel('Tempo [s]'); ylabel('\|xN - xs\|'); title('Norma terminal');
+xlabel('Tempo [s]'); ylabel('||xN - xs||'); title('Norma terminal');
 ylim([-0.02, 0.05 + 0.02]);
 fontsize(18, "points")
 
