@@ -51,7 +51,7 @@ X_k = posicoes_iniciais;
 % x_ref = [-1.2,  1.3;  
 %          -0.5,  -0.5];
 x_ref = [1.1,  -1.3,  1.20,  1.20;  
-         -0.6,  -0.5,  0.25, -0.25];
+         -0.5,  -0.5,  0.25, -0.25];
 
 % =========================================================================
 % DEFINIÇÃO DOS BLOCOS DO CORREDOR
@@ -73,7 +73,7 @@ eta_safe   = 1e4;
 gamma_safe = 0.5;  
 eta_term   = 2000.0;
 mu_safe    = 1e4;
-kappa_s    = 50;
+kappa_s    = 55;
 
 % Inicialização ajustada para o novo tamanho
 % w_init = zeros(nW,1);

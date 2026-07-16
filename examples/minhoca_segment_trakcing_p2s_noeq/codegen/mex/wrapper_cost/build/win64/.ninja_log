@@ -1,14 +1,14 @@
 # ninja log v5
-55	552	8059243642496117	build/win64/wrapper_cost_data.obj	1876455fbb749410
-22	619	8059243643378881	build/win64/rt_nonfinite.obj	fe47aaf1b4014426
-40	649	8059243643428931	build/win64/wrapper_cost_initialize.obj	c5cc58230846d17a
-86	655	8059243643524436	build/win64/wrapper_cost_emxutil.obj	265ec5aeb326d3e9
-2	662	8059243643720700	build/win64/wrapper_cost_terminate.obj	b9ca70e12430e78e
-133	668	8059243643876522	build/win64/c_mexapi_version.obj	ef99bde288b06709
-104	686	8059243644164796	build/win64/sumMatrixIncludeNaN.obj	f4159900dd168345
-118	833	8059243645623204	build/win64/build_robot_cbf_experiment.obj	9cc04ef4bee2b57c
-576	909	8059243646393657	build/win64/_coder_wrapper_cost_mex.obj	24644f71e239e80e
-634	915	8059243646446170	build/win64/_coder_wrapper_cost_info.obj	714246599e1b0452
-184	938	8059243646711495	build/win64/_coder_wrapper_cost_api.obj	104584722af6eaad
-70	946	8059243646776573	build/win64/wrapper_cost.obj	2ae7aa8b5203e5bf
-949	1248	8059243649321078	wrapper_cost_mex.mexw64	9200a5c8e4757b3
+2	371	8059254426796019	build/win64/rt_nonfinite.obj	fe47aaf1b4014426
+27	408	8059254427130670	build/win64/wrapper_cost_initialize.obj	c5cc58230846d17a
+40	434	8059254427292226	build/win64/wrapper_cost_data.obj	1876455fbb749410
+14	444	8059254427427255	build/win64/wrapper_cost_terminate.obj	b9ca70e12430e78e
+67	480	8059254427618273	build/win64/_coder_wrapper_cost_api.obj	104584722af6eaad
+80	514	8059254427997910	build/win64/wrapper_cost_emxutil.obj	265ec5aeb326d3e9
+120	532	8059254428271779	build/win64/_coder_wrapper_cost_info.obj	714246599e1b0452
+106	545	8059254428388413	build/win64/_coder_wrapper_cost_mex.obj	24644f71e239e80e
+93	552	8059254428510190	build/win64/sumMatrixIncludeNaN.obj	f4159900dd168345
+420	706	8059254430153359	build/win64/c_mexapi_version.obj	ef99bde288b06709
+54	776	8059254430894009	build/win64/wrapper_cost.obj	2ae7aa8b5203e5bf
+390	838	8059254431437692	build/win64/build_robot_cbf_experiment.obj	9cc04ef4bee2b57c
+841	917	8059254432371967	wrapper_cost_mex.mexw64	9200a5c8e4757b3
