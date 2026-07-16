@@ -84,9 +84,9 @@ kappa_s    = 50;
 
 w_init = zeros(nW,1);
 w_init(2*N+1:2*N+2) = [-1.2; -0.5];  % xs
-w_init(2*N+3:2*N+4) = [-0.35  -0.4]; % r1
-w_init(2*N+5:2*N+6) = [-0.15; 0.25];      % r2
-w_init(2*N+7:2*N+8) = [1.05; 0.25];  % r3
+w_init(2*N+3:2*N+4) = [-1.2; -0.5]; % r1
+w_init(2*N+5:2*N+6) = [-1.2; -0.5];      % r2
+w_init(2*N+7:2*N+8) = [-1.2; -0.5];  % r3
 
 target_block = blocks_params(1:4);
 hist_X = zeros(3, n_steps + 1);
