@@ -973,9 +973,9 @@ void wrapper_grad(const emlrtStack *sp, const real_T u[48],
                                     &st);
     }
     loop_ub = 3 * ((int32_T)b_n - 1);
-    grad_xs_tmp = 40.0 * (X_hist_data[loop_ub] - xs_tmp);
+    grad_xs_tmp = 80.0 * (X_hist_data[loop_ub] - xs_tmp);
     grad_xs[0] -= grad_xs_tmp;
-    b_grad_xs_tmp = 40.0 * (X_hist_data[loop_ub + 1] - b_xs_tmp);
+    b_grad_xs_tmp = 80.0 * (X_hist_data[loop_ub + 1] - b_xs_tmp);
     grad_xs[1] -= b_grad_xs_tmp;
     /*  Avaliação Suavizada Ponto a Ponto para CBF */
     b_st.site = &j_emlrtRSI;
@@ -1131,7 +1131,7 @@ void wrapper_grad(const emlrtStack *sp, const real_T u[48],
     b_r1 = _mm_mul_pd(b_r1, _mm_set1_pd(P2));
     r = _mm_add_pd(r, b_r1);
     _mm_storeu_pd(&r2[0], r);
-    gPa[0] = 2.0 * v_n;
+    gPa[0] = 10.0 * v_n;
     gPa[1] = 0.02 * u[(int32_T)b_u + 1];
     r = _mm_loadu_pd(&r2[0]);
     b_r1 = _mm_loadu_pd(&gPa[0]);

@@ -71,7 +71,7 @@ blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
 % =========================================================================            
 eta_safe   = 1e4;           
 gamma_safe = 0.5;  
-eta_term   = 2200.0;
+eta_term   = 2000.0;
 mu_safe    = 1e4;
 kappa_s    = 50;
 
