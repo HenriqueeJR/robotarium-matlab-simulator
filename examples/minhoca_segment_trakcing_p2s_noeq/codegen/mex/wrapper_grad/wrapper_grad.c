@@ -973,9 +973,9 @@ void wrapper_grad(const emlrtStack *sp, const real_T u[48],
                                     &st);
     }
     loop_ub = 3 * ((int32_T)b_n - 1);
-    grad_xs_tmp = 10.0 * (X_hist_data[loop_ub] - xs_tmp);
+    grad_xs_tmp = 40.0 * (X_hist_data[loop_ub] - xs_tmp);
     grad_xs[0] -= grad_xs_tmp;
-    b_grad_xs_tmp = 10.0 * (X_hist_data[loop_ub + 1] - b_xs_tmp);
+    b_grad_xs_tmp = 40.0 * (X_hist_data[loop_ub + 1] - b_xs_tmp);
     grad_xs[1] -= b_grad_xs_tmp;
     /*  Avaliação Suavizada Ponto a Ponto para CBF */
     b_st.site = &j_emlrtRSI;

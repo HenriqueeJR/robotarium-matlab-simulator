@@ -50,8 +50,8 @@ end
 X_k = posicoes_iniciais;  
 % x_ref = [-1.2,  1.3;  
 %          -0.5,  -0.5];
-x_ref = [1.3,  -1.3,  1.20,  1.20;  
-         -0.5,  -0.5,  0.25, -0.25];
+x_ref = [1.1,  -1.3,  1.20,  1.20;  
+         -0.6,  -0.5,  0.25, -0.25];
 
 % =========================================================================
 % DEFINIÇÃO DOS BLOCOS DO CORREDOR
@@ -71,22 +71,22 @@ blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
 % =========================================================================            
 eta_safe   = 1e4;           
 gamma_safe = 0.5;  
-eta_term   = 1000.0;
+eta_term   = 2200.0;
 mu_safe    = 1e4;
 kappa_s    = 50;
 
 % Inicialização ajustada para o novo tamanho
 % w_init = zeros(nW,1);
-% w_init(2*N+1:2*N+2) = [1.2; -0.2];  % xs
-% w_init(2*N+3:2*N+4) = [1.2; 0.3]; % r1
-% w_init(2*N+5:2*N+6) = [-0.2  0.3];      % r2
-% w_init(2*N+7:2*N+8) = [-0.5; -0.5];  % r3
+% w_init(2*N+1:2*N+2) = [1.2; -0.5];  % xs
+% w_init(2*N+3:2*N+4) = [1.05; 0.25]; % r1
+% w_init(2*N+5:2*N+6) = [-0.15; 0.25];      % r2
+% w_init(2*N+7:2*N+8) = [-0.35  -0.4];  % r3
 
 w_init = zeros(nW,1);
-w_init(2*N+1:2*N+2) = [-0.5; -0.5];  % xs
-w_init(2*N+3:2*N+4) = [-0.2  0.3]; % r1
-w_init(2*N+5:2*N+6) = [1.2; 0.3];      % r2
-w_init(2*N+7:2*N+8) = [1.2; -0.2];  % r3
+w_init(2*N+1:2*N+2) = [-1.2; -0.5];  % xs
+w_init(2*N+3:2*N+4) = [-0.35  -0.4]; % r1
+w_init(2*N+5:2*N+6) = [-0.15; 0.25];      % r2
+w_init(2*N+7:2*N+8) = [1.05; 0.25];  % r3
 
 target_block = blocks_params(1:4);
 hist_X = zeros(3, n_steps + 1);
@@ -132,10 +132,10 @@ h_robot_body = fill(ax, X_k(1) + r_rob*cos(theta_circle), X_k(2) + r_rob*sin(the
 h_robot_body_intern = fill(ax, X_k(1) + (0.07)*cos(theta_circle), X_k(2) + (0.07)*sin(theta_circle), 'g', 'FaceAlpha', 0.75, 'EdgeColor', 'green', 'LineWidth', 1.5);
 h_xs    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','m');
 
-% plot(ax, w_init(2*N+1),w_init(2*N+2),'mo','MarkerFaceColor','m');
-% plot(ax, w_init(2*N+3),w_init(2*N+4),'mo','MarkerFaceColor','m');
-% plot(ax, w_init(2*N+5),w_init(2*N+6),'mo','MarkerFaceColor','m');
-% plot(ax, w_init(2*N+7),w_init(2*N+8),'mo','MarkerFaceColor','m');
+plot(ax, w_init(2*N+1),w_init(2*N+2),'mo','MarkerFaceColor','m');
+plot(ax, w_init(2*N+3),w_init(2*N+4),'mo','MarkerFaceColor','m');
+plot(ax, w_init(2*N+5),w_init(2*N+6),'mo','MarkerFaceColor','m');
+plot(ax, w_init(2*N+7),w_init(2*N+8),'mo','MarkerFaceColor','m');
 
 h_r1    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');
 h_r2    = plot(ax, X_k(1),X_k(2),'mo','MarkerFaceColor','blue');

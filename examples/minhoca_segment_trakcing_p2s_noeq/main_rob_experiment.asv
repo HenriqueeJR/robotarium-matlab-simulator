@@ -69,18 +69,24 @@ blocks_params = [b1_xmin; b1_xmax+r_rob; b1_ymin; b1_ymax-r_rob; ...
 % =========================================================================
 % PESOS DO NMPC
 % =========================================================================            
-eta_safe   = 0;           
+eta_safe   = 1e4;           
 gamma_safe = 0.5;  
-eta_term   = 1000.0;
+eta_term   = 2200.0;
 mu_safe    = 1e4;
 kappa_s    = 50;
 
 % Inicialização ajustada para o novo tamanho
+% w_init = zeros(nW,1);
+% w_init(2*N+1:2*N+2) = [1.2; -0.5];  % xs
+% w_init(2*N+3:2*N+4) = [1.05; 0.25]; % r1
+% w_init(2*N+5:2*N+6) = [-0.15; 0.25];      % r2
+% w_init(2*N+7:2*N+8) = [-0.35  -0.4];  % r3
+
 w_init = zeros(nW,1);
-w_init(2*N+1:2*N+2) = [1.2; -0.2];  % xs
-w_init(2*N+3:2*N+4) = [1.2; 0.3]; % r1
-w_init(2*N+5:2*N+6) = [-0.2  0.3];      % r2
-w_init(2*N+7:2*N+8) = [-0.5; -0.5];  % r3
+w_init(2*N+1:2*N+2) = [-1.2; -0.5];  % xs
+w_init(2*N+3:2*N+4) = [-0.35  -0.4]; % r1
+w_init(2*N+5:2*N+6) = [-0.15; 0.25];      % r2
+w_init(2*N+7:2*N+8) = [1.05; 0.25];  % r3
 
 target_block = blocks_params(1:4);
 hist_X = zeros(3, n_steps + 1);

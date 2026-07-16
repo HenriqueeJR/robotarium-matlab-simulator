@@ -1,14 +1,14 @@
 # ninja log v5
-0	383	8058289567971215	build/win64/wrapper_cost_data.obj	1876455fbb749410
-6	409	8058289568113874	build/win64/rt_nonfinite.obj	fe47aaf1b4014426
-38	423	8058289568174317	build/win64/wrapper_cost_emxutil.obj	265ec5aeb326d3e9
-13	426	8058289568174317	build/win64/wrapper_cost_initialize.obj	c5cc58230846d17a
-54	430	8058289568234648	build/win64/_coder_wrapper_cost_mex.obj	24644f71e239e80e
-60	435	8058289568254738	build/win64/c_mexapi_version.obj	ef99bde288b06709
-19	438	8058289568254738	build/win64/wrapper_cost_terminate.obj	b9ca70e12430e78e
-32	442	8058289568440230	build/win64/_coder_wrapper_cost_api.obj	104584722af6eaad
-45	539	8058289569497411	build/win64/build_robot_cbf_experiment.obj	9cc04ef4bee2b57c
-415	567	8058289569822108	build/win64/_coder_wrapper_cost_info.obj	714246599e1b0452
-394	577	8058289569919902	build/win64/sumMatrixIncludeNaN.obj	f4159900dd168345
-26	590	8058289570062704	build/win64/wrapper_cost.obj	2ae7aa8b5203e5bf
-592	642	8058289570582445	wrapper_cost_mex.mexw64	9200a5c8e4757b3
+1	2213	8059221794729803	build/win64/wrapper_cost_data.obj	1876455fbb749410
+51	2332	8059221794792292	build/win64/wrapper_cost_terminate.obj	b9ca70e12430e78e
+63	2463	8059221794792292	build/win64/c_mexapi_version.obj	ef99bde288b06709
+101	2468	8059221795776084	build/win64/sumMatrixIncludeNaN.obj	f4159900dd168345
+88	2473	8059221795796216	build/win64/wrapper_cost_emxutil.obj	265ec5aeb326d3e9
+39	2478	8059221795725657	build/win64/rt_nonfinite.obj	fe47aaf1b4014426
+25	2484	8059221794792292	build/win64/wrapper_cost_initialize.obj	c5cc58230846d17a
+76	2489	8059221795735819	build/win64/_coder_wrapper_cost_mex.obj	24644f71e239e80e
+112	2494	8059221798367867	build/win64/build_robot_cbf_experiment.obj	9cc04ef4bee2b57c
+14	2567	8059221799214999	build/win64/wrapper_cost.obj	2ae7aa8b5203e5bf
+2445	2636	8059221799961367	build/win64/_coder_wrapper_cost_info.obj	714246599e1b0452
+2313	2658	8059221800213073	build/win64/_coder_wrapper_cost_api.obj	104584722af6eaad
+2662	2944	8059221801787302	wrapper_cost_mex.mexw64	9200a5c8e4757b3

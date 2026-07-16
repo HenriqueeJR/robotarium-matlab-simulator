@@ -698,8 +698,8 @@ real_T wrapper_cost(const emlrtStack *sp, const real_T u[48],
     v2 = x_k_idx_1 - b_xs_tmp;
     b_st.site = &e_emlrtRSI;
     b_st.site = &e_emlrtRSI;
-    l_u = (l_u +
-           ((5.0 * (work * work + v2 * v2) + v_n * v_n) + 0.01 * (w_n * w_n))) +
+    l_u = (l_u + ((20.0 * (work * work + v2 * v2) + v_n * v_n) +
+                  0.01 * (w_n * w_n))) +
           params[5] * (tmp2 * tmp2);
     x_k_idx_0 = d2;
     x_k_idx_1 = d1;
